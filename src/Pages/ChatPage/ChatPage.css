@@ -1,0 +1,73 @@
+/* src/Pages/ChatPage/ChatPage.css */
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+    background-color: #F0F0F0;
+  }
+  
+  .chat-container h1 {
+    margin-top: 20px;
+  }
+  
+  .chat-box {
+    width: 80%;
+    max-width: 600px;
+    height: 70vh;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #FFF;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .message {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+    word-wrap: break-word;
+  }
+  
+  .message-user {
+    align-self: flex-end;
+    color: #FFF;
+    background-color: #fe3bd4;
+  }
+  
+  .message-bot {
+    align-self: flex-start;
+    color: #000;
+    background-color: #e0e0e0;
+  }
+  
+  .input-container {
+    display: flex;
+    width: 80%;
+    max-width: 600px;
+    margin-bottom: 20px;
+  }
+  
+  .input-container input {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    margin-right: 8px;
+  }
+  
+  .input-container button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background-color: #fe3bd4;
+    color: #FFF;
+    cursor: pointer;
+  }

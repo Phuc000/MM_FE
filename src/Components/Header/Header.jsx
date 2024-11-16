@@ -56,8 +56,8 @@ const Header = () => {
           <Link to="/AboutUs" className={getNavItemClass("/AboutUs")}>
             <p className="a__navbar btn btn--primary">ABOUT US</p>
           </Link>
-          <Link to="/" className={getNavItemClass("/")}>
-            <p className="a__navbar btn btn--primary">OFFERS</p>
+          <Link to="/Chat" className={getNavItemClass("/Chat")}>
+            <p className="a__navbar btn btn--primary">CHATBOT</p>
           </Link>
           <Link to="/Cart" className={getNavItemClass("/Cart")}>
             {state.cart.length > 0 ? (

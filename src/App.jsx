@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Home, Login, Cart, Category, BuyProduct, Store, Profile, AboutUs, CheckOut, Admin, Shipper } from "./Pages";
+import { Home, Login, Cart, Category, BuyProduct, Store, Profile, AboutUs, CheckOut, Admin, Shipper, ChatPage } from "./Pages";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AdminDashboard from "./admin/Dashboard";
@@ -26,6 +26,7 @@ function App() {
                 <Route path="/Profile" element={<Profile />} />
                 <Route path="/Category/:categoryName" element={<Category />} />
                 <Route path="/Cart" element={<Cart />} />
+                <Route path="/Chat" element={<ChatPage />} />
                 <Route path="/CheckOut" element={<CheckOut />} />
                 <Route path="/Checkout/PaymentCallBack" element={<CheckOut />} />
                 <Route path="/buy-product/:productId/:storeId" element={<BuyProduct />} />
