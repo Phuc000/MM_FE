@@ -228,7 +228,13 @@ const Promotions = () => {
                       </Typography>
                       {/* Applicable Products */}
                       {promo.products && promo.products.length > 0 && (
-                        <Stack direction="row" spacing={1} sx={{ marginTop: 1 }}>
+                        <Stack 
+                          direction="row" 
+                          spacing={1} 
+                          sx={{ 
+                            marginTop: 1,
+                            flexWrap: 'wrap',
+                          }}>
                           {promo.products.map((product) => (
                             <Tooltip
                               key={product.productID}

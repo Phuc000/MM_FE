@@ -212,7 +212,11 @@ const ManagePromotions = () => {
                     </Typography>
                   )}
                   {promotion.type === 'Product Promotion' && promotion.products && (
-                    <Stack direction="row" spacing={1}>
+                    <Stack
+                      direction="row"
+                      spacing={1}
+                      sx={{ flexWrap: 'wrap' }} // Enable wrapping
+                    >
                       {promotion.products.map((product) => (
                         <Tooltip
                           key={product.productID || product.productId}
