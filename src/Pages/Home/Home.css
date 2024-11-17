@@ -209,7 +209,7 @@ html {
 
   /*Hero section*/
   .hero {
-      background: url('/Images/bg_mobile.jpg');
+      background: url('/Images/bg_mobile.webp');
       background-repeat: no-repeat;
       background-size: cover;
       background-position: center;
@@ -391,7 +391,7 @@ html {
     opacity: 1;
   }
   #bannerblock {
-      background: url('/Images/bg_mobile.jpg');
+      background: url('/Images/bg_mobile.webp');
       background-repeat: no-repeat;
       background-size: cover;
       background-position: center;

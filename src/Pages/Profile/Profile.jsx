@@ -68,6 +68,10 @@ const Profile = () => {
     } else if (user.role === "StoreManager") {
       setShowManager(true);
       setActiveComponent("Dashboard");
+    } else if (user.role === "Admin") {
+      navigate("/Admin");
+    } else if (user.role === "Shipper") {
+      navigate("/Shipper");
     }
   }, [user, navigate]);
 
