@@ -1,12 +1,23 @@
 // src/Pages/ChatPage/ChatPage.jsx
 
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
 import { Header, Footer } from '../../Components';
 import ReactMarkdown from 'react-markdown';
 import runChat from '../../config/gemini';
 import axios from 'axios';
 import './ChatPage.css';
+
+// Hardcoded product list (same as in Header.jsx)
+const products = [
+  'Tomato Pasta Sauce', 'Crab Legs', 'Pork Belly', 'Pork Loin', 'Pork Chops',
+  'Pork Ribs', 'Ground Pork', 'Ground Beef', 'Beef Brisket', 'Beef Ribeye',
+  'Beef Tenderloin', 'Beef Stew Meat', 'Salmon Fillet', 'Shrimp', 'Scallops',
+  'Cod', 'Whole Milk', 'Skim Milk', 'Almond Milk', 'Oranges', 'Soy Milk',
+  'Coconut Milk', 'Black Pepper', 'Cinnamon', 'Paprika', 'Turmeric', 'Cumin',
+  'Spinach', 'Carrots', 'Broccoli', 'Bell Peppers', 'Tomatoes', 'Tomato Sauce',
+  'Soy Sauce', 'Hot Sauce', 'BBQ Sauce', 'Fish Sauce', 'Bananas', 'Grapes',
+  'Strawberries', 'Quinoa', 'Barley', 'Oats', 'Wheat Flour', 'Apples', 'Rice',
+];
 
 const ChatUI = () => {
   const [messages, setMessages] = useState([]);
@@ -22,35 +33,45 @@ const ChatUI = () => {
     try {
       const responseText = await runChat(userInput);
 
-      // Extract ingredients from the response text
-      const ingredients = extractIngredients(responseText);
-
       let processedText = responseText;
 
-      console.log('Ingredients:', ingredients);
+      // Find ingredients mentioned in the response
+      const ingredients = products.filter((product) =>
+        processedText.toLowerCase().includes(product.toLowerCase())
+      );
 
       if (ingredients.length > 0) {
         try {
-          // Make the API request to get product details
-          const apiResponse = await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/products/chatbot`, 
-            ingredients
+          // Fetch product details using the ingredients
+          const apiResponse = await axios.post(
+            `${import.meta.env.VITE_REACT_APP_API_URL}/products/chatbot`,
+            ingredients,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
           );
-          console.log('API response:', apiResponse.data);
-          const products = apiResponse.data; // Assume API returns an array of products
 
-          // Create a map of product names to product IDs
+          const productsData = apiResponse.data; // Array of product details
+
+          // Map product names to product IDs
           const productMap = {};
-          products.forEach((product) => {
-            productMap[product.pName] = product.productID;
+          productsData.forEach((product) => {
+            productMap[product.pName.toLowerCase()] = product.productID;
           });
 
           // Replace ingredient names with links in the response text
           ingredients.forEach((ingredient) => {
-            const productId = productMap[ingredient];
+            const productId = productMap[ingredient.toLowerCase()];
             if (productId) {
-              const linkText = `[${ingredient}](/BuyProduct/${productId}/null)`;
-              // Replace the ingredient in the text with the link
-              const regex = new RegExp(`\\b${ingredient}\\b`, 'g');
+              const linkText = `[${ingredient}](/buy-product/${productId}/null)`;
+
+              // Escape special regex characters
+              const escapedIngredient = escapeRegExp(ingredient);
+
+              // Replace all occurrences of the ingredient (case-insensitive)
+              const regex = new RegExp(`\\b${escapedIngredient}\\b`, 'gi');
               processedText = processedText.replace(regex, linkText);
             }
           });
@@ -68,38 +89,9 @@ const ChatUI = () => {
     }
   };
 
-  const extractIngredients = (text) => {
-    const ingredients = [];
-
-    // Match the "**Ingredients:**" section
-    const ingredientsSectionRegex = /\*\*Ingredients:\*\*\s*([\s\S]*?)\n\n/;
-    const ingredientsSectionMatch = text.match(ingredientsSectionRegex);
-
-    if (ingredientsSectionMatch) {
-      const ingredientsSection = ingredientsSectionMatch[1];
-
-      // Match all list items in the ingredients section
-      const ingredientRegex = /^\s*[*-]\s*(?:\*\*.*\*\*\s*)?(.*)$/gm;
-      let match;
-      while ((match = ingredientRegex.exec(ingredientsSection)) !== null) {
-        const ingredientLine = match[1].trim();
-
-        console.log('Ingredient line:', ingredientLine);
-
-        // Skip subheadings
-        if (ingredientLine.startsWith('**')) continue;
-
-        // Remove any text in parentheses or after commas
-        const ingredientName = ingredientLine.split('(')[0].split(',')[0].trim();
-        console.log('Ingredient name:', ingredientName);
-        if (ingredientName) {
-          ingredients.push(ingredientName);
-        }
-      }
-    }
-
-    // Remove duplicates
-    return [...new Set(ingredients)];
+  // Function to escape special characters in a string for regex
+  const escapeRegExp = (string) => {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   };
 
   return (
