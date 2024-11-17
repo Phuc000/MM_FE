@@ -42,6 +42,30 @@ nav .wrap-menu {
     cursor: pointer;
 }
 
+.dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+  }
+
+  .dropdown-item {
+    display: block;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #eee;
+  }
+
+  .dropdown-item:hover {
+    background-color: #f4f4f4;
+  }
+
     /**********************/
     /*******Search bar*****/
     /**********************/

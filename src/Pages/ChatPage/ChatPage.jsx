@@ -12,58 +12,6 @@ const ChatUI = () => {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
 
-  useEffect(() => {
-    const responseText = `How about a flavorful Pork Loin with Roasted Vegetables? It's a healthy and satisfying meal.
-
-**Ingredients:**
-
-* **Fresh Ingredients (Prioritized):**
-    * Pork Loin (from our selection)
-    * Carrots (fresh)
-    * Broccoli (fresh)
-    * Bell Peppers (fresh, any color you prefer)
-    * Tomatoes (fresh)
-
-* **Pantry Ingredients:**
-    * Black Pepper (ground)
-    * Paprika
-    * Turmeric
-    * Cumin
-    * Soy Sauce
-    * Olive Oil (if you have some, otherwise a neutral oil will do)
-
-
-**Recipe:**
-
-1. **Prep the Pork Loin:** Pat the pork loin dry with paper towels. Mix the black pepper, paprika, turmeric, cumin, and a splash of soy sauce in a small bowl to create a rub. Rub this mixture all over the pork loin.
-2. **Prep the Vegetables:** Chop the carrots, broccoli, bell peppers, and tomatoes into bite-sized pieces. Toss them with a drizzle of olive oil, salt, and pepper.
-3. **Roast:** Preheat your oven to 400°F (200°C). Place the pork loin in a roasting pan and arrange the vegetables around it.
-4. **Cook:** Roast for approximately 45-60 minutes, or until the pork loin reaches an internal temperature of 145°F (63°C) and the vegetables are tender.
-5. **Rest & Serve:** Remove the pork loin from the oven and let it rest for 10 minutes before slicing. This allows the juices to redistribute, making it more tender. Serve the sliced pork loin with the roasted vegetables.
-
-You can find all the fresh ingredients and spices for this recipe on our website. Let me know if you have any questions or want to explore other dinner options!`;
-
-  console.log('Response text:', responseText);
-
-    // Extract ingredients from the response text
-  const ingredients = extractIngredients(responseText);
-    console.log('Ingredients:', ingredients);
-    try {
-      // Make the API request to get product details
-      const apiResponse = axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/products/chatbot`, 
-        ingredients
-      );
-      console.log('API response:', apiResponse.data);
-      const products = apiResponse.data; // Assume API returns an array of products
-
-      
-    } catch (error) {
-      console.error('Error fetching product data:', error);
-      // Handle error appropriately
-    }
-
-  }, []);
-
   const handleSend = async () => {
     if (!userInput.trim()) return;
 
@@ -100,7 +48,7 @@ You can find all the fresh ingredients and spices for this recipe on our website
           ingredients.forEach((ingredient) => {
             const productId = productMap[ingredient];
             if (productId) {
-              const linkText = `[${ingredient}](/BuyProduct/${productId})`;
+              const linkText = `[${ingredient}](/BuyProduct/${productId}/null)`;
               // Replace the ingredient in the text with the link
               const regex = new RegExp(`\\b${ingredient}\\b`, 'g');
               processedText = processedText.replace(regex, linkText);
