@@ -18,13 +18,33 @@ const Footer = () => {
                     <div className="footer__social">
                         <h3 className="footer-subtitle">OUR SOCIAL MEDIA</h3>
                         <ul className="footer__list social__list">
-                            <a href="#" className="social__link">
-                                <li className="footer__item social__item"><i className="fa fa-facebook"></i></li></a>
-                            <a href="#" className="social__link">
-                                <li className="footer__item social__item"><i className="fa fa-instagram"></i></li> </a>
-                            <a href="#" className="social__link">
-                                <li className="footer__item social__item"><i className="fa fa-twitter-square"></i></li>
+                          <li className="footer__item social__item">
+                            <a
+                              href="#"
+                              className="social__link"
+                              aria-label="Visit our Facebook page"
+                            >
+                              <i className="fa fa-facebook" aria-hidden="true"></i>
                             </a>
+                          </li>
+                          <li className="footer__item social__item">
+                            <a
+                              href="#"
+                              className="social__link"
+                              aria-label="Visit our Instagram profile"
+                            >
+                              <i className="fa fa-instagram" aria-hidden="true"></i>
+                            </a>
+                          </li>
+                          <li className="footer__item social__item">
+                            <a
+                              href="#"
+                              className="social__link"
+                              aria-label="Visit our Twitter account"
+                            >
+                              <i className="fa fa-twitter-square" aria-hidden="true"></i>
+                            </a>
+                          </li>
                         </ul>
                     </div>
                 </div>

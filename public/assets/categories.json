@@ -1,38 +1,38 @@
 [
   {
       "name": "Vegetable",
-      "image": "/Images/categories/vegetable-crop.png"
+      "image": "/Images/categories/vegetable-crop.webp"
   },
   {
       "name": "Seafood",
-      "image": "/Images/categories/seafood-crop.png"
+      "image": "/Images/categories/seafood-crop.webp"
   },
   {
       "name": "Spice",
-      "image": "/Images/categories/spice-crop.png"
+      "image": "/Images/categories/spice-crop.webp"
   },
   {
       "name": "Grain",
-      "image": "/Images/categories/grain-crop.png"
+      "image": "/Images/categories/grain-crop.webp"
   },
   {
       "name": "Sauce",
-      "image": "/Images/categories/sauce-crop.png"
+      "image": "/Images/categories/sauce-crop.webp"
   },
   {
       "name": "Beef",
-      "image": "/Images/categories/beef-crop.png"
+      "image": "/Images/categories/beef-crop.webp"
   },
   {
       "name": "Milk",
-      "image": "/Images/categories/milk-crop.png"
+      "image": "/Images/categories/milk-crop.webp"
   },
   {
       "name": "Fruit",
-      "image": "/Images/categories/fruit-crop.png"
+      "image": "/Images/categories/fruit-crop.webp"
   },
   {
       "name": "Pork",
-      "image": "/Images/categories/pork-crop.png"
+      "image": "/Images/categories/pork-crop.webp"
   }
 ]

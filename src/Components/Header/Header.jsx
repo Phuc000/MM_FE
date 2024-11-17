@@ -43,7 +43,7 @@ const Header = () => {
           <div className="search_body">
             <div className="search-container">
               <input type="text" className="search-input" id="searchInput" placeholder="Search..." />
-              <button className="search-button">
+              <button className="search-button" aria-label="Search">
                 <SearchIcon />
               </button>
             </div>
