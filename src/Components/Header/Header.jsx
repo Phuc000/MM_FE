@@ -1,5 +1,5 @@
 // src/Components/Header/Header.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useCart } from "../../Context/CartContext";
 import { useAuth } from "../../hooks/useAuth"; // Import useAuth hook
@@ -32,6 +32,11 @@ const Header = () => {
     setIsMenuOpen((prevState) => !prevState);
     document.body.classList.toggle("body__fixed", !isMenuOpen); // Prevent body scroll when menu is open
   };
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+    document.body.classList.remove("body__fixed");
+  }, [location.pathname]);
 
   return (
     <div className="header">
