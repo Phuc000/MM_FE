@@ -96,7 +96,7 @@ const Header = () => {
   return (
     <div className="header">
       <nav>
-        <Link to="/" className={getNavItemClass("/")}>
+        <Link to="/" className="navbar-item home_logo">
           <img src="/Images/logo.png" alt="logo-shophouse" className="nav__logo" />
         </Link>
         <div className="header-with-search__search-section">

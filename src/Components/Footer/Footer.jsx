@@ -11,7 +11,7 @@ const Footer = () => {
                         <ul className="footer__list info__list">
                             <li className="footer__item info__item">268 Ly Thuong Kiet</li>
                             <li className="footer__item info__item">+84 999-999-999</li>
-                            <li className="footer__item info__item">IUFC@nest.com</li>
+                            <li className="footer__item info__item">MealMate@IUFC.com</li>
                         </ul>
                     </div>
 

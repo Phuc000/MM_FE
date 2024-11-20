@@ -27,6 +27,11 @@ nav {
     color: var(--main_dark);
 }
 
+.home_logo {
+  display: flex;
+  justify-content: center;
+}
+
 .nav__logo {
     max-width: 200px;
 }
