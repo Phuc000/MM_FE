@@ -69,6 +69,11 @@
           margin-bottom: 0;
         }
       }
+
+      // Media query for small screens (e.g., phones)
+      @media (max-width: 480px) {
+        padding: 0; // Remove padding on small screens
+      }
     }
   }
   

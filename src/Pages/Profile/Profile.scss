@@ -1,10 +1,25 @@
 .profile-content-wrapper {
-    display: flex;
-    justify-content: flex-start; // Align items to the start of the container
-    padding: 20px; // Add some padding
-    margin: 30px;
-    gap: 10px; // Add space between items
+  display: flex;
+  justify-content: flex-start; // Align items to the start of the container
+  padding: 20px; // Add some padding
+  margin: 30px;
+  gap: 10px; // Add space between items
+
+  // Media query for tablets and large smartphones
+  @media (max-width: 768px) {
+    flex-direction: column; // Stack items vertically
+    padding: 10px; // Reduce padding
+    margin: 15px; // Reduce margin
+    gap: 5px; // Reduce space between items
   }
+
+  // Media query for smaller smartphones
+  @media (max-width: 480px) {
+    padding: 8px; // Further reduce padding
+    margin: 10px; // Further reduce margin
+    gap: 4px; // Further reduce space between items
+  }
+}
 
   .customer_profile_form {
     background-color: #fff;
