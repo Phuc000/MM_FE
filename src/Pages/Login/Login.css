@@ -132,6 +132,10 @@ form {
     left: 0;
     width: 50%;
     z-index: 2;
+
+    @media (max-width: 480px) {
+      width: 100%;
+    }
   }
   
   .cred-box-container.right-panel-active .sign-in-container {
@@ -143,6 +147,25 @@ form {
     width: 50%;
     opacity: 0;
     z-index: 1;
+
+    @media (max-width: 480px) {
+      width: 100%;
+      animation: show 0.6s;
+
+      .social-container {
+        margin-top: 0;
+      }
+    }
+  }
+
+  .mobile_toggle {
+    display: none;
+  }
+
+  @media (max-width: 480px) {
+    .mobile_toggle {
+      display: block;
+    }
   }
   
   .cred-box-container.right-panel-active .sign-up-container {
@@ -150,6 +173,10 @@ form {
     opacity: 1;
     z-index: 5;
     animation: show 0.6s;
+
+    @media (max-width: 480px) {
+      transform: translateX(0%);
+    }
   }
   
   @keyframes show {
@@ -175,6 +202,10 @@ form {
     overflow: hidden;
     transition: transform 0.6s ease-in-out;
     z-index: 100;
+
+    @media (max-width: 480px) {
+      display: none;
+    }
   }
   
   .cred-box-container.right-panel-active .overlay-container {

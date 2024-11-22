@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 
-function SignInForm() {
+function SignInForm({ toggleSignState }) {
   const navigate = useNavigate();
   const { login } = useAuth();
   const [state, setState] = useState({
@@ -110,6 +110,12 @@ function SignInForm() {
         <a className="link-L1" href="#">
           Forgot your password?
         </a>
+        <p className="mobile_toggle">
+          Don't have an account?
+          <a href="#" onClick={() => toggleSignState("signUp")}>
+            Sign Up
+          </a>
+        </p>
         <button className="button-77">Sign In</button>
       </form>
     </div>

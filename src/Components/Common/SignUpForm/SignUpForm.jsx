@@ -161,6 +161,12 @@ function SignUpForm({ toggleSignState }) {
           placeholder="Password"
           required
         />
+        <p className="mobile_toggle">
+          Already have an account?
+          <a href="#" onClick={() => toggleSignState("signIn")}>
+            Sign In
+          </a>
+        </p>
         <button className="button-77">Sign Up</button>
       </form>
     </div>

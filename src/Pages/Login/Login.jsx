@@ -24,7 +24,7 @@ const Login = () => {
       <div className="login-content">
         <div className={containerClass} id="container">
           <SignUpForm toggleSignState={toggleSignState} />
-          <SignInForm />
+          <SignInForm toggleSignState={toggleSignState} />
           <div className="overlay-container">
             <div className="overlay">
               <div className="overlay-panel overlay-left">
