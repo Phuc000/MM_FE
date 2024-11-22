@@ -1,5 +1,7 @@
-/* Reset */
+/* Style.scss */
+
 @import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css");
+
 // Variables
 $color: #d93e2d;
 $color-dark: #b93426;
@@ -8,7 +10,7 @@ $transition: all #{$speed} cubic-bezier(0.310, -0.105, 0.430, 1.400);
 
 /* Main Styles */
 .x_button {
-    border: none;
+  border: none;
   display: block;
   background-color: $color;
   max-width: 150px;
@@ -24,10 +26,10 @@ $transition: all #{$speed} cubic-bezier(0.310, -0.105, 0.430, 1.400);
   cursor: pointer;
   overflow: hidden;
   border-radius: 5px;
-  box-shadow: 0 0 20px 0 rgba(0,0,0,.3);
+  box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.3);
   transition: $transition;
   margin-right: 20px;
-  
+
   span,
   .icon {
     display: block;
@@ -36,7 +38,7 @@ $transition: all #{$speed} cubic-bezier(0.310, -0.105, 0.430, 1.400);
     position: absolute;
     top: 0;
   }
-  
+
   span {
     width: 72%;
     line-height: inherit;
@@ -44,7 +46,7 @@ $transition: all #{$speed} cubic-bezier(0.310, -0.105, 0.430, 1.400);
     text-transform: uppercase;
     left: 0;
     transition: $transition;
-    
+
     &:after {
       content: '';
       background-color: $color-dark;
@@ -55,68 +57,109 @@ $transition: all #{$speed} cubic-bezier(0.310, -0.105, 0.430, 1.400);
       right: -1px;
     }
   }
-  
+
   .icon {
     width: 28%;
     right: 0;
     transition: $transition;
-    
+
     .fa {
       font-size: 15px;
       vertical-align: middle;
       transition: $transition, height #{$speed} ease;
     }
-    
+
     .fa-remove {
       height: 18px;
     }
-    
+
     .fa-check {
       display: none;
     }
   }
-  
+
   &.success,
   &:hover {
-    
     span {
       left: -72%;
       opacity: 0;
     }
-    
+
     .icon {
       width: 100%;
-      
+
       .fa {
         font-size: 22.5px;
       }
     }
   }
-  
+
   &.success {
     background-color: #27ae60;
-    
+
     .icon {
-      
       .fa-remove {
         display: none;
       }
-      
+
       .fa-check {
         display: inline-block;
       }
     }
   }
-  
+
   &:hover {
-    opacity: .9;
-    
+    opacity: 0.9;
+
     .icon .fa-remove {
       height: 23px;
     }
   }
-  
+
   &:active {
     opacity: 1;
+  }
+
+  /* Media Query for Mobile Screens */
+  @media (max-width: 480px) {
+    max-width: 30px;
+    max-height: 30px;
+    padding: 0;
+    margin-right: 0;
+    line-height: 50px;
+    box-shadow: none;
+    top: -120px;
+    right: 10px;
+
+    span {
+      display: none; /* Hide the text */
+    }
+
+    .icon {
+      width: 100%;
+      right: 0;
+      top: -12px;
+
+      .fa {
+        font-size: 22px; /* Increase icon size */
+      }
+    }
+
+    &.success,
+    &:hover {
+      span {
+        display: none;
+        left: 0;
+        opacity: 1;
+      }
+
+      .icon {
+        width: 100%;
+
+        .fa {
+          font-size: 22px;
+        }
+      }
+    }
   }
 }

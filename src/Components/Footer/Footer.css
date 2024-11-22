@@ -48,6 +48,10 @@
     justify-content: space-around; 
     margin-left: 90px;
     width: 100%;
+
+    @media (max-width: 480px) {
+        margin-left: 40px;
+    }
 }
 
 .footer__list {
