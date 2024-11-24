@@ -19,19 +19,33 @@ const products = [
   'Strawberries', 'Quinoa', 'Barley', 'Oats', 'Wheat Flour', 'Apples', 'Rice',
 ];
 
+const mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+const dietaryPreferences = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free'];
+
 const ChatUI = () => {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
+  const [selectedMealType, setSelectedMealType] = useState('');
+  const [selectedDietaryPreference, setSelectedDietaryPreference] = useState('');
 
   const handleSend = async () => {
     if (!userInput.trim()) return;
+
+    // Build the final message to send, including selected options
+    let finalUserInput = userInput;
+    if (selectedMealType) {
+      finalUserInput = `Meal Type: ${selectedMealType}\n${finalUserInput}`;
+    }
+    if (selectedDietaryPreference) {
+      finalUserInput = `Dietary Preference: ${selectedDietaryPreference}\n${finalUserInput}`;
+    }
 
     const newMessage = { sender: 'user', text: userInput };
     setMessages([...messages, newMessage]);
     setUserInput('');
 
     try {
-      const responseText = await runChat(userInput);
+      const responseText = await runChat(finalUserInput);
 
       let processedText = responseText;
 
@@ -99,6 +113,38 @@ const ChatUI = () => {
       <Header />
       <div className="chat-container">
         <h1>IUFC Chat Bot</h1>
+        <div className="options-container">
+          <div className="meal-type-selector">
+            <label htmlFor="meal-type">Meal Type:</label>
+            <select
+              id="meal-type"
+              value={selectedMealType}
+              onChange={(e) => setSelectedMealType(e.target.value)}
+            >
+              <option value="">Any</option>
+              {mealTypes.map((meal) => (
+                <option key={meal} value={meal}>
+                  {meal}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="dietary-preference-selector">
+            <label htmlFor="dietary-preference">Dietary Preference:</label>
+            <select
+              id="dietary-preference"
+              value={selectedDietaryPreference}
+              onChange={(e) => setSelectedDietaryPreference(e.target.value)}
+            >
+              <option value="">None</option>
+              {dietaryPreferences.map((preference) => (
+                <option key={preference} value={preference}>
+                  {preference}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
         <div className="chat-box">
           {messages.map((message, index) => (
             <div

@@ -71,3 +71,24 @@
     color: #FFF;
     cursor: pointer;
   }
+
+  /* src/Pages/ChatPage/ChatPage.css */
+
+.options-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.options-container > div {
+  display: flex;
+  align-items: center;
+}
+
+.options-container label {
+  margin-right: 5px;
+}
+
+.options-container select {
+  padding: 5px;
+}
