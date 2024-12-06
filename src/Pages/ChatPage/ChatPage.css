@@ -78,6 +78,7 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
+  gap: 10px;
 }
 
 .options-container > div {
@@ -91,4 +92,30 @@
 
 .options-container select {
   padding: 5px;
+}
+
+.voice-button {
+  position: relative;
+  /* Add any other button styles here */
+}
+
+.listening-indicator {
+  display: flex;
+  align-items: center;
+}
+
+.listening-indicator .bars {
+  display: flex;
+  margin-left: 10px;
+  align-items: center;
+}
+
+.listening-indicator .bar {
+  width: 4px;
+  background-color: #e7e7e7;
+  margin: 0 1px;
+  transition: height 0.05s ease;
+  height: 5px; /* Initial height */
+  transform-origin: center; /* Expand from center */
+  border-radius: 4px;
 }
