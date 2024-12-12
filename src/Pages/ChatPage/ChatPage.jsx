@@ -7,6 +7,7 @@ import runChat from '../../config/gemini';
 import axios from 'axios';
 import './ChatPage.css';
 import StopIcon from '@mui/icons-material/Stop';
+import MicIcon from '@mui/icons-material/Mic';
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
@@ -278,7 +279,9 @@ const ChatUI = () => {
                 </div>
               </div>
             ) : (
-              'Start Voice Input'
+              <div className="listening-indicator">
+                <MicIcon />
+              </div>
             )}
           </button>
         </div>

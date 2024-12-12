@@ -1,0 +1,57 @@
+.recipes-articles-container {
+
+    display: flex;
+    flex-direction: column;
+    margin: 10px 30px;
+
+
+    .big-icon {
+        height: 60px;
+        width: 60px;
+    }
+
+    h1 {
+        font-size: 3em;
+        font-weight: 900;
+        font-family: 'Quicksand', sans-serif;
+        color: #333;
+    }
+
+    .recipes-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+      }
+      
+      .recipe-card {
+        width: 300px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        background-color: #fff;
+      }
+      
+      .recipe-card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+      }
+      
+      .recipe-card h2 {
+        font-size: 1.5rem;
+        margin: 10px;
+      }
+      
+      .recipe-card p {
+        font-size: 1rem;
+        margin: 10px;
+      }
+      
+      .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin: 20px 0;
+      }
+
+}

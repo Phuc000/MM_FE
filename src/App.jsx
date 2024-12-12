@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Home, Login, Cart, Category, BuyProduct, Store, Profile, AboutUs, CheckOut, Admin, Shipper, ChatPage } from "./Pages";
+import { Home, Login, Cart, Category, BuyProduct, Store, Profile, AboutUs, CheckOut, Admin, Shipper, ChatPage, RecipesArticles } from "./Pages";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AdminDashboard from "./admin/Dashboard";
@@ -32,6 +32,7 @@ function App() {
                 <Route path="/buy-product/:productId/:storeId" element={<BuyProduct />} />
                 <Route path="/store/:storeId" element={<Store />} />
                 <Route path="/AboutUs" element={<AboutUs />} />
+                <Route path="/RecipesArticles" element={<RecipesArticles />} />
                 <Route path="/Admin/*" element={<Admin />}>
                   <Route path="dashboard" element={<AdminDashboard />} />
                   <Route path="manage-users" element={<ManageUsers />} />
