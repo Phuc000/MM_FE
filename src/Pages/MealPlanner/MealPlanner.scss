@@ -1,36 +1,73 @@
 .meal-planner-container {
     padding: 20px;
-    max-width: 1200px;
+    max-width: 1300px;
     margin: 0 auto;
-  
+    position: relative;
+
     h1 {
-      text-align: center;
-      margin-bottom: 20px;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        font-weight: 900;
+        font-family: 'Quicksand', sans-serif;
+    }
+  
+    .meal-type-cell {
+      width: 100px;
+      min-width: 100px;
+      font-weight: bold;
+    }
+  
+    .date-cell {
+      width: 150px;
+      min-width: 150px;
+      font-weight: bold;
+    }
+  
+    .recipe-cell {
+      width: 150px;
+      min-width: 150px;
+      padding: 8px;
+      vertical-align: top;
     }
   
     .recipe-card {
-      margin: 5px 0;
+      margin-bottom: 8px;
       background-color: #f5f5f5;
   
-      .MuiCardContent-root {
+      .recipe-content {
         padding: 8px;
+      }
+  
+      .recipe-info {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        gap: 8px;
       }
   
-      .MuiTypography-subtitle2 {
+      .recipe-image {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+  
+      .recipe-title {
         font-size: 0.8rem;
-        margin-right: 8px;
+        max-width: 80px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
   
-      .MuiIconButton-root {
+      .MuiCheckbox-root {
         padding: 4px;
       }
     }
   
-    .MuiTableCell-root {
-      min-width: 150px;
-      vertical-align: top;
+    .delete-fab {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
     }
   }

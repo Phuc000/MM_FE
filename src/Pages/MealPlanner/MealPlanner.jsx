@@ -12,7 +12,11 @@ import {
   IconButton,
   Card,
   CardContent,
-  Typography
+  Typography,
+  Checkbox,
+  Fab,
+  Avatar,
+  Tooltip,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import './MealPlanner.scss';
@@ -20,9 +24,10 @@ import './MealPlanner.scss';
 const mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 
 const MealPlanner = () => {
-  const { mealPlan, setMealPlan } = useMealPlanner();
-  const [currentWeek] = useState(new Date());
-
+    const { mealPlan, setMealPlan } = useMealPlanner();
+    const [currentWeek] = useState(new Date());
+    const [selectedRecipes, setSelectedRecipes] = useState([]); // Format: [{date, mealType, index}]
+  
   // Get dates for current week
   const getWeekDates = (date) => {
     const week = [];
@@ -52,6 +57,30 @@ const MealPlanner = () => {
 
   const weekDates = getWeekDates(currentWeek);
 
+  const handleSelect = (date, mealType, index) => {
+    const recipeKey = `${formatDate(date)}-${mealType}-${index}`;
+    setSelectedRecipes(prev => {
+      if (prev.includes(recipeKey)) {
+        return prev.filter(key => key !== recipeKey);
+      }
+      return [...prev, recipeKey];
+    });
+  };
+
+  const handleBulkDelete = () => {
+    const newPlan = { ...mealPlan };
+    selectedRecipes.forEach(key => {
+      const [date, mealType, index] = key.split('-');
+      if (newPlan[date]?.[mealType]) {
+        const recipes = [...newPlan[date][mealType]];
+        recipes.splice(parseInt(index), 1);
+        newPlan[date][mealType] = recipes;
+      }
+    });
+    setMealPlan(newPlan);
+    setSelectedRecipes([]);
+  };
+
   return (
     <div>
       <Header />
@@ -61,9 +90,9 @@ const MealPlanner = () => {
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell>Meal Type</TableCell>
+                <TableCell className="meal-type-cell">Meal Type</TableCell>
                 {weekDates.map(date => (
-                  <TableCell key={date}>
+                  <TableCell key={date} className="date-cell">
                     {date.toLocaleDateString('en-US', { 
                       weekday: 'short',
                       month: 'short',
@@ -76,28 +105,39 @@ const MealPlanner = () => {
             <TableBody>
               {mealTypes.map(mealType => (
                 <TableRow key={mealType}>
-                  <TableCell>{mealType}</TableCell>
+                  <TableCell className="meal-type-cell">{mealType}</TableCell>
                   {weekDates.map(date => {
                     const dateKey = formatDate(date);
                     const recipes = mealPlan[dateKey]?.[mealType.toLowerCase()] || [];
 
                     return (
-                      <TableCell key={dateKey}>
-                        {recipes.map((recipe, index) => (
-                          <Card key={index} className="recipe-card">
-                            <CardContent>
-                              <Typography variant="subtitle2">
-                                {recipe.title}
-                              </Typography>
-                              <IconButton 
-                                size="small"
-                                onClick={() => handleDelete(date, mealType.toLowerCase(), index)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </CardContent>
-                          </Card>
-                        ))}
+                      <TableCell key={dateKey} className="recipe-cell">
+                        {recipes.map((recipe, index) => {
+                          const recipeKey = `${dateKey}-${mealType.toLowerCase()}-${index}`;
+                          return (
+                            <Card key={index} className="recipe-card">
+                              <CardContent className="recipe-content">
+                                <div className="recipe-info">
+                                  <Checkbox
+                                    size="small"
+                                    checked={selectedRecipes.includes(recipeKey)}
+                                    onChange={() => handleSelect(date, mealType.toLowerCase(), index)}
+                                  />
+                                  <img 
+                                    src={recipe.image} 
+                                    alt={recipe.title}
+                                    className="recipe-image"
+                                  />
+                                  <Tooltip title={recipe.title}>
+                                    <Typography className="recipe-title" noWrap>
+                                      {recipe.title}
+                                    </Typography>
+                                  </Tooltip>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
                       </TableCell>
                     );
                   })}
@@ -106,6 +146,16 @@ const MealPlanner = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        {selectedRecipes.length > 0 && (
+          <Fab
+            color="error"
+            className="delete-fab"
+            onClick={handleBulkDelete}
+            aria-label="delete selected"
+          >
+            <DeleteIcon />
+          </Fab>
+        )}
       </div>
       <FeatureAd />
       <Footer />
