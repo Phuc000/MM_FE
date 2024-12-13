@@ -1,0 +1,78 @@
+.add-recipe-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal-content {
+    position: relative;
+    background-color: #fff;
+    max-width: 800px;
+    width: 90%;
+    padding: 25px;
+    border-radius: 8px;
+    outline: none;
+    overflow-y: auto;
+    max-height: 90vh;
+  }
+  
+  .close-button {
+    position: absolute;
+    top: -10px;
+    right: 20px;
+    color: #fe3bd4;
+  }
+  
+  .recipe-image {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  .recipe-title {
+    text-align: center;
+    color: #fe3bd4;
+    margin-top: 20px;
+  }
+  
+  .recipe-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+  }
+  
+  .tag-chip {
+    margin: 5px;
+    background-color: #fe3bd4 !important;
+    color: #fff !important;
+  }
+  
+  .ingredients-list {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+  
+  .ingredient-item {
+    margin-bottom: 5px;
+  }
+  
+  .instructions {
+    white-space: pre-wrap;
+    margin-top: 10px;
+  }
+  
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+  
+  .modal-button {
+    background-color: #fe3bd4 !important;
+    color: #fff !important;
+  }
+  
+  .modal-button:hover {
+    background-color: #e134bf !important;
+  }
