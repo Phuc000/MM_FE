@@ -306,9 +306,10 @@ const Profile = () => {
                 data={wheelData}
                 backgroundColors={["#3e3e3e", "#df3428"]}
                 textColors={["#ffffff"]}
+                fontSize={16}
                 outerBorderColor={"#000000"}
                 outerBorderWidth={5}
-                innerRadius={20}
+                innerRadius={18}
                 radiusLineColor={"#ffffff"}
                 radiusLineWidth={8}
                 spinDuration={0.5}

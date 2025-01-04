@@ -28,12 +28,14 @@ const AdminDashboard = () => {
   const [stores, setStores] = useState([]);
   const [revenuePerStore, setRevenuePerStore] = useState([]);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [customers, setCustomers] = useState([]);
+  const [newCustomersCount, setNewCustomersCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Fetch transactions and stores
     const fetchData = async () => {
       try {
+        // Fetch transactions and stores
         const [transactionsRes, storesRes] = await Promise.all([
           axios.get(
             `${import.meta.env.VITE_REACT_APP_API_URL}/transactions`,
@@ -43,7 +45,6 @@ const AdminDashboard = () => {
             withCredentials: true,
           }),
         ]);
-
         const transactionsData = transactionsRes.data;
         const storesData = storesRes.data;
 
@@ -72,14 +73,50 @@ const AdminDashboard = () => {
         setStores(storesData);
         setTotalRevenue(parseFloat(totalRev.toFixed(2)));
         setRevenuePerStore(revenueStore);
-        setLoading(false);
+        // setLoading(false);
       } catch (error) {
         console.error('Error fetching data:', error);
-        setLoading(false);
       }
     };
 
-    fetchData();
+    const fetchUsers = async () => {
+      try {
+        // Fetch customers
+        const customersResponse = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/customers`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            withCredentials: true,
+          }
+        );
+        const customersData = customersResponse.data;
+        setCustomers(customersData);
+
+        // Calculate number of new customers in the last 30 days
+        const now = new Date();
+        const lastMonth = new Date(
+          now.getFullYear(),
+          now.getMonth() - 1,
+          now.getDate()
+        );
+        const recentCustomers = customersData.filter((customer) => {
+          // Assuming you have a 'createdAt' field in your customer object
+          // hardcoded createAt field for testing
+          customer.createdAt = '2024-12-12T00:00:00.000Z';
+          return new Date(customer.createdAt) >= lastMonth;
+        });
+        setNewCustomersCount(recentCustomers.length);
+      } catch (error) {
+        console.error('Error fetching customers:', error);
+      }
+    };
+
+    // Run both fetch operations, then remove loading spinner
+    Promise.all([fetchData(), fetchUsers()]).finally(() => {
+      setLoading(false);
+    });
   }, []);
 
   if (loading) {
@@ -97,7 +134,7 @@ const AdminDashboard = () => {
 
   return (
     <Box p={3}>
-      <Typography variant='h4' gutterBottom>
+      <Typography variant='h4' gutterBottom mb={5}>
         Admin Dashboard
       </Typography>
 
@@ -121,7 +158,7 @@ const AdminDashboard = () => {
         {/* Total Transactions */}
         <Grid item xs={12} md={4}>
           <Paper elevation={3} sx={{ p: 2 }}>
-            <Typography 
+            <Typography
               variant='h6'
               sx={{
                 fontWeight: '900',
@@ -131,6 +168,29 @@ const AdminDashboard = () => {
               Total Transactions
             </Typography>
             <Typography variant='h5'>{transactions.length}</Typography>
+          </Paper>
+        </Grid>
+
+        {/* Total Customers */}
+        <Grid item xs={12} md={4}>
+          <Paper elevation={3} sx={{ p: 2 }}>
+            <Typography
+              variant='h6'
+              sx={{
+                fontWeight: '900',
+                fontFamily: 'Quicksand',
+              }}
+            >
+              Total Customers
+            </Typography>
+            <Box display="flex" alignItems="center" mt={0}>
+              <Typography variant='h5'>{customers.length}</Typography>
+              {newCustomersCount > 0 && (
+                <Typography variant='body2' color='green' ml={1}>
+                  +{newCustomersCount} this month
+                </Typography>
+              )}
+            </Box>
           </Paper>
         </Grid>
 
@@ -171,9 +231,7 @@ const AdminDashboard = () => {
                   .slice(-10)
                   .reverse()
                   .map((tx) => {
-                    const store = stores.find(
-                      (s) => s.storeID === tx.storeID
-                    );
+                    const store = stores.find((s) => s.storeID === tx.storeID);
                     return (
                       <TableRow key={tx.transactionId}>
                         <TableCell>

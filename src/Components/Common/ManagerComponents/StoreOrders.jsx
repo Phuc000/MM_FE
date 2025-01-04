@@ -14,11 +14,17 @@ import {
   Button,
   Snackbar,
   Alert,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
+import "./StoreOrders.scss";
 
 const StoreOrders = () => {
   const [transactions, setTransactions] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
+  const [statusFilter, setStatusFilter] = useState("All");
 
   useEffect(() => {
     const fetchTransactions = async () => {
@@ -84,9 +90,20 @@ const StoreOrders = () => {
     }
   };
 
+  const handleStatusChange = (event) => {
+    setStatusFilter(event.target.value);
+  };
+
+  const filteredTransactions = transactions.filter((tx) => {
+    if (statusFilter === "All") return true;
+    return getStatusText(tx.deliveryStatus) === statusFilter;
+  });
+
   return (
     <Box>
-      <Typography variant="h4" gutterBottom
+      <Typography
+        variant="h4"
+        gutterBottom
         sx={{
           fontWeight: "900",
           fontFamily: "Quicksand",
@@ -94,6 +111,28 @@ const StoreOrders = () => {
       >
         Store Orders
       </Typography>
+
+      {/* Status Filter */}
+      <Box display="flex" justifyContent="flex-end" mb={2}>
+        <FormControl variant="outlined" size="small" sx={{ minWidth: 200 }}>
+          <InputLabel id="status-filter-label">Filter by Status</InputLabel>
+          <Select
+            labelId="status-filter-label"
+            id="status-filter"
+            value={statusFilter}
+            onChange={handleStatusChange}
+            label="Filter by Status"
+          >
+            <MenuItem value="All">All</MenuItem>
+            <MenuItem value="Pending">Pending</MenuItem>
+            <MenuItem value="Prepared">Prepared</MenuItem>
+            <MenuItem value="Accepted">Accepted</MenuItem>
+            <MenuItem value="On Delivery">On Delivery</MenuItem>
+            <MenuItem value="Delivered">Delivered</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
       <TableContainer component={Paper}>
         <Table aria-label="transactions table">
           <TableHead>
@@ -111,7 +150,7 @@ const StoreOrders = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {transactions.map((tx) => (
+            {filteredTransactions.map((tx) => (
               <TableRow key={tx.transactionId}>
                 <TableCell>{tx.transactionId}</TableCell>
                 <TableCell>{tx.customerID}</TableCell>
@@ -137,10 +176,10 @@ const StoreOrders = () => {
                 </TableCell>
               </TableRow>
             ))}
-            {transactions.length === 0 && (
+            {filteredTransactions.length === 0 && (
               <TableRow>
                 <TableCell colSpan={10} align="center">
-                  No transactions found.
+                  No transactions found for the selected status.
                 </TableCell>
               </TableRow>
             )}

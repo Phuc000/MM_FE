@@ -1,0 +1,18 @@
+.meal-plan-dialog {
+    .dialog-title {
+      color: #fe3bd4;
+      font-weight: bold;
+    }
+    
+    .MuiMenuItem-root {
+      &:hover {
+        background-color: rgba(254, 59, 212, 0.08);
+      }
+      &.Mui-selected {
+        background-color: rgba(254, 59, 212, 0.16);
+        &:hover {
+          background-color: rgba(254, 59, 212, 0.24);
+        }
+      }
+    }
+  }

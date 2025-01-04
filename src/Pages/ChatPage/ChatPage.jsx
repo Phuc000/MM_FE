@@ -9,6 +9,8 @@ import './ChatPage.css';
 import StopIcon from '@mui/icons-material/Stop';
 import MicIcon from '@mui/icons-material/Mic';
 
+import AddRecipe from '../../Components/Common/AddRecipe';
+
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 
@@ -202,6 +204,8 @@ const ChatUI = () => {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   };
 
+  const [showRecipeModal, setShowRecipeModal] = useState(false);
+
   return (
     <div>
       <Header />
@@ -286,6 +290,13 @@ const ChatUI = () => {
           </button>
         </div>
       </div>
+      {/* {showRecipeModal && (
+        <AddRecipe
+          open={showRecipeModal}
+          handleClose={() => setShowRecipeModal(false)}
+          recipe={gumboRecipe}
+        />
+      )} */}
       <Footer />
     </div>
   );

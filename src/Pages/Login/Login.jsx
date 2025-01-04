@@ -21,6 +21,9 @@ const Login = () => {
   return (
     <div className="login">
       <Header />
+      {/* <div>
+        <br />
+      </div> */}
       <div className="login-content">
         <div className={containerClass} id="container">
           <SignUpForm toggleSignState={toggleSignState} />
@@ -55,6 +58,10 @@ const Login = () => {
           </div>
         </div>
       </div>
+      {/* <div>
+        <br />
+        <br />
+      </div> */}
       <Footer />
     </div>
   );

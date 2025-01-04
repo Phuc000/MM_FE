@@ -28,3 +28,4 @@ dist-ssr
 
 # temp data
 public/assets/processed_recipes.json
+temp
