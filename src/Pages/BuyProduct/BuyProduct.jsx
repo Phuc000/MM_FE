@@ -1,5 +1,5 @@
 // src/Pages/BuyProduct/BuyProduct.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef  } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Header, Footer } from "../../Components";
 import { useCart } from '../../Context/CartContext';
@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import "./BuyProduct.scss";
 import { useAuth } from '../../hooks/useAuth'; // Import useAuth
+import hubConnection from '../../services/SignalR/signalrService';
 
 const BuyProduct = () => {
   const { productId, storeId } = useParams();
@@ -22,6 +23,10 @@ const BuyProduct = () => {
   const [buttonClass, setButtonClass] = useState('');
   const { user } = useAuth(); // Get user from context
 
+  const [stock, setStock] = useState(0);
+  const hasJoinedGroupRef = useRef(false);  // Keeps track of whether group is joined
+
+
   const defaultImages = [
     '/Images/no-image.jpg',
     '/Images/no-image.jpg',
@@ -33,50 +38,138 @@ const BuyProduct = () => {
   const [selectedImage, setSelectedImage] = useState(images[0]);
 
   useEffect(() => {
-    // Fetch product details based on the productId
-    axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/product/${productId}`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => {
-        // console.log('Product Data:', response.data);
-        setProduct(response.data);
-        // Set images based on imageURL
-        if (response.data.imageURL) {
-          setImages(Array(4).fill(response.data.imageURL));
-          setSelectedImage(response.data.imageURL);
+    const fetchData = async () => {
+      try {
+        // Fetch product details
+        const productResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/product/${productId}`, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+        setProduct(productResponse.data);
+        
+        // Set images and discount if available
+        if (productResponse.data.imageURL) {
+          setImages(Array(4).fill(productResponse.data.imageURL));
+          setSelectedImage(productResponse.data.imageURL);
         } else {
           setImages(defaultImages);
           setSelectedImage(defaultImages[0]);
         }
-        // Set initial discount and discountedPrice from product data
-        if (response.data.discount && response.data.discount > 0) {
-          setTotalDiscount(response.data.discount);
+  
+        if (productResponse.data.discount && productResponse.data.discount > 0) {
+          setTotalDiscount(productResponse.data.discount);
         }
-      })
-      .catch((error) => console.error(`Error fetching product ${productId} data:`, error));
-
-    // Fetch product availability at store
-    axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/${productId}`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    })
-      .then((response) => {
-        // Choose the storeId with the same storeId
+  
+        // Fetch product availability at store
+        const storeResponse = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/${productId}`, {
+          headers: { 'Content-Type': 'application/json' },
+        });
+  
+        let selectedStoreInfo;
         if (storeId && storeId !== 'null') {
-          const selectedStoreInfo = response.data.find((storeInfo) => storeInfo.storeID === storeId);
-          setProductAtStore(selectedStoreInfo);
+          selectedStoreInfo = storeResponse.data.find((storeInfo) => storeInfo.storeID === storeId);
         } else {
-          // Choose the storeId with the highest NumberAtStore
-          const selectedStoreInfo = response.data.reduce((prev, current) => (prev.numberAtStore > current.numberAtStore) ? prev : current);
-          setProductAtStore(selectedStoreInfo);
-          setChosenStoreId(selectedStoreInfo.storeID);
+          selectedStoreInfo = storeResponse.data.reduce((prev, current) => (prev.numberAtStore > current.numberAtStore) ? prev : current);
+          setChosenStoreId(selectedStoreInfo.storeID);  // Set the chosen store ID
         }
-      })
-      .catch((error) => console.error(`Error fetching product availability for ${productId}:`, error));
+  
+        if (!selectedStoreInfo) {
+          console.error("Selected store info not found for the given product");
+          return;
+        }
+  
+        setProductAtStore(selectedStoreInfo);
+        setStock(selectedStoreInfo.numberAtStore);
+  
+        // SignalR connection and group join only if not already done
+        if (hubConnection.state === "Disconnected") {
+          await hubConnection.start();
+          console.log("SignalR connection established");
+        }
+
+        if (!hasJoinedGroupRef.current) {
+          await hubConnection.invoke("JoinProductStoreGroup", productId, selectedStoreInfo.storeID);
+          console.log(`Joined group for product ${productId} at store ${selectedStoreInfo.storeID}`);
+          
+          hasJoinedGroupRef.current = true;  // Mark group as joined
+          
+          hubConnection.on("ReceiveChangeStock", (updatedProductId, newStock) => {
+            if (updatedProductId === productId) {
+              setStock(newStock);
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching data or joining SignalR group:", error);
+      }
+    };
+  
+    fetchData();
+
+    return () => {
+      const cleanup = async () => {
+        try {
+          if (hasJoinedGroupRef.current) {
+            await hubConnection.invoke("LeaveProductStoreGroup", productId, chosenStoreId);
+            console.log(`Left group for product ${productId} at store ${chosenStoreId}`);
+            hasJoinedGroupRef.current = false;  // Mark group as left
+          }
+        } catch (err) {
+          console.error("Error leaving SignalR group:", err);
+        }
+        hubConnection.off("ReceiveChangeStock");
+      };
+      cleanup();
+    };
   }, [productId, storeId]);
+  
+
+  // useEffect(() => {
+  //   // Fetch product details based on the productId
+  //   axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/product/${productId}`, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   })
+  //     .then((response) => {
+  //       // console.log('Product Data:', response.data);
+  //       setProduct(response.data);
+  //       // Set images based on imageURL
+  //       if (response.data.imageURL) {
+  //         setImages(Array(4).fill(response.data.imageURL));
+  //         setSelectedImage(response.data.imageURL);
+  //       } else {
+  //         setImages(defaultImages);
+  //         setSelectedImage(defaultImages[0]);
+  //       }
+  //       // Set initial discount and discountedPrice from product data
+  //       if (response.data.discount && response.data.discount > 0) {
+  //         setTotalDiscount(response.data.discount);
+  //       }
+  //     })
+  //     .catch((error) => console.error(`Error fetching product ${productId} data:`, error));
+
+  //   // Fetch product availability at store
+  //   axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/${productId}`, {
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //   })
+  //     .then((response) => {
+  //       // Choose the storeId with the same storeId
+  //       if (storeId && storeId !== 'null') {
+  //         const selectedStoreInfo = response.data.find((storeInfo) => storeInfo.storeID === storeId);
+  //         setProductAtStore(selectedStoreInfo);
+  //         setStock(selectedStoreInfo.numberAtStore);
+  //       } else {
+  //         // Choose the storeId with the highest NumberAtStore
+  //         const selectedStoreInfo = response.data.reduce((prev, current) => (prev.numberAtStore > current.numberAtStore) ? prev : current);
+  //         setProductAtStore(selectedStoreInfo);
+  //         setStock(selectedStoreInfo.numberAtStore);
+  //         setChosenStoreId(selectedStoreInfo.storeID);
+  //       }
+  //     })
+  //     .catch((error) => console.error(`Error fetching product availability for ${productId}:`, error));
+  // }, [productId, storeId]);
 
   useEffect(() => {
     // Fetch store information based on chosen storeId
@@ -93,6 +186,53 @@ const BuyProduct = () => {
         .catch((error) => console.error(`Error fetching store ${chosenStoreId} data:`, error));
     }
   }, [chosenStoreId]);
+
+  // useEffect(() => {
+  //   // Start the SignalR connection if not already connected
+  //   if (hubConnection.state === "Disconnected") {
+  //     hubConnection
+  //       .start()
+  //       .then(() => {
+  //         console.log("SignalR connection established");
+  //       })
+  //       .catch((err) => console.error("Error starting SignalR connection:", err));
+  //   }
+
+  //   // Join the SignalR group for the specific product and store
+  //   const joinGroup = async () => {
+  //     try {
+  //       await hubConnection.invoke("JoinProductStoreGroup", productId, chosenStoreId);
+  //       console.log(`Joined group for product ${productId} at store ${chosenStoreId}`);
+  //     } catch (err) {
+  //       console.error("Error joining SignalR group:", err);
+  //     }
+  //   };
+  //   joinGroup();
+
+  //   // Handle stock updates
+  //   const handleStockUpdate = (updatedProductId, newStock) => {
+  //     if (updatedProductId === productId) {
+  //       setStock(newStock);
+  //     }
+  //   };
+  //   hubConnection.on("ReceiveChangeStock", handleStockUpdate);
+
+  //   // Cleanup when leaving the page
+  //   return () => {
+  //     const leaveGroup = async () => {
+  //       try {
+  //         await hubConnection.invoke("LeaveProductStoreGroup", productId, chosenStoreId);
+  //         console.log(`Left group for product ${productId} at store ${chosenStoreId}`);
+  //       } catch (err) {
+  //         console.error("Error leaving SignalR group:", err);
+  //       }
+  //     };
+  //     leaveGroup();
+
+  //     // Remove the event listener
+  //     hubConnection.off("ReceiveChangeStock", handleStockUpdate);
+  //   };
+  // }, [productId, chosenStoreId]);
 
   // Function to fetch promotion information on demand
   const fetchPromotionInfo = async () => {
@@ -143,7 +283,8 @@ const BuyProduct = () => {
 
   const handleQuantityChange = (e) => {
     const newQuantity = parseInt(e.target.value);
-    const maxQuantity = productAtStore ? productAtStore.numberAtStore : 1;
+    // const maxQuantity = productAtStore ? productAtStore.numberAtStore : 1;
+    const maxQuantity = productAtStore ? stock : 1;
     setQuantity(newQuantity > 0 ? Math.min(newQuantity, maxQuantity) : 1);
   };
 
@@ -178,7 +319,8 @@ const BuyProduct = () => {
       const newQuantity = existingCartItem.quantity + quantity;
   
       // Check if the new quantity exceeds the available stock
-      if (newQuantity > productAtStore.numberAtStore) {
+      // if (newQuantity > productAtStore.numberAtStore) {
+      if (newQuantity > stock) {
         toast.error('Quantity exceeds available stock.', {
           position: "bottom-left",
           autoClose: 5000,
@@ -282,7 +424,8 @@ const BuyProduct = () => {
                   <p className="product-description">Weight: {product.weight}g</p>
                   <div className='product-at-store'>
                     <p>Stock: </p>
-                    <p className='aeon_pink'> {productAtStore.numberAtStore} Items In Stock</p>
+                    {/* <p className='aeon_pink'> {productAtStore.numberAtStore} Items In Stock</p> */}
+                    <p className='aeon_pink'> {stock} Items In Stock</p>
                   </div>
                 </div>
               </div>
