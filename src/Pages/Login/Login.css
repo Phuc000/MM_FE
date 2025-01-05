@@ -15,7 +15,8 @@
   }
 
 .login-content {
-    margin: 20px;
+    margin: 25px 20px 35px;
+    /* margin: 20px; */
 }
 
 form {
