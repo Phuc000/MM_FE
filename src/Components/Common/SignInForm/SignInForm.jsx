@@ -1,11 +1,13 @@
 // src/components/SignInForm.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
+import { useTimer } from "../../../Context/TimerContext";
 
 function SignInForm({ toggleSignState }) {
+  const { fetchTimeLeft } = useTimer();
   const navigate = useNavigate();
   const { login } = useAuth();
   const [state, setState] = useState({
@@ -41,6 +43,11 @@ function SignInForm({ toggleSignState }) {
       // Save user data in context
       login({ ...user, role });
 
+      // Fetch timer immediately if the user is a Customer
+      if (role === "Customer") {
+        fetchTimeLeft(user.id);
+      }
+
       // Redirect based on role
       const roleRedirectMap = {
         "Customer": "/",
@@ -72,6 +79,12 @@ function SignInForm({ toggleSignState }) {
       password: "",
     });
   };
+
+  // useEffect(() => {
+  //   if (login && login.role === "Customer") {
+  //     fetchTimeLeft(login.id);
+  //   }
+  // }, [login]);
 
   return (
     <div className="form-container sign-in-container">

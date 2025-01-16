@@ -2,7 +2,6 @@
 import React, { useEffect, useState, useRef  } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { Header, Footer } from "../../Components";
-import { useCart } from '../../Context/CartContext';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
@@ -19,7 +18,6 @@ const BuyProduct = () => {
   const [promotions, setPromotions] = useState([]);
   const [totalDiscount, setTotalDiscount] = useState(0);
   const [store, setStore] = useState();
-  const { state, dispatch } = useCart();
   const [buttonClass, setButtonClass] = useState('');
   const { user } = useAuth(); // Get user from context
 
@@ -94,7 +92,7 @@ const BuyProduct = () => {
           
           hubConnection.on("ReceiveChangeStock", (updatedProductId, newStock) => {
             if (updatedProductId === productId) {
-              setStock(newStock);
+              setStock((prevStock) => prevStock - newStock);
             }
           });
         }
@@ -235,51 +233,51 @@ const BuyProduct = () => {
   // }, [productId, chosenStoreId]);
 
   // Function to fetch promotion information on demand
-  const fetchPromotionInfo = async () => {
-    if (!product) {
-      toast.error('Product information is not available.', {
-        position: "bottom-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        theme: "colored",
-      });
-      return;
-    }
+  // const fetchPromotionInfo = async () => {
+  //   if (!product) {
+  //     toast.error('Product information is not available.', {
+  //       position: "bottom-left",
+  //       autoClose: 5000,
+  //       hideProgressBar: false,
+  //       theme: "colored",
+  //     });
+  //     return;
+  //   }
 
-    try {
-      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/promotions/product/${productId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      console.log('Promotion Data:', response.data);
-      setPromotions(response.data);
-      setTotalDiscount(calculateTotalDiscount(response.data));
-      toast.success('Promotions applied successfully!', {
-        position: "bottom-left",
-        autoClose: 3000,
-        hideProgressBar: false,
-        theme: "colored",
-      });
-    } catch (error) {
-      console.error(`Error fetching promotion info for product ${productId}:`, error);
-      toast.error('Failed to apply promotions. Please try again later.', {
-        position: "bottom-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        theme: "colored",
-      });
-    }
-  };
+  //   try {
+  //     const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/promotions/product/${productId}`, {
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //     });
+  //     console.log('Promotion Data:', response.data);
+  //     setPromotions(response.data);
+  //     setTotalDiscount(calculateTotalDiscount(response.data));
+  //     toast.success('Promotions applied successfully!', {
+  //       position: "bottom-left",
+  //       autoClose: 3000,
+  //       hideProgressBar: false,
+  //       theme: "colored",
+  //     });
+  //   } catch (error) {
+  //     console.error(`Error fetching promotion info for product ${productId}:`, error);
+  //     toast.error('Failed to apply promotions. Please try again later.', {
+  //       position: "bottom-left",
+  //       autoClose: 5000,
+  //       hideProgressBar: false,
+  //       theme: "colored",
+  //     });
+  //   }
+  // };
 
-  const calculateTotalDiscount = (promotions) => {
-    if (!promotions || promotions.length === 0) {
-      return product.discount || 0; // Use product's discount if no promotions
-    }
-    const promotionDiscount = promotions.reduce((total, promotion) => total + promotion.Discount, 0);
-    // Ensure the total discount does not exceed 0.99
-    return Math.min((product.discount || 0) + promotionDiscount, 0.99);
-  };
+  // const calculateTotalDiscount = (promotions) => {
+  //   if (!promotions || promotions.length === 0) {
+  //     return product.discount || 0; // Use product's discount if no promotions
+  //   }
+  //   const promotionDiscount = promotions.reduce((total, promotion) => total + promotion.Discount, 0);
+  //   // Ensure the total discount does not exceed 0.99
+  //   return Math.min((product.discount || 0) + promotionDiscount, 0.99);
+  // };
 
   const handleQuantityChange = (e) => {
     const newQuantity = parseInt(e.target.value);
@@ -288,8 +286,7 @@ const BuyProduct = () => {
     setQuantity(newQuantity > 0 ? Math.min(newQuantity, maxQuantity) : 1);
   };
 
-  const handleAddToCart = () => {
-    // Check if user is authenticated and is a customer
+  const handleAddToCart = async () => {
     if (!user || user.role !== 'Customer') {
       toast.error('Log in to add items to your cart!', {
         position: "bottom-left",
@@ -297,10 +294,10 @@ const BuyProduct = () => {
         hideProgressBar: false,
         theme: "colored",
       });
-      return; // Prevent adding to cart if user is not a customer
+      return;
     }
   
-    // Handle button class changes
+    // Handle button class animation
     setButtonClass('onclic');
     setTimeout(() => {
       setButtonClass('validate');
@@ -309,45 +306,11 @@ const BuyProduct = () => {
       }, 1250);
     }, 2250);
   
-    // Check if the product already exists in the cart
-    const existingCartItem = state.cart.find(
-      (item) => item.productID === product.productID && item.storeID === productAtStore.storeID
-    );
-  
-    if (existingCartItem) {
-      // If the product exists, calculate the new quantity
-      const newQuantity = existingCartItem.quantity + quantity;
-  
-      // Check if the new quantity exceeds the available stock
-      // if (newQuantity > productAtStore.numberAtStore) {
-      if (newQuantity > stock) {
-        toast.error('Quantity exceeds available stock.', {
-          position: "bottom-left",
-          autoClose: 5000,
-          hideProgressBar: false,
-          theme: "colored",
-        });
-        return; // Prevent adding to cart if quantity exceeds stock
-      }
-  
-      // Update the quantity of the existing item in the cart
-      dispatch({ type: 'UPDATE_CART_ITEM', payload: { ...existingCartItem, quantity: newQuantity } });
-      setQuantity(1); // Reset the quantity to 1 after adding to cart
-  
-      toast.success(`Updated quantity of ${product.pName} successfully!`, {
-        position: "bottom-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        theme: "colored",
-      });
-      console.log(state);
-  
-    } else {
-      // If the product does not exist, add it to the cart
+    try {
       const purchaseInfo = {
         productID: product.productID,
         pName: product.pName,
-        quantity: quantity,
+        quantity,
         price: product.price,
         storeID: productAtStore.storeID,
         storeName: store.name,
@@ -355,14 +318,24 @@ const BuyProduct = () => {
         discountedPrice: product.discountedPrice || product.price,
         weight: product.weight || 0,
         imageURL: product.imageURL || '/Images/no-image.jpg',
-        // Add other relevant info
       };
   
-      // Add the new item to the cart
-      dispatch({ type: 'ADD_TO_CART', payload: purchaseInfo });
-      setQuantity(1); // Reset the quantity to 1 after adding to cart
+      // Send the item to the API for adding/updating the cart
+      await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/cart/add/${user.id}`, purchaseInfo);
   
+      // Show a success message
       toast.success(`Added ${quantity} ${product.pName} to the cart.`, {
+        position: "bottom-left",
+        autoClose: 5000,
+        hideProgressBar: false,
+        theme: "colored",
+      });
+  
+      setQuantity(1); // Reset quantity input
+      // await fetchCart(user.id); // Refresh the cart from the server
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      toast.error('Failed to add item to the cart.', {
         position: "bottom-left",
         autoClose: 5000,
         hideProgressBar: false,
@@ -370,7 +343,7 @@ const BuyProduct = () => {
       });
     }
   };
-
+  
   return (
     <div className="buy-product">
       <Header />

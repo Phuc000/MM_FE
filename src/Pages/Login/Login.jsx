@@ -1,12 +1,9 @@
 // src/Login.jsx
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Header, Footer, SignInForm, SignUpForm } from "../../Components";
 import "./Login.css";
-import axios from "axios";
 
 const Login = () => {
-  const navigate = useNavigate();
   const [type, setType] = useState("signIn");
 
   const containerClass =

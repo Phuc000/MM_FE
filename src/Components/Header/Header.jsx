@@ -1,7 +1,6 @@
 // src/Components/Header/Header.jsx
 import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useCart } from "../../Context/CartContext";
 import axios from "axios";
 import { useAuth } from "../../hooks/useAuth"; // Import useAuth hook
 import Badge from '@mui/material/Badge';
@@ -10,7 +9,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import "./Header.css";
 
 const Header = () => {
-  const { state } = useCart();
   const { user } = useAuth(); // Access user from useAuth
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -140,13 +138,14 @@ const Header = () => {
             <p className="a__navbar btn btn--primary">CHATBOT</p>
           </Link>
           <Link to="/Cart" className={getNavItemClass("/Cart")}>
-            {state.cart.length > 0 ? (
+            <p className="a__navbar btn btn--primary">MY CART</p>
+            {/* {state.cart.length > 0 ? (
               <StyledBadge badgeContent={state.cart.length} color="secondary">
                 <p className="a__navbar btn btn--primary">MY CART</p>
               </StyledBadge>
             ) : (
               <p className="a__navbar btn btn--primary">MY CART</p>
-            )}
+            )} */}
           </Link>
           {!user && (
             <Link to="/Login" className={getNavItemClass("/Login")}>

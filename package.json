@@ -27,6 +27,7 @@
     "react-custom-roulette": "^1.4.1",
     "react-dom": "^18.2.0",
     "react-markdown": "^9.0.1",
+    "react-modal": "^3.16.3",
     "react-router-dom": "^6.18.0",
     "react-toastify": "^10.0.6",
     "recharts": "^2.13.3",
