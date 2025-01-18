@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
@@ -9,7 +9,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Title from '../Common/Title/Title';
 import { useAuth } from "../../hooks/useAuth";
-import { useCart } from "../../Context/CartContext";
+// import { useCart } from "../../Context/CartContext";
 import "./UserMenu.scss";
 
 
@@ -18,7 +18,7 @@ const UserMenu = ({ username, onMenuClick, mode }) => {
   const location = useLocation();
   const [open, setOpen] = React.useState(false);
   const { user, logout } = useAuth();
-  const { dispatch } = useCart();
+  // const { dispatch } = useCart();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -31,7 +31,7 @@ const UserMenu = ({ username, onMenuClick, mode }) => {
   const handleLogout = () => {
     logout();
     // Clear the cart after successful logout
-    dispatch({ type: 'CLEAR_CART' });
+    // dispatch({ type: 'CLEAR_CART' });
     navigate("/");
   };
 

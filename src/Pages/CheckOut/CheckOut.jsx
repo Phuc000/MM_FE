@@ -12,7 +12,10 @@ import { v4 as uuidv4 } from 'uuid';
 import axios from 'axios';
 import '../Cart/Cart.css';
 import './CheckOut.scss';
+import { fetchTimeLeft } from '../../Components/Timer/Timer';
 import { useTimer } from '../../Context/TimerContext';
+// import { fetchTimeLeft } from '../../Components/Timer/Timer';
+// import { useTimer } from '../../Context/TimerContext';
 
 const PromotionTicket = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -62,10 +65,11 @@ const CheckOut = () => {
   const [selectedCustomerPromotion, setSelectedCustomerPromotion] = useState([]);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [step, setStep] = useState(0); // Tracks current step
 
   const [totals, setTotals] = useState({ subtotal: 0, discountAmount: 0, temptotal: 0 });
   const amountDiscount = [];
-  const { fetchTimeLeft } = useTimer();
+  // const { fetchTimeLeft } = useTimer();
 
   const calculateTotals = (cartItems, promotion) => {
     let subtotal = 0;
@@ -90,30 +94,40 @@ const CheckOut = () => {
   };
 
   useEffect(() => {
-    const fetchCartData = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_API_URL}/cart/checkout-cart/${user.id}`
-        );
-        console.log('Cart data:', response.data);
-        setCart(response.data.cart.cartItems);
-        setSelectedCustomerPromotion(response.data.promotions);
-        calculateTotals(response.data.cart.cartItems, response.data.promotions);
-        
-      } catch (error) {
-        console.error("Error fetching cart:", error);
-        navigate('/Cart');
-      }
-    };
-
-    fetchCartData();
-  }, []); // Empty dependency array ensures this only runs on mount
-
-  useEffect(() => {
-    if (user && user.role === 'Customer' && user.id) {
-      fetchTimeLeft(user.id);
+    if (step === 0) {
+      // First step: Check cart and fetch data
+      const checkCart = async () => {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_REACT_APP_API_URL}/cart/checkout/${user.id}`
+          );
+          if (response.data === "false") {
+            console.log('Cart is empty. Redirecting...');
+            navigate('/Cart');
+          } else {
+            console.log('Fetching cart data...');
+            const cartResponse = await axios.get(
+              `${import.meta.env.VITE_REACT_APP_API_URL}/cart/checkout-cart/${user.id}`
+            );
+            setCart(cartResponse.data.cart.cartItems);
+            setSelectedCustomerPromotion(cartResponse.data.promotions);
+            calculateTotals(cartResponse.data.cart.cartItems, cartResponse.data.promotions);
+            setStep(1); // Move to the next step
+          }
+        } catch (error) {
+          console.error('Error checking cart:', error);
+          navigate('/Cart');
+        }
+      };
+      checkCart();
     }
-  }, [user.id]);
+  }, [step]);
+
+  // useEffect(() => {
+  //   if (user && user.role === 'Customer' && user.id) {
+  //     fetchTimeLeft(user.id);
+  //   }
+  // }, [user.id]);
 
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('Cash');
   const [isProcessing, setIsProcessing] = useState(false);
@@ -136,35 +150,40 @@ const CheckOut = () => {
   const [billDiscountAmount, setBillDiscountAmount] = useState(0);
 
   useEffect(() => {
-    const fetchBillPromotion = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_API_URL}/promotions/bill/price/${totalBeforeBillPromotion}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-            },
+    if (step === 1) {
+      const fetchBillPromotion = async () => {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_REACT_APP_API_URL}/promotions/bill/price/${totalBeforeBillPromotion}`,
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          setBillPromotion(response.data);
+          const discount = totalBeforeBillPromotion * response.data.discount;
+          setBillDiscountAmount(discount);
+          setTotal(totalBeforeBillPromotion - discount);
+        } catch (error) {
+          if (error.response && error.response.status === 404) {
+            setBillPromotion(null);
+            setBillDiscountAmount(0);
+            setTotal(totalBeforeBillPromotion);
+          } else {
+            console.error('Error fetching BillPromotion:', error);
           }
-        );
-        setBillPromotion(response.data);
-        const discount = totalBeforeBillPromotion * response.data.discount;
-        setBillDiscountAmount(discount);
-        setTotal(totalBeforeBillPromotion - discount);
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          setBillPromotion(null);
-          setBillDiscountAmount(0);
-          setTotal(totalBeforeBillPromotion);
-        } else {
-          console.error('Error fetching BillPromotion:', error);
         }
-      }
-    };
+      };
 
-    if (totalBeforeBillPromotion > 0) {
-      fetchBillPromotion();
+      if (totalBeforeBillPromotion > 0) {
+        fetchBillPromotion();
+        setStep(2);
+      }
     }
-  }, [totalBeforeBillPromotion]);
+  }, [totalBeforeBillPromotion, step]);
+
+  const { refreshTimer } = useTimer();
 
   const handleBuyButtonClick = async () => {
     if (isProcessing) return;
@@ -182,17 +201,103 @@ const CheckOut = () => {
         return;
       }
   
-      switch (selectedPaymentMethod) {
-        case 'Momo':
-          await handleMomoPayment();
-          break;
-        case 'VNPay':
-          await handleVNPayPayment();
-          await handleCreateBill();
-          break;
-        default:
-          await handleCreateBill();
+      // switch (selectedPaymentMethod) {
+      //   case 'Momo':
+      //     await handleMomoPayment();
+      //     break;
+      //   case 'VNPay':
+      //     await handleVNPayPayment();
+      //     await handleCreateBill();
+      //     break;
+      //   default:
+      //     await handleCreateBill();
+      // }
+
+      if (selectedPaymentMethod === 'Momo') {
+        const orderId = uuidv4();
+        const fullName = `${user.fName} ${user.lName}`;
+        const orderInformation = `Payment for order ${orderId}`;
+        const amount = total.toFixed(2);
+      
+        const paymentData = {
+          fullName,
+          orderId,
+          orderInformation,
+          amount: parseFloat(amount),
+        };
+      
+        try {
+          const response = await axios.post(
+            `${import.meta.env.VITE_REACT_APP_API_URL}/payment/momo/createpayment`,
+            paymentData,
+            {
+              headers: { 'Content-Type': 'application/json' },
+              withCredentials: true,
+            }
+          );
+      
+          if (response.data && response.data.payUrl) {
+            window.location.href = response.data.payUrl;
+          } else {
+            throw new Error('Invalid response from payment gateway.');
+          }
+        } catch (error) {
+          console.error('Error initiating Momo payment:', error);
+          toast.error('There was an error initiating Momo payment. Please try again.', {
+            position: 'bottom-left',
+            autoClose: 5000,
+            hideProgressBar: false,
+            theme: 'colored',
+          });
+          setIsProcessing(false);
+        }
+        return;
       }
+
+      else if (selectedPaymentMethod === 'VNPay') {
+        const orderType = 'other';
+        const fullName = `${user.fName} ${user.lName}`;
+        const amountInUSD = parseFloat(total.toFixed(2));
+        const exchangeRate = 25000;
+        const amountInVND = Math.round(amountInUSD * exchangeRate);
+      
+        const paymentData = {
+          orderType,
+          amount: amountInVND,
+          fullName,
+          orderDescription: 'New bill',
+          name: fullName,
+        };
+      
+        try { 
+          const response = await axios.post(
+            `${import.meta.env.VITE_REACT_APP_API_URL}/payment/vnpay`,
+            paymentData,
+            {
+              headers: { 'Content-Type': 'application/json' },
+              withCredentials: true,
+            }
+          );
+      
+          if (response.data) {
+            window.location.href = response.data;
+          } else {
+            throw new Error('Invalid response from payment gateway.');
+          }
+        } catch (error) {
+          console.error('Error initiating VNPay payment:', error);
+          toast.error('There was an error initiating VNPay payment. Please try again.', {
+            position: 'bottom-left',
+            autoClose: 5000,
+            hideProgressBar: false,
+            theme: 'colored',
+          });
+          setIsProcessing(false);
+        }
+        return;
+      }
+
+      await handleCreateBill();
     } catch (error) {
       console.error('Error while processing the purchase:', error);
       toast.error('There was an error processing your purchase. Please try again.', {
@@ -287,6 +392,8 @@ const CheckOut = () => {
   };
 
   const handleCreateBill = async () => {
+    console.log('Creating bill...');
+    console.log("Cart: ", cart);
     try {
       const itemsByStore = cart.reduce((result, item) => {
         const storeID = item.storeID;
@@ -424,6 +531,7 @@ const CheckOut = () => {
   
       try {
         await axios.delete(`${import.meta.env.VITE_REACT_APP_API_URL}/cart/clear/${user.id}`);
+        console.log('Cart cleared successfully.');
       } catch (error) {
         console.error('Error clearing cart:', error);
         toast.warn('Purchase was successful, but we failed to clear your cart.', {
@@ -440,6 +548,9 @@ const CheckOut = () => {
         hideProgressBar: false,
         theme: 'colored',
       });
+
+      await fetchTimeLeft(user.id);
+      refreshTimer();
   
       navigate('/');
     } catch (error) {
@@ -455,11 +566,6 @@ const CheckOut = () => {
     }
   };
 
-  const handleMomoPaymentSuccess = async () => {
-    setSelectedPaymentMethod('Momo');
-    setIsProcessing(true);
-    await handleCreateBill();
-  };
 
   // const handleBuyButtonClick = async () => {
   //   if (isProcessing) return;
@@ -742,68 +848,82 @@ const CheckOut = () => {
   // };
 
   useEffect(() => {
-    // Parse query parameters using URLSearchParams
-    const params = new URLSearchParams(location.search);
-    // check if there is PaymentCallBack in the Url
-    if (!location.pathname.includes('PaymentCallBack')) {
-      console.log('This is not the PaymentCallBack URL');
-      return;
-    }
-
-    if (params.has('vnp_Amount')) {
-      const vnpResponseCode = params.get('vnp_ResponseCode');
-      if (vnpResponseCode !== '00') {
-        console.error('VNPay payment failed:', vnpResponseCode);
-        toast.error('There was an error processing your purchase. Please try again.', {
-          position: 'bottom-left',
-          autoClose: 5000,
-          hideProgressBar: false,
-          theme: 'colored',
-        });
+    if (step === 2) {
+      const handleMomoPaymentSuccess = async () => {
+        setSelectedPaymentMethod('Momo');
+        setIsProcessing(true);
+        await handleCreateBill();
+      };
+    
+      const handleVNPayPaymentSuccess = async () => {
+        setSelectedPaymentMethod('VNPay');
+        setIsProcessing(true);
+        await handleCreateBill();
+      };  
+  
+      // Parse query parameters using URLSearchParams
+      const params = new URLSearchParams(location.search);
+      // check if there is PaymentCallBack in the Url
+      if (!location.pathname.includes('PaymentCallBack')) {
+        console.log('This is not the PaymentCallBack URL');
         return;
       }
-      else {
+  
+      if (params.has('vnp_Amount')) {
+        const vnpResponseCode = params.get('vnp_ResponseCode');
+        console.log('VNPay callback detected:');
+        if (vnpResponseCode !== '00') {
+          console.error('VNPay payment failed:', vnpResponseCode);
+          toast.error('There was an error processing your purchase. Please try again.', {
+            position: 'bottom-left',
+            autoClose: 5000,
+            hideProgressBar: false,
+            theme: 'colored',
+          });
+          return;
+        }
+        else {
+          // Perform any action here, such as setting state or calling a function
+          console.log("CP1");
+          console.log("HAs Processed Callback Ref: ", hasProcessedCallbackRef.current);
+          if (!hasProcessedCallbackRef.current) {
+            console.log("CP2")
+            handleVNPayPaymentSuccess();
+            hasProcessedCallbackRef.current = true;  // Prevent duplicate processing
+          }
+        }
         // Perform any action here, such as setting state or calling a function
-        if (!hasProcessedCallbackRef.current) {
-          setSelectedPaymentMethod('VNPay');
-          setIsProcessing(true);
-          handleCreateBill();
+      }
+  
+      else if (params.has('partnerCode') || params.has('orderInfo')) {
+        // Check for essential Momo callback parameters
+        const orderId = params.get('orderId');
+        const transId = params.get('transId');
+        // const errorCode = params.get('errorCode');
+        const orderInfo = params.get('orderInfo');
+        const orderType = params.get('orderType');
+        const accessKey = params.get('accessKey');
+  
+        const CustomerRequest = orderInfo.split('\n')[0];
+        // check if the orderType is "momo_wallet" and accessKey is "F8BBA842ECF85" and CustomerRequest is `user.fName user.lName`
+        if (orderType !== 'momo_wallet' || accessKey !== 'F8BBA842ECF85' || CustomerRequest !== `Customer: ${user.fName} ${user.lName}`) {
+          console.error('Invalid Momo callback request.');
+          return;
+        }
+  
+        // Proceed only if orderId and transId are present and there's no error
+        if (orderId && transId && !hasProcessedCallbackRef.current) {
+          console.log('Momo callback detected:', { orderId, transId });
+          handleMomoPaymentSuccess();
           hasProcessedCallbackRef.current = true;  // Prevent duplicate processing
         }
       }
-      // Perform any action here, such as setting state or calling a function
-    }
-
-    else if (params.has('partnerCode') || params.has('orderInfo')) {
-      // Check for essential Momo callback parameters
-      const orderId = params.get('orderId');
-      const transId = params.get('transId');
-      // const errorCode = params.get('errorCode');
-      const orderInfo = params.get('orderInfo');
-      const orderType = params.get('orderType');
-      const accessKey = params.get('accessKey');
-
-      const CustomerRequest = orderInfo.split('\n')[0];
-      // check if the orderType is "momo_wallet" and accessKey is "F8BBA842ECF85" and CustomerRequest is `user.fName user.lName`
-      if (orderType !== 'momo_wallet' || accessKey !== 'F8BBA842ECF85' || CustomerRequest !== `Customer: ${user.fName} ${user.lName}`) {
-        console.error('Invalid Momo callback request.');
+  
+      else {
         return;
       }
-
-      // Proceed only if orderId and transId are present and there's no error
-      if (orderId && transId && !hasProcessedCallbackRef.current) {
-        console.log('Momo callback detected:', { orderId, transId });
-        setSelectedPaymentMethod('Momo');
-        handleMomoPaymentSuccess();
-        hasProcessedCallbackRef.current = true;  // Prevent duplicate processing
-      }
     }
-
-    else {
-      return;
-    }
-    
-  }, [location.search, user.fName, user.lName]);
+  }, [location.search, user.fName, user.lName, step]);
 
   // const handleCreateBill = async () => {
   //   try {

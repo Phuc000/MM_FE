@@ -9,31 +9,30 @@ import ManagePromotions from './admin/ManagePromotions';
 import ManageInventory from "./admin/ManageInventory";
 import ViewOrders from "./admin/ViewOrders";
 import { CartProvider } from './Context/CartContext';
-import { AuthProvider } from "./Context/AuthContext";
+// import { AuthProvider } from "./Context/AuthContext";
 
 import { MealPlannerProvider } from "./Context/MealPlannerContext";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Timer from "./Components/Timer/Timer";
 import { TimerProvider } from "./Context/TimerContext";
-// import { useAuth } from "./hooks/useAuth";
+import { useAuth } from "./hooks/useAuth";
 
 
 import "./App.css";
 
 function App() {
-  // const {user} = useAuth();
+  const {user} = useAuth();
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <MealPlannerProvider>
         <CartProvider>
         <TimerProvider>
-          <AuthProvider>
+          {/* <AuthProvider> */}
               <Router>
                 <div className="App">
                   <div className="content">
-                  {/* {user && user.role === 'Customer' && <Timer customerId={user.id} />} */}
-                    <Timer />
+                  {user && user.role === 'Customer' && <Timer customerId={user.id} />}
                     <Routes>
                       <Route path="/" element={<Home />} />
                       <Route path="/Login" element={<Login />} />
@@ -64,7 +63,7 @@ function App() {
                   </div>
                 </div>
               </Router>
-          </AuthProvider>
+          {/* </AuthProvider> */}
           </TimerProvider>
         </CartProvider>
       </MealPlannerProvider>

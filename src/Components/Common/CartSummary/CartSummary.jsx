@@ -8,6 +8,8 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAuth } from '../../../hooks/useAuth';
+import { fetchTimeLeft } from '../../Timer/Timer';
+import { useTimer } from '../../../Context/TimerContext';
 
 const CartSummary = ({
   subtotal = 0,
@@ -21,6 +23,7 @@ const CartSummary = ({
   selectedCustomerPromotion=[]
 }) => {
   const navigate = useNavigate();
+  const { refreshTimer } = useTimer();
   const customerPromotionNameList = selectedCustomerPromotion.map((promotion) => promotion.name);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -35,7 +38,7 @@ const CartSummary = ({
   const handleRevalidateCart = async (cart) => {
     var payload = {
       customerId: user.id,
-      cart: cart,
+      cartItems: cart,
     }
     try {
       const response = await axios.post(
@@ -87,6 +90,9 @@ const CartSummary = ({
           },
         });
 
+        await fetchTimeLeft(user.id);
+        refreshTimer(); // Trigger the Timer to refresh
+
         navigate("/CheckOut");
       } catch (checkoutError) {
         console.error("Error during checkout:", checkoutError);
@@ -100,8 +106,20 @@ const CartSummary = ({
     }
   };
 
-  const handleBackToCart = () => {
-    navigate('/Cart');
+  const handleBackToCart = async () => {
+    try {
+      await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/cart/backtocart/${user.id}`, 
+        {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      await fetchTimeLeft(user.id);
+      refreshTimer(); // Trigger the Timer to refresh
+      navigate('/Cart');
+    } catch (error) {
+      console.error("Error removing reserve cart:", error);
+    }
   };
 
   return (

@@ -24,17 +24,31 @@ const Cart = () => {
 
   // Check for valid user role or redirect to Login
   useEffect(() => {
-    if (!user || user.role !== "Customer") {
-      navigate("/Login"); // Redirect to login page
-    }
-    else {
-      fetchCart(user.id); // Fetch cart if user is a customer
-    }
-  }, [user, navigate]);
+    
+    const validateUserAndNavigate = async () => {
+      if (!user || user.role !== "Customer") {
+        navigate("/Login");
+        return; // Return early to avoid executing further code
+      }
 
-  useEffect(() => {
-    console.log("Check selected promotions:", selectedCustomerPromotions);
-  }, [selectedCustomerPromotions]);
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/cart/checkout/${user.id}`
+        );
+        if (response.data === true) {
+          navigate("/CheckOut");
+        } else {
+          console.log("CAll here"); 
+          await fetchCart(user.id);
+        }
+      } catch (error) {
+        console.error("Error during checkout navigation:", error);
+        // Optionally handle error or show a message to the user
+      }
+    };
+
+    validateUserAndNavigate();
+  }, []);
 
   const fetchCart = async (customerId) => {
     try {
@@ -43,6 +57,7 @@ const Cart = () => {
         `${import.meta.env.VITE_REACT_APP_API_URL}/cart/${customerId}`,
         { headers: { 'Content-Type': 'application/json' } }
       );
+      console.log("Cart Response:", cartResponse.data);
       
       const cartItems = cartResponse.data.cart.cartItems;
       const selectedPromotions = cartResponse.data.selectedPromotions;
@@ -71,7 +86,6 @@ const Cart = () => {
     }
   };
   
-
   const handleRemoveItem = async (productId, storeId, discountedPrice, quantity) => {
     // Remove item from cart
     try {

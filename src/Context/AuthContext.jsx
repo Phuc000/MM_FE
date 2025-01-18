@@ -1,6 +1,6 @@
 // src/contexts/AuthContext.js
 import React, { createContext, useState, useEffect } from 'react';
-import { useTimer } from './TimerContext';
+// import { useTimer } from './TimerContext';
 
 export const AuthContext = createContext(null);
 
@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
-  const { resetTimer } = useTimer();
+  // const { resetTimer } = useTimer();
 
   // Update localStorage whenever user state changes
   useEffect(() => {
@@ -29,7 +29,7 @@ export const AuthProvider = ({ children }) => {
 
   // Function to handle logout
   const logout = () => {
-    resetTimer();
+    // resetTimer();
     setUser(null);
   };
 
