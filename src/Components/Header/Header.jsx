@@ -3,6 +3,9 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../hooks/useAuth"; // Import useAuth hook
+import { useLocationContext } from "../../Context/LocationContext";
+import LocationSelector from "../Modal/LocationSelector";
+
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
@@ -11,6 +14,16 @@ import "./Header.css";
 const Header = () => {
   const { user } = useAuth(); // Access user from useAuth
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { location } = useLocationContext();
+  const [showSelector, setShowSelector] = useState(false);
+
+  useEffect(() => {
+    console.log("Location context:", location);
+    if (!location) {
+      setShowSelector(true);
+    }
+  }, [location]);
 
   const products = ['Tomato Pasta Sauce', 'Crab Legs', 'Pork Belly', 'Pork Loin', 'Pork Chops', 'Pork Ribs', 'Ground Pork', 'Ground Beef', 'Beef Brisket', 'Beef Ribeye', 'Beef Tenderloin', 'Beef Stew Meat', 'Salmon Fillet', 'Shrimp', 'Scallops', 'Cod', 'Whole Milk', 'Skim Milk', 'Almond Milk', 'Oranges', 'Soy Milk', 'Coconut Milk', 'Black Pepper', 'Cinnamon', 'Paprika', 'Turmeric', 'Cumin', 'Spinach', 'Carrots', 'Broccoli', 'Bell Peppers', 'Tomatoes', 'Tomato Sauce', 'Soy Sauce', 'Hot Sauce', 'BBQ Sauce', 'Fish Sauce', 'Bananas', 'Grapes', 'Strawberries', 'Quinoa', 'Barley', 'Oats', 'Wheat Flour', 'Apples', 'Rice']
 
@@ -75,10 +88,10 @@ const Header = () => {
     },
   }));
 
-  const location = useLocation();
+  const page_location = useLocation();
 
   const getNavItemClass = (pathname) => {
-    return location.pathname === pathname ? "navbar-item current-page" : "navbar-item";
+    return page_location.pathname === pathname ? "navbar-item current-page" : "navbar-item";
   };
 
   const toggleMenu = () => {
@@ -89,11 +102,17 @@ const Header = () => {
   useEffect(() => {
     setIsMenuOpen(false);
     document.body.classList.remove("body__fixed");
-  }, [location.pathname]);
+  }, [page_location.pathname]);
 
   return (
     <div className="header">
       <nav>
+        {!location && (
+          <LocationSelector
+            open={showSelector} 
+            onClose={() => setShowSelector(false)} 
+          />
+        )}
         <Link to="/" className="navbar-item home_logo">
           <img src="/Images/logo.png" alt="logo-shophouse" className="nav__logo" />
         </Link>

@@ -1,6 +1,8 @@
 // ShowProduct.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLocationContext } from '../../Context/LocationContext';
+
 import axios from 'axios';
 import "./ShowProduct.scss";
 
@@ -8,6 +10,7 @@ const ShowProduct = ({ product, storeId }) => {
   const [promotions, setPromotions] = useState([]);
   const [totalDiscount, setTotalDiscount] = useState(0);
   const [pageStoreId, setPageStoreId] = useState(storeId);
+  const { getRankedStoresForProduct } = useLocationContext();
 
   // Fetch store information based on productId if storeId is not provided
   useEffect(() => {
@@ -20,13 +23,32 @@ const ShowProduct = ({ product, storeId }) => {
             },
           });
           const storeInfoArray = response.data;
+
+          // Get ranked stores that have the product
+          const rankedStores = getRankedStoresForProduct(
+            storeInfoArray.map(store => store.storeID)
+          );
           
-          // Choose the storeId with the highest NumberAtStore
-          const selectedStoreInfo = storeInfoArray.reduce((prev, current) => (prev.numberAtStore > current.numberAtStore) ? prev : current);
-          const fetchedStoreId = selectedStoreInfo.storeID;
-          
-          // Use the fetched storeId or set a default value if needed
-          setPageStoreId(fetchedStoreId);
+          let selectedStoreId;
+          if (rankedStores.length > 0) {
+            // Get stock levels for ranked stores
+            const stockByStore = new Map(
+              storeInfoArray.map(store => [store.storeID, store.numberAtStore])
+            );
+
+            // Find first store with stock > 0, otherwise use highest ranked
+            selectedStoreId = rankedStores.find(
+              store => (stockByStore.get(store.storeID) || 0) > 0
+            )?.storeID || rankedStores[0].storeID;
+          } else {
+            // Fallback: Choose store with highest stock
+            const maxStockStore = storeInfoArray.reduce((prev, current) => 
+              (prev.numberAtStore > current.numberAtStore) ? prev : current
+            );
+            selectedStoreId = maxStockStore.storeID;
+          }
+
+          setPageStoreId(selectedStoreId);
         } catch (error) {
           console.error(`Error fetching store info for product ${product.productID}:`, error);
         }

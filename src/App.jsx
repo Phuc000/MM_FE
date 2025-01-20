@@ -16,6 +16,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Timer from "./Components/Timer/Timer";
 import { TimerProvider } from "./Context/TimerContext";
+import { LocationProvider } from "./Context/LocationContext";
 import { useAuth } from "./hooks/useAuth";
 
 
@@ -24,50 +25,52 @@ import "./App.css";
 function App() {
   const {user} = useAuth();
   return (
-    <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <MealPlannerProvider>
-        <CartProvider>
-        <TimerProvider>
-          {/* <AuthProvider> */}
-              <Router>
-                <div className="App">
-                  <div className="content">
-                  {user && user.role === 'Customer' && <Timer customerId={user.id} />}
-                    <Routes>
-                      <Route path="/" element={<Home />} />
-                      <Route path="/Login" element={<Login />} />
-                      <Route path="/Profile" element={<Profile />} />
-                      <Route path="/Category/:categoryName" element={<Category />} />
-                      <Route path="/Cart" element={<Cart />} />
-                      <Route path="/Chat" element={<ChatPage />} />
-                      <Route path="/CheckOut" element={<CheckOut />} />
-                      <Route path="/Checkout/PaymentCallBack" element={<CheckOut />} />
-                      <Route path="/buy-product/:productId/:storeId" element={<BuyProduct />} />
-                      <Route path="/store/:storeId" element={<Store />} />
-                      <Route path="/AboutUs" element={<AboutUs />} />
-                      <Route path="/MealPlanner" element={<MealPlanner />} />
-                      <Route path="/RecipesArticles" element={<RecipesArticles />} />
-                      <Route path="/Admin/*" element={<Admin />}>
-                        <Route path="dashboard" element={<AdminDashboard />} />
-                        <Route path="manage-users" element={<ManageUsers />} />
-                        <Route path="manage-products" element={<ManageProducts />} />
-                        <Route path="manage-promotions" element={<ManagePromotions />} />
-                        <Route path="manage-inventory" element={<ManageInventory />} />
-                        <Route path="view-orders" element={<ViewOrders />} />
-                      </Route>
-                      <Route path="/Shipper/*" element={<Shipper />}>
-
-                      </Route>
-                    </Routes>
-                    <ToastContainer />
+    <LocationProvider>
+      <LocalizationProvider dateAdapter={AdapterDateFns}>
+        <MealPlannerProvider>
+          <CartProvider>
+          <TimerProvider>
+            {/* <AuthProvider> */}
+                <Router>
+                  <div className="App">
+                    <div className="content">
+                    {user && user.role === 'Customer' && <Timer customerId={user.id} />}
+                      <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/Login" element={<Login />} />
+                        <Route path="/Profile" element={<Profile />} />
+                        <Route path="/Category/:categoryName" element={<Category />} />
+                        <Route path="/Cart" element={<Cart />} />
+                        <Route path="/Chat" element={<ChatPage />} />
+                        <Route path="/CheckOut" element={<CheckOut />} />
+                        <Route path="/Checkout/PaymentCallBack" element={<CheckOut />} />
+                        <Route path="/buy-product/:productId/:storeId" element={<BuyProduct />} />
+                        <Route path="/store/:storeId" element={<Store />} />
+                        <Route path="/AboutUs" element={<AboutUs />} />
+                        <Route path="/MealPlanner" element={<MealPlanner />} />
+                        <Route path="/RecipesArticles" element={<RecipesArticles />} />
+                        <Route path="/Admin/*" element={<Admin />}>
+                          <Route path="dashboard" element={<AdminDashboard />} />
+                          <Route path="manage-users" element={<ManageUsers />} />
+                          <Route path="manage-products" element={<ManageProducts />} />
+                          <Route path="manage-promotions" element={<ManagePromotions />} />
+                          <Route path="manage-inventory" element={<ManageInventory />} />
+                          <Route path="view-orders" element={<ViewOrders />} />
+                        </Route>
+                        <Route path="/Shipper/*" element={<Shipper />}>
+    
+                        </Route>
+                      </Routes>
+                      <ToastContainer />
+                    </div>
                   </div>
-                </div>
-              </Router>
-          {/* </AuthProvider> */}
-          </TimerProvider>
-        </CartProvider>
-      </MealPlannerProvider>
-    </LocalizationProvider>
+                </Router>
+            {/* </AuthProvider> */}
+            </TimerProvider>
+          </CartProvider>
+        </MealPlannerProvider>
+      </LocalizationProvider>
+    </LocationProvider>
   );
 }
 

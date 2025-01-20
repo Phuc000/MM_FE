@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
 import "./BuyProduct.scss";
 import { useAuth } from '../../hooks/useAuth'; // Import useAuth
+import { useLocationContext } from '../../Context/LocationContext';
 import hubConnection from '../../services/SignalR/signalrService';
 
 const BuyProduct = () => {
@@ -20,6 +21,8 @@ const BuyProduct = () => {
   const [store, setStore] = useState();
   const [buttonClass, setButtonClass] = useState('');
   const { user } = useAuth(); // Get user from context
+
+  const { getRankedStoresForProduct } = useLocationContext();
 
   const [stock, setStock] = useState(0);
   const hasJoinedGroupRef = useRef(false);  // Keeps track of whether group is joined
@@ -66,8 +69,18 @@ const BuyProduct = () => {
         if (storeId && storeId !== 'null') {
           selectedStoreInfo = storeResponse.data.find((storeInfo) => storeInfo.storeID === storeId);
         } else {
-          selectedStoreInfo = storeResponse.data.reduce((prev, current) => (prev.numberAtStore > current.numberAtStore) ? prev : current);
-          setChosenStoreId(selectedStoreInfo.storeID);  // Set the chosen store ID
+          // Get ranked stores that have the product
+          const storesWithProduct = getRankedStoresForProduct(
+            storeResponse.data.map(store => store.storeID)
+          );
+          console.log("Stores with product:", storesWithProduct);
+
+          // Use first (closest) store from ranked list that has stock
+          const closestStore = storesWithProduct[0];
+          selectedStoreInfo = storeResponse.data.find(
+            (storeInfo) => storeInfo.storeID === closestStore.storeID
+          );
+          setChosenStoreId(selectedStoreInfo.storeID);
         }
   
         if (!selectedStoreInfo) {

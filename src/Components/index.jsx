@@ -12,3 +12,4 @@ export { default as CartSummary } from "./Common/CartSummary/CartSummary";
 export { default as InfoForm } from "./Common/InfoForm/InfoForm";
 export { default as PromotionTicket } from "./Common/PromotionTicket/PromotionTicket";
 export { default as StoreCard } from "./StoreCard/StoreCard";
+export { default as LocationSelector } from "./Modal/LocationSelector";
