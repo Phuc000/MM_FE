@@ -9,6 +9,8 @@ import LocationSelector from "../Modal/LocationSelector";
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
+import LocationOnIcon from '@mui/icons-material/LocationOn'; // Import Location Icon
+import { Box, Typography, IconButton } from '@mui/material';
 import "./Header.css";
 
 const Header = () => {
@@ -107,12 +109,11 @@ const Header = () => {
   return (
     <div className="header">
       <nav>
-        {!location && (
-          <LocationSelector
-            open={showSelector} 
-            onClose={() => setShowSelector(false)} 
-          />
-        )}
+        <LocationSelector
+          open={showSelector} 
+          onClose={() => setShowSelector(false)} 
+        />
+
         <Link to="/" className="navbar-item home_logo">
           <img src="/Images/logo.png" alt="logo-shophouse" className="nav__logo" />
         </Link>
@@ -179,6 +180,28 @@ const Header = () => {
         </ul>
         <i className="fa fa-bars wrap-menu" onClick={toggleMenu} aria-label="Open menu"></i>
       </nav>
+      <div className="secondary-header">
+        {/* User current location on the right with MUI styling */}
+        <Box 
+          display="flex" 
+          alignItems="center" 
+          justifyContent="flex-end" 
+          sx={{ cursor: 'pointer', pr: 2 }} 
+          onClick={() => setShowSelector(true)} // Open Location Selector on click
+        >
+          <LocationOnIcon color="primary" />
+          <Typography 
+            variant="body1" 
+            sx={{ 
+              fontWeight: 900, 
+              fontFamily: 'Quicksand, sans-serif',
+              ml: 1 
+            }}
+          >
+            {location?.ward.name}, {location?.city.name}
+          </Typography>
+        </Box>
+      </div>
     </div>
   );
 };
