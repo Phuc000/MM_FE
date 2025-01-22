@@ -1,17 +1,19 @@
 // src/Components/Header/Header.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import { useAuth } from "../../hooks/useAuth"; // Import useAuth hook
 import { useLocationContext } from "../../Context/LocationContext";
 import LocationSelector from "../Modal/LocationSelector";
 
-import Badge from '@mui/material/Badge';
-import { styled } from '@mui/material/styles';
+// import Badge from '@mui/material/Badge';
+// import { styled } from '@mui/material/styles';
 import SearchIcon from '@mui/icons-material/Search';
 import LocationOnIcon from '@mui/icons-material/LocationOn'; // Import Location Icon
-import { Box, Typography, IconButton } from '@mui/material';
+import { Box, Typography} from '@mui/material';
 import "./Header.css";
+
+import debounce from "lodash.debounce";
 
 const Header = () => {
   const { user } = useAuth(); // Access user from useAuth
@@ -27,32 +29,32 @@ const Header = () => {
     }
   }, [location]);
 
-  const products = ['Tomato Pasta Sauce', 'Crab Legs', 'Pork Belly', 'Pork Loin', 'Pork Chops', 'Pork Ribs', 'Ground Pork', 'Ground Beef', 'Beef Brisket', 'Beef Ribeye', 'Beef Tenderloin', 'Beef Stew Meat', 'Salmon Fillet', 'Shrimp', 'Scallops', 'Cod', 'Whole Milk', 'Skim Milk', 'Almond Milk', 'Oranges', 'Soy Milk', 'Coconut Milk', 'Black Pepper', 'Cinnamon', 'Paprika', 'Turmeric', 'Cumin', 'Spinach', 'Carrots', 'Broccoli', 'Bell Peppers', 'Tomatoes', 'Tomato Sauce', 'Soy Sauce', 'Hot Sauce', 'BBQ Sauce', 'Fish Sauce', 'Bananas', 'Grapes', 'Strawberries', 'Quinoa', 'Barley', 'Oats', 'Wheat Flour', 'Apples', 'Rice']
+  // const products = ['Tomato Pasta Sauce', 'Crab Legs', 'Pork Belly', 'Pork Loin', 'Pork Chops', 'Pork Ribs', 'Ground Pork', 'Ground Beef', 'Beef Brisket', 'Beef Ribeye', 'Beef Tenderloin', 'Beef Stew Meat', 'Salmon Fillet', 'Shrimp', 'Scallops', 'Cod', 'Whole Milk', 'Skim Milk', 'Almond Milk', 'Oranges', 'Soy Milk', 'Coconut Milk', 'Black Pepper', 'Cinnamon', 'Paprika', 'Turmeric', 'Cumin', 'Spinach', 'Carrots', 'Broccoli', 'Bell Peppers', 'Tomatoes', 'Tomato Sauce', 'Soy Sauce', 'Hot Sauce', 'BBQ Sauce', 'Fish Sauce', 'Bananas', 'Grapes', 'Strawberries', 'Quinoa', 'Barley', 'Oats', 'Wheat Flour', 'Apples', 'Rice']
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredProducts, setFilteredProducts] = useState([]);
+  // const [searchTerm, setSearchTerm] = useState("");
+  // const [filteredProducts, setFilteredProducts] = useState([]);
 
-  const handleInputChange = (e) => {
-    const value = e.target.value.toLowerCase();
-    setSearchTerm(value);
+  // const handleInputChange = (e) => {
+  //   const value = e.target.value.toLowerCase();
+  //   setSearchTerm(value);
   
-    if (value.trim() === "") {
-      setFilteredProducts([]);
-      return;
-    }
+  //   if (value.trim() === "") {
+  //     setFilteredProducts([]);
+  //     return;
+  //   }
   
-    const filtered = products
-      .filter((product) => {
-        // Check if the search term matches any part of the product name
-        return product
-          .toLowerCase()
-          .split(" ")
-          .some((word) => word.startsWith(value.trim())) || product.toLowerCase().includes(value.trim());
-      })
-      .slice(0, 4); // Limit to the first 4 matches
+  //   const filtered = products
+  //     .filter((product) => {
+  //       // Check if the search term matches any part of the product name
+  //       return product
+  //         .toLowerCase()
+  //         .split(" ")
+  //         .some((word) => word.startsWith(value.trim())) || product.toLowerCase().includes(value.trim());
+  //     })
+  //     .slice(0, 4); // Limit to the first 4 matches
   
-    setFilteredProducts(filtered);
-  };
+  //   setFilteredProducts(filtered);
+  // };
   
   const handleProductSelect = async (product) => {
     try {
@@ -81,15 +83,43 @@ const Header = () => {
     }
   };
   
-  const StyledBadge = styled(Badge)(({ theme }) => ({
-    '& .MuiBadge-badge': {
-      right: 10,
-      top: 25,
-      border: `2px solid ${theme.palette.background.paper}`,
-      padding: '0 4px',
-    },
-  }));
+  // const StyledBadge = styled(Badge)(({ theme }) => ({
+  //   '& .MuiBadge-badge': {
+  //     right: 10,
+  //     top: 25,
+  //     border: `2px solid ${theme.palette.background.paper}`,
+  //     padding: '0 4px',
+  //   },
+  // }));
 
+
+  // Test here
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState([]);
+
+  // Debounced function to handle API call
+  const fetchSuggestions = debounce(async (searchText) => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/search`, {
+        params: { query: searchText },
+      });
+      setSuggestions(response.data);
+    } catch (error) {
+      console.error("Autocomplete failed:", error);
+    }
+  }, 500); // Wait for 300ms after the user stops typing
+
+  const handleInputChange = (e) => {
+    const value = e.target.value;
+    setQuery(value);
+    if (value.trim()) {
+      fetchSuggestions(value);
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  // End test here
   const page_location = useLocation();
 
   const getNavItemClass = (pathname) => {
@@ -125,15 +155,15 @@ const Header = () => {
                 className="search-input"
                 id="searchInput"
                 placeholder="Search..."
-                value={searchTerm}
+                value={query}
                 onChange={handleInputChange}
               />
               <button className="search-button">
                 <SearchIcon />
               </button>
-              {filteredProducts.length > 0 && (
+              {suggestions.length > 0 && (
             <div className="dropdown">
-              {filteredProducts.map((product, index) => (
+              {suggestions.map((product, index) => (
                 <a
                   key={index}
                   onClick={() => handleProductSelect(product)} // Call handleProductSelect on click
