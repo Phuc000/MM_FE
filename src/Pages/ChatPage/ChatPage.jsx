@@ -1,6 +1,6 @@
 // src/Pages/ChatPage/ChatPage.jsx
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Header, Footer } from '../../Components';
 import ReactMarkdown from 'react-markdown';
 import runChat from '../../config/gemini';
@@ -9,6 +9,7 @@ import './ChatPage.css';
 import StopIcon from '@mui/icons-material/Stop';
 import MicIcon from '@mui/icons-material/Mic';
 
+import { useAuth } from '../../hooks/useAuth';
 import AddRecipe from '../../Components/Common/AddRecipe';
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -30,8 +31,11 @@ const mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 const dietaryPreferences = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free'];
 
 const ChatUI = () => {
+  const { user } = useAuth();
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
+  const [wsStatus, setWsStatus] = useState('disconnected');
+  const wsRef = useRef(null);
   const [selectedMealType, setSelectedMealType] = useState('');
   const [selectedDietaryPreference, setSelectedDietaryPreference] = useState('');
 
@@ -124,10 +128,62 @@ const ChatUI = () => {
     }
   };
 
-  const handleSend = async () => {
-    if (!userInput.trim()) return;
+  // Connect WebSocket on mount
+  useEffect(() => {
+    console.log('User:', user);
+    if (!user?.id) return;
 
-    // Build the final message to send, including selected options
+    const connectWebSocket = () => {
+      const ws = new WebSocket(`ws://localhost:6969/ws/chat/${user.id}`);
+      
+      ws.onopen = () => {
+        console.log('WebSocket Connected');
+        setWsStatus('connected');
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        if (data.error) {
+          console.error('WebSocket error:', data.error);
+          return;
+        }
+        setMessages(prev => [...prev, { sender: 'bot', text: data.message }]);
+      };
+
+      ws.onclose = () => {
+        console.log('WebSocket Disconnected');
+        setWsStatus('disconnected');
+        // Attempt to reconnect after 3 seconds
+        setTimeout(connectWebSocket, 3000);
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket Error:', error);
+        setWsStatus('error');
+      };
+
+      wsRef.current = ws;
+    };
+
+    connectWebSocket();
+
+    // Cleanup on unmount
+    return () => {
+      if (wsRef.current) {
+        wsRef.current.close();
+      }
+    };
+  }, [user?.id]);
+
+  const handleSend = async () => {
+    if (!userInput.trim() || !wsRef.current) return;
+
+    // // Build message with selected options
+    // const message = {
+    //   message: userInput,
+    //   mealType: selectedMealType,
+    //   dietaryPreference: selectedDietaryPreference
+    // };
     let finalUserInput = userInput;
     if (selectedMealType) {
       finalUserInput = `Meal Type: ${selectedMealType}\n${finalUserInput}`;
@@ -135,69 +191,92 @@ const ChatUI = () => {
     if (selectedDietaryPreference) {
       finalUserInput = `Dietary Preference: ${selectedDietaryPreference}\n${finalUserInput}`;
     }
+    const message = {
+      message: finalUserInput,
+    };
 
-    const newMessage = { sender: 'user', text: userInput };
-    setMessages([...messages, newMessage]);
+    // Add user message to chat
+    setMessages(prev => [...prev, { sender: 'user', text: userInput }]);
     setUserInput('');
 
-    try {
-      const responseText = await runChat(finalUserInput);
-
-      let processedText = responseText;
-
-      // Find ingredients mentioned in the response
-      const ingredients = products.filter((product) =>
-        processedText.toLowerCase().includes(product.toLowerCase())
-      );
-
-      if (ingredients.length > 0) {
-        try {
-          // Fetch product details using the ingredients
-          const apiResponse = await axios.post(
-            `${import.meta.env.VITE_REACT_APP_API_URL}/products/chatbot`,
-            ingredients,
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-
-          const productsData = apiResponse.data; // Array of product details
-
-          // Map product names to product IDs
-          const productMap = {};
-          productsData.forEach((product) => {
-            productMap[product.pName.toLowerCase()] = product.productID;
-          });
-
-          // Replace ingredient names with links in the response text
-          ingredients.forEach((ingredient) => {
-            const productId = productMap[ingredient.toLowerCase()];
-            if (productId) {
-              const linkText = `[${ingredient}](/buy-product/${productId}/null)`;
-
-              // Escape special regex characters
-              const escapedIngredient = escapeRegExp(ingredient);
-
-              // Replace all occurrences of the ingredient (case-insensitive)
-              const regex = new RegExp(`\\b${escapedIngredient}\\b`, 'gi');
-              processedText = processedText.replace(regex, linkText);
-            }
-          });
-        } catch (error) {
-          console.error('Error fetching product data:', error);
-          // Handle error appropriately
-        }
-      }
-
-      const responseMessage = { sender: 'bot', text: processedText };
-      setMessages((prevMessages) => [...prevMessages, responseMessage]);
-    } catch (error) {
-      console.error('Error:', error);
-      // Handle error appropriately
-    }
+    // Send via WebSocket
+    wsRef.current.send(JSON.stringify(message));
   };
+
+  // const handleSend = async () => {
+  //   if (!userInput.trim()) return;
+
+  //   // Build the final message to send, including selected options
+  //   let finalUserInput = userInput;
+  //   if (selectedMealType) {
+  //     finalUserInput = `Meal Type: ${selectedMealType}\n${finalUserInput}`;
+  //   }
+  //   if (selectedDietaryPreference) {
+  //     finalUserInput = `Dietary Preference: ${selectedDietaryPreference}\n${finalUserInput}`;
+  //   }
+
+  //   const newMessage = { sender: 'user', text: userInput };
+  //   setMessages([...messages, newMessage]);
+  //   setUserInput('');
+
+  //   try {
+  //     const responseText = await runChat(finalUserInput);
+
+  //     let processedText = responseText;
+
+  //     // Find ingredients mentioned in the response
+  //     const ingredients = products.filter((product) =>
+  //       processedText.toLowerCase().includes(product.toLowerCase())
+  //     );
+
+  //     if (ingredients.length > 0) {
+  //       try {
+  //         // Fetch product details using the ingredients
+  //         const apiResponse = await axios.post(
+  //           `${import.meta.env.VITE_REACT_APP_API_URL}/products/chatbot`,
+  //           ingredients,
+  //           {
+  //             headers: {
+  //               'Content-Type': 'application/json',
+  //             },
+  //           }
+  //         );
+
+  //         const productsData = apiResponse.data; // Array of product details
+
+  //         // Map product names to product IDs
+  //         const productMap = {};
+  //         productsData.forEach((product) => {
+  //           productMap[product.pName.toLowerCase()] = product.productID;
+  //         });
+
+  //         // Replace ingredient names with links in the response text
+  //         ingredients.forEach((ingredient) => {
+  //           const productId = productMap[ingredient.toLowerCase()];
+  //           if (productId) {
+  //             const linkText = `[${ingredient}](/buy-product/${productId}/null)`;
+
+  //             // Escape special regex characters
+  //             const escapedIngredient = escapeRegExp(ingredient);
+
+  //             // Replace all occurrences of the ingredient (case-insensitive)
+  //             const regex = new RegExp(`\\b${escapedIngredient}\\b`, 'gi');
+  //             processedText = processedText.replace(regex, linkText);
+  //           }
+  //         });
+  //       } catch (error) {
+  //         console.error('Error fetching product data:', error);
+  //         // Handle error appropriately
+  //       }
+  //     }
+
+  //     const responseMessage = { sender: 'bot', text: processedText };
+  //     setMessages((prevMessages) => [...prevMessages, responseMessage]);
+  //   } catch (error) {
+  //     console.error('Error:', error);
+  //     // Handle error appropriately
+  //   }
+  // };
 
   // Function to escape special characters in a string for regex
   const escapeRegExp = (string) => {
@@ -211,6 +290,11 @@ const ChatUI = () => {
       <Header />
       <div className="chat-container">
         <h1>IUFC Chat Bot</h1>
+        <div className="connection-status" style={{
+          color: wsStatus === 'connected' ? 'green' : 'red'
+        }}>
+          {wsStatus === 'connected' ? 'Connected' : 'Disconnected'}
+        </div>
         <div className="options-container">
           <div className="meal-type-selector">
             <label htmlFor="meal-type">Meal Type:</label>
@@ -266,8 +350,14 @@ const ChatUI = () => {
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+            disabled={wsStatus !== 'connected'}
           />
-          <button onClick={handleSend}>Send</button>
+          <button 
+            onClick={handleSend}
+            disabled={wsStatus !== 'connected'}
+          >
+            Send
+          </button>
           <button onClick={handleVoiceInput} className="voice-button">
             {listening ? (
               <div className="listening-indicator">
