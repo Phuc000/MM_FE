@@ -6,9 +6,13 @@ import ReactMarkdown from 'react-markdown';
 import runChat from '../../config/gemini';
 import axios from 'axios';
 import './ChatPage.css';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import StopIcon from '@mui/icons-material/Stop';
 import MicIcon from '@mui/icons-material/Mic';
 import ImageIcon from '@mui/icons-material/Image';
+import { Alert, Snackbar } from '@mui/material';
+
+import { Typography, Box } from '@mui/material';
 
 import { useAuth } from '../../hooks/useAuth';
 import AddRecipe from '../../Components/Common/AddRecipe';
@@ -31,6 +35,30 @@ const products = [
 const mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 const dietaryPreferences = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free'];
 
+const ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp', 'image/heic', 'image/heif'];
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
+
+// Add validation helpers
+const validateImageFile = (file) => {
+  if (!file) return { valid: false, error: 'No file selected' };
+  
+  if (!ALLOWED_TYPES.includes(file.type)) {
+    return { 
+      valid: false, 
+      error: 'Invalid file type. Please upload PNG, JPEG, WEBP, HEIC or HEIF images only.'
+    };
+  }
+
+  if (file.size > MAX_FILE_SIZE) {
+    return {
+      valid: false,
+      error: 'File size too large. Please upload images under 5MB.'
+    };
+  }
+
+  return { valid: true };
+};
+
 const ChatUI = () => {
   const { user } = useAuth();
   const [messages, setMessages] = useState([]);
@@ -43,6 +71,7 @@ const ChatUI = () => {
   // Add state for image
   const [selectedImage, setSelectedImage] = useState(null);
   const fileInputRef = useRef(null);
+  const [error, setError] = useState('');
 
   // voice chat function
   const [listening, setListening] = useState(false);
@@ -136,7 +165,15 @@ const ChatUI = () => {
   // Add function to handle image selection
   const handleImageSelect = (event) => {
     const file = event.target.files[0];
+    
     if (file) {
+      const validation = validateImageFile(file);
+      
+      if (!validation.valid) {
+        setError(validation.error);
+        return;
+      }
+
       const reader = new FileReader();
       reader.onloadend = () => {
         // Get base64 string without metadata
@@ -323,7 +360,7 @@ const ChatUI = () => {
     <div>
       <Header />
       <div className="chat-container">
-        <h1>IUFC Chat Bot</h1>
+        <h1>IUFC Chat</h1>
         <div className="connection-status" style={{
           color: wsStatus === 'connected' ? 'green' : 'red'
         }}>
@@ -362,7 +399,27 @@ const ChatUI = () => {
           </div>
         </div>
         <div className="chat-box">
-          {messages.map((message, index) => (
+          {messages.length === 0 ? (
+            <Box 
+              display="flex" 
+              justifyContent="center" 
+              alignItems="center" 
+              height="100%"
+            >
+              <Typography
+                variant="h4"
+                sx={{
+                  color: '#666',
+                  fontWeight: 900,
+                  opacity: 0.8,
+                  fontFamily: 'Quicksand, sans-serif',
+                }}
+              >
+                How can I help you today?
+              </Typography>
+            </Box>
+          ) : (
+          messages.map((message, index) => (
             <div
               key={index}
               className={`message-group ${
@@ -391,7 +448,8 @@ const ChatUI = () => {
                 </div>
               )}
             </div>
-          ))}
+          ))
+          )}
         </div>
         {selectedImage && (
           <div className="preview-container">
@@ -430,12 +488,6 @@ const ChatUI = () => {
           >
             <ImageIcon />
           </button>
-          <button 
-            onClick={handleSend}
-            disabled={wsStatus !== 'connected'}
-          >
-            Send
-          </button>
           <button onClick={handleVoiceInput} className="voice-button">
             {listening ? (
               <div className="listening-indicator">
@@ -456,6 +508,12 @@ const ChatUI = () => {
               </div>
             )}
           </button>
+          <button 
+            onClick={handleSend}
+            disabled={wsStatus !== 'connected'}
+          >
+            <ArrowUpwardIcon />
+          </button>
         </div>
       </div>
       {/* {showRecipeModal && (
@@ -465,6 +523,16 @@ const ChatUI = () => {
           recipe={gumboRecipe}
         />
       )} */}
+      <Snackbar 
+        open={!!error} 
+        autoHideDuration={6000} 
+        onClose={() => setError('')}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setError('')} severity="error">
+          {error}
+        </Alert>
+      </Snackbar>
       <Footer />
     </div>
   );

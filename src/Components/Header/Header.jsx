@@ -178,12 +178,15 @@ const Header = () => {
           </div>
         </div>
         <ul className={`nav__navigation ${isMenuOpen ? "nav__navigation_visible" : ""}`}>
-          <Link to="/" className={getNavItemClass("/")}>
+          {/* <Link to="/" className={getNavItemClass("/")}>
             <p className="a__navbar btn btn--primary">HOME</p>
+          </Link> */}
+          <Link to="/MealPlanner" className={getNavItemClass("/MealPlanner")}>
+            <p className="a__navbar btn btn--primary">MEAL PLANNER</p>
           </Link>
-          <Link to="/AboutUs" className={getNavItemClass("/AboutUs")}>
+          {/* <Link to="/AboutUs" className={getNavItemClass("/AboutUs")}>
             <p className="a__navbar btn btn--primary">ABOUT US</p>
-          </Link>
+          </Link> */}
           <Link to="/Chat" className={getNavItemClass("/Chat")}>
             <p className="a__navbar btn btn--primary">CHATBOT</p>
           </Link>
@@ -220,6 +223,38 @@ const Header = () => {
           sx={{ padding: { xs: '10px', sm: '20px' } }}
         >
           <Box display="flex" alignItems="center" gap={3}>
+            <Link to="/" className={getNavItemClass("/")}>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: 900,
+                  fontFamily: 'Quicksand, sans-serif',
+                  transition: 'color 0.3s',
+                  color: 'rgb(24, 40, 51)',
+                  '&:hover': {
+                    color: '#fe3bd4',
+                  },
+                }}
+              >
+                Home
+              </Typography>
+            </Link>
+            <Link to="/AboutUs" className={getNavItemClass("/AboutUs")}>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: 900,
+                  fontFamily: 'Quicksand, sans-serif',
+                  transition: 'color 0.3s',
+                  color: 'rgb(24, 40, 51)',
+                  '&:hover': {
+                    color: '#fe3bd4',
+                  },
+                }}
+              >
+                About Us
+              </Typography>
+            </Link>
             <Link to="/RecipesArticles" className={getNavItemClass("/RecipesArticles")}>
               <Typography
                 variant="body1"
@@ -236,7 +271,7 @@ const Header = () => {
                 Recipes Articles
               </Typography>
             </Link>
-            <Link to="/MealPlanner" className={getNavItemClass("/MealPlanner")}>
+            {/* <Link to="/MealPlanner" className={getNavItemClass("/MealPlanner")}>
               <Typography
                 variant="body1"
                 sx={{
@@ -251,7 +286,7 @@ const Header = () => {
               >
                 Meal Planner
               </Typography>
-            </Link>
+            </Link> */}
           </Box>
           {/* User current location on the right with MUI styling */}
           <Box 
