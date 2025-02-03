@@ -133,10 +133,16 @@ const ChatUI = () => {
     console.log('User:', user);
     if (!user?.id) return;
 
+    // Add a cleanup flag
+    let isSubscribed = true;
+
     const connectWebSocket = () => {
+      // Only create new connection if not already connected
+      if (wsRef.current?.readyState === WebSocket.OPEN) return;
       const ws = new WebSocket(`ws://localhost:6969/ws/chat/${user.id}`);
       
       ws.onopen = () => {
+        if (!isSubscribed) return;
         console.log('WebSocket Connected');
         setWsStatus('connected');
       };
@@ -169,8 +175,10 @@ const ChatUI = () => {
 
     // Cleanup on unmount
     return () => {
+      isSubscribed = false;
       if (wsRef.current) {
         wsRef.current.close();
+        wsRef.current = null;
       }
     };
   }, [user?.id]);
