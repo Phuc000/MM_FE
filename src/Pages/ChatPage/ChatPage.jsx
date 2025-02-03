@@ -365,25 +365,48 @@ const ChatUI = () => {
           {messages.map((message, index) => (
             <div
               key={index}
-              className={`message ${
-                message.sender === 'user' ? 'message-user' : 'message-bot'
+              className={`message-group ${
+                message.sender === 'user' ? 'message-group-user' : 'message-group-bot'
               }`}
             >
+              {/* Image message */}
               {message.image && (
-                <img 
-                  src={message.image} 
-                  alt="User uploaded"
-                  className="message-image" 
-                />
+                <div className="message message-image-container">
+                  <img 
+                    src={message.image} 
+                    alt="User uploaded"
+                    className="message-image" 
+                  />
+                </div>
               )}
-              {message.sender === 'bot' ? (
-                <ReactMarkdown>{message.text}</ReactMarkdown>
-              ) : (
-                message.text
+              
+              {/* Text message */}
+              {message.text && (
+                <div className="message">
+                  {message.sender === 'bot' ? (
+                    <ReactMarkdown>{message.text}</ReactMarkdown>
+                  ) : (
+                    message.text
+                  )}
+                </div>
               )}
             </div>
           ))}
         </div>
+        {selectedImage && (
+          <div className="preview-container">
+            <div className="image-preview">
+              <img src={selectedImage.preview} alt="Preview" />
+              <button 
+                onClick={() => setSelectedImage(null)}
+                className="remove-image"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="input-container">
           <input
             type="text"
@@ -407,12 +430,6 @@ const ChatUI = () => {
           >
             <ImageIcon />
           </button>
-          {selectedImage && (
-            <div className="image-preview">
-              <img src={selectedImage.preview} alt="Preview" />
-              <button onClick={() => setSelectedImage(null)}>×</button>
-            </div>
-          )}
           <button 
             onClick={handleSend}
             disabled={wsStatus !== 'connected'}

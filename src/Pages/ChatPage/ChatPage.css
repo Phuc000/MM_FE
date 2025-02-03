@@ -15,45 +15,70 @@
   }
   
   .chat-box {
-    width: 80%;
-    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    max-width: 800px;
+    gap: 24px;
+    padding: 24px;
     height: 70vh;
     overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 16px;
-    background-color: #FFF;
+
+    @media screen and (max-width: 768px) {
+      max-width: 90vw;
+      
+    }
+
+    @media screen and (max-width: 480px) {
+      max-width: 95vw;
+      
+    }
+  }
+  
+  .message-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-bottom: 10px;
+    width: 100%;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .message-group-user {
+    align-items: flex-end;
+  }
+  
+  .message-group-bot {
+    align-items: flex-start;
   }
   
   .message {
-    max-width: 70%;
-    padding: 10px 15px;
-    border-radius: 8px;
-    box-shadow: 0 1px 1px rgba(0,0,0,0.1);
-    word-wrap: break-word;
+    max-width: 80%;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
   }
   
-  .message-user {
-    align-self: flex-end;
-    color: #FFF;
-    background-color: #fe3bd4;
+  .message-group-user .message {
+    background: #fe3bd4;
+    color: white;
+  }
+
+  .message-group-user .message-image-container {
+    background: none;
+    color: white;
   }
   
-  .message-bot {
-    align-self: flex-start;
-    color: #000;
-    background-color: #e0e0e0;
+  .message-image-container {
+    padding: 0px;
+    background: transparent;
+    box-shadow: none;
   }
   
   .input-container {
     display: flex;
     width: 80%;
-    max-width: 600px;
-    margin-bottom: 20px;
+    max-width: 800px;
+    margin-bottom: 10px;
   }
   
   .input-container input {
@@ -129,35 +154,55 @@
 }
 
 .message-image {
-  max-width: 200px;
+  max-width: 300px;
   border-radius: 8px;
-  margin: 5px 0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.preview-container {
+  padding: 12px;
+  border-top: 1px solid #eee;
 }
 
 .image-preview {
-  position: relative;
   display: inline-block;
-  margin: 0 10px;
+  position: relative;
+  margin: 0 8px;
 }
 
 .image-preview img {
-  height: 40px;
-  border-radius: 4px;
+  height: 80px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.image-preview button {
+.remove-image {
   position: absolute;
   top: -8px;
   right: -8px;
-  background: #ff4444;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #353333;
   color: white;
   border: none;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
   cursor: pointer;
-  padding: 0;
-  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .upload-button {
