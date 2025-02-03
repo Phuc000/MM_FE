@@ -8,6 +8,7 @@ import axios from 'axios';
 import './ChatPage.css';
 import StopIcon from '@mui/icons-material/Stop';
 import MicIcon from '@mui/icons-material/Mic';
+import ImageIcon from '@mui/icons-material/Image';
 
 import { useAuth } from '../../hooks/useAuth';
 import AddRecipe from '../../Components/Common/AddRecipe';
@@ -38,6 +39,10 @@ const ChatUI = () => {
   const wsRef = useRef(null);
   const [selectedMealType, setSelectedMealType] = useState('');
   const [selectedDietaryPreference, setSelectedDietaryPreference] = useState('');
+
+  // Add state for image
+  const [selectedImage, setSelectedImage] = useState(null);
+  const fileInputRef = useRef(null);
 
   // voice chat function
   const [listening, setListening] = useState(false);
@@ -128,6 +133,23 @@ const ChatUI = () => {
     }
   };
 
+  // Add function to handle image selection
+  const handleImageSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        // Get base64 string without metadata
+        const base64String = reader.result.split(',')[1];
+        setSelectedImage({
+          preview: reader.result,
+          base64: base64String
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Connect WebSocket on mount
   useEffect(() => {
     console.log('User:', user);
@@ -183,15 +205,10 @@ const ChatUI = () => {
     };
   }, [user?.id]);
 
+  // Update handleSend function
   const handleSend = async () => {
-    if (!userInput.trim() || !wsRef.current) return;
+    if ((!userInput.trim() && !selectedImage) || !wsRef.current) return;
 
-    // // Build message with selected options
-    // const message = {
-    //   message: userInput,
-    //   mealType: selectedMealType,
-    //   dietaryPreference: selectedDietaryPreference
-    // };
     let finalUserInput = userInput;
     if (selectedMealType) {
       finalUserInput = `Meal Type: ${selectedMealType}\n${finalUserInput}`;
@@ -199,13 +216,22 @@ const ChatUI = () => {
     if (selectedDietaryPreference) {
       finalUserInput = `Dietary Preference: ${selectedDietaryPreference}\n${finalUserInput}`;
     }
+
     const message = {
       message: finalUserInput,
+      ...(selectedImage && { image: selectedImage.base64 })
     };
 
-    // Add user message to chat
-    setMessages(prev => [...prev, { sender: 'user', text: userInput }]);
+    // Add user message and image to chat
+    setMessages(prev => [...prev, { 
+      sender: 'user', 
+      text: userInput,
+      image: selectedImage?.preview
+    }]);
+
+    // Reset input and image
     setUserInput('');
+    setSelectedImage(null);
 
     // Send via WebSocket
     wsRef.current.send(JSON.stringify(message));
@@ -343,6 +369,13 @@ const ChatUI = () => {
                 message.sender === 'user' ? 'message-user' : 'message-bot'
               }`}
             >
+              {message.image && (
+                <img 
+                  src={message.image} 
+                  alt="User uploaded"
+                  className="message-image" 
+                />
+              )}
               {message.sender === 'bot' ? (
                 <ReactMarkdown>{message.text}</ReactMarkdown>
               ) : (
@@ -360,6 +393,26 @@ const ChatUI = () => {
             onKeyDown={(e) => e.key === 'Enter' && handleSend()}
             disabled={wsStatus !== 'connected'}
           />
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleImageSelect}
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+          />
+          <button 
+            onClick={() => fileInputRef.current.click()}
+            className="upload-button"
+            disabled={wsStatus !== 'connected'}
+          >
+            <ImageIcon />
+          </button>
+          {selectedImage && (
+            <div className="image-preview">
+              <img src={selectedImage.preview} alt="Preview" />
+              <button onClick={() => setSelectedImage(null)}>×</button>
+            </div>
+          )}
           <button 
             onClick={handleSend}
             disabled={wsStatus !== 'connected'}

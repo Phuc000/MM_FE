@@ -128,6 +128,50 @@
   font-weight: bold;
 }
 
+.message-image {
+  max-width: 200px;
+  border-radius: 8px;
+  margin: 5px 0;
+}
+
+.image-preview {
+  position: relative;
+  display: inline-block;
+  margin: 0 10px;
+}
+
+.image-preview img {
+  height: 40px;
+  border-radius: 4px;
+}
+
+.image-preview button {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #ff4444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+.upload-button {
+  background: none;
+  border: none;
+  color: #666;
+  cursor: pointer;
+  padding: 8px;
+}
+
+/* .upload-button:hover {
+  color: #fe3bd4;
+} */
+
 .input-container input:disabled,
 .input-container button:disabled {
   opacity: 0.6;
