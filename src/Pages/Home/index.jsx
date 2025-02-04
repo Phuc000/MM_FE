@@ -77,7 +77,7 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-      axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/top5products/2024`, {
+      axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/top5products/2025`, {
         headers: {
           'Content-Type': 'application/json',
         },

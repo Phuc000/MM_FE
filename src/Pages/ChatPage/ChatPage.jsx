@@ -15,6 +15,7 @@ import { Alert, Snackbar } from '@mui/material';
 import { Typography, Box } from '@mui/material';
 
 import { useAuth } from '../../hooks/useAuth';
+import { useWebSocket } from '../../hooks/useWebSocket';
 import AddRecipe from '../../Components/Common/AddRecipe';
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -61,10 +62,9 @@ const validateImageFile = (file) => {
 
 const ChatUI = () => {
   const { user } = useAuth();
-  const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
-  const [wsStatus, setWsStatus] = useState('disconnected');
-  const wsRef = useRef(null);
+  const { wsStatus, messages, wsRef, setMessages } = useWebSocket(user?.id);
+
   const [selectedMealType, setSelectedMealType] = useState('');
   const [selectedDietaryPreference, setSelectedDietaryPreference] = useState('');
 
@@ -187,60 +187,60 @@ const ChatUI = () => {
     }
   };
 
-  // Connect WebSocket on mount
-  useEffect(() => {
-    console.log('User:', user);
-    if (!user?.id) return;
+  // // Connect WebSocket on mount
+  // useEffect(() => {
+  //   console.log('User:', user);
+  //   if (!user?.id) return;
 
-    // Add a cleanup flag
-    let isSubscribed = true;
+  //   // Add a cleanup flag
+  //   let isSubscribed = true;
 
-    const connectWebSocket = () => {
-      // Only create new connection if not already connected
-      if (wsRef.current?.readyState === WebSocket.OPEN) return;
-      const ws = new WebSocket(`ws://localhost:6969/ws/chat/${user.id}`);
+  //   const connectWebSocket = () => {
+  //     // Only create new connection if not already connected
+  //     if (wsRef.current?.readyState === WebSocket.OPEN) return;
+  //     const ws = new WebSocket(`ws://localhost:6969/ws/chat/${user.id}`);
       
-      ws.onopen = () => {
-        if (!isSubscribed) return;
-        console.log('WebSocket Connected');
-        setWsStatus('connected');
-      };
+  //     ws.onopen = () => {
+  //       if (!isSubscribed) return;
+  //       console.log('WebSocket Connected');
+  //       setWsStatus('connected');
+  //     };
 
-      ws.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.error) {
-          console.error('WebSocket error:', data.error);
-          return;
-        }
-        setMessages(prev => [...prev, { sender: 'bot', text: data.message }]);
-      };
+  //     ws.onmessage = (event) => {
+  //       const data = JSON.parse(event.data);
+  //       if (data.error) {
+  //         console.error('WebSocket error:', data.error);
+  //         return;
+  //       }
+  //       setMessages(prev => [...prev, { sender: 'bot', text: data.message }]);
+  //     };
 
-      ws.onclose = () => {
-        console.log('WebSocket Disconnected');
-        setWsStatus('disconnected');
-        // Attempt to reconnect after 3 seconds
-        setTimeout(connectWebSocket, 3000);
-      };
+  //     ws.onclose = () => {
+  //       console.log('WebSocket Disconnected');
+  //       setWsStatus('disconnected');
+  //       // Attempt to reconnect after 3 seconds
+  //       setTimeout(connectWebSocket, 3000);
+  //     };
 
-      ws.onerror = (error) => {
-        console.error('WebSocket Error:', error);
-        setWsStatus('error');
-      };
+  //     ws.onerror = (error) => {
+  //       console.error('WebSocket Error:', error);
+  //       setWsStatus('error');
+  //     };
 
-      wsRef.current = ws;
-    };
+  //     wsRef.current = ws;
+  //   };
 
-    connectWebSocket();
+  //   connectWebSocket();
 
-    // Cleanup on unmount
-    return () => {
-      isSubscribed = false;
-      if (wsRef.current) {
-        wsRef.current.close();
-        wsRef.current = null;
-      }
-    };
-  }, [user?.id]);
+  //   // Cleanup on unmount
+  //   return () => {
+  //     isSubscribed = false;
+  //     if (wsRef.current) {
+  //       wsRef.current.close();
+  //       wsRef.current = null;
+  //     }
+  //   };
+  // }, [user?.id]);
 
   // Update handleSend function
   const handleSend = async () => {

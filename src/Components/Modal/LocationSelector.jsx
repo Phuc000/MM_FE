@@ -20,12 +20,27 @@ const LocationSelector = ({ open, onClose }) => {
   useEffect(() => {
     // Fetch Vietnam cities/provinces
     const fetchCities = async () => {
-      const response = await fetch('https://provinces.open-api.vn/api/p/');
-      const data = await response.json();
-      setCities(data);
+      if (open && cities.length === 0) {
+        console.log('Fetching cities...');
+        try {
+          const response = await fetch('https://provinces.open-api.vn/api/p/');
+          const data = await response.json();
+          setCities(data);
+        } catch (error) {
+          console.error('Error fetching cities:', error);
+        }
+      }
     };
     fetchCities();
-  }, []);
+  }, [open, cities.length]);
+
+  // Reset selections when dialog is closed
+  useEffect(() => {
+    if (!open) {
+      setSelectedCity('');
+      setSelectedWard('');
+    }
+  }, [open]);
 
   useEffect(() => {
     // Fetch wards for selected city
