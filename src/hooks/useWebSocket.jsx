@@ -6,16 +6,25 @@ export const useWebSocket = (userId) => {
   const [messages, setMessages] = useState([]);
   const wsRef = useRef(null);
   const location = useLocation();
+  const isOnChatPage = location.pathname === '/Chat';
 
   useEffect(() => {
     let isSubscribed = true;
+    let reconnectTimeout;
 
     const connectWebSocket = () => {
       // Only connect on Chat page
-      if (location.pathname !== '/Chat' || !userId) return;
+      if (!isOnChatPage || !userId) {
+        console.log('Not connecting WebSocket - not on chat page or no user');
+        return;
+      }
       
-      if (wsRef.current?.readyState === WebSocket.OPEN) return;
+      if (wsRef.current?.readyState === WebSocket.OPEN) {
+        console.log('WebSocket already connected');
+        return;
+      }
       
+      console.log('Connecting WebSocket...');
       const ws = new WebSocket(`ws://localhost:6969/ws/chat/${userId}`);
       
       ws.onopen = () => {
@@ -25,6 +34,7 @@ export const useWebSocket = (userId) => {
       };
 
       ws.onmessage = (event) => {
+        if (!isSubscribed || !isOnChatPage) return;
         const data = JSON.parse(event.data);
         if (data.error) {
           console.error('WebSocket error:', data.error);
@@ -34,10 +44,11 @@ export const useWebSocket = (userId) => {
       };
 
       ws.onclose = () => {
-        if (location.pathname === '/Chat') {
-          console.log('WebSocket Disconnected');
-          setWsStatus('disconnected');
-          setTimeout(connectWebSocket, 3000);
+        console.log('WebSocket Closed');
+        setWsStatus('disconnected');
+        if (isOnChatPage && isSubscribed) {
+          console.log('Scheduling reconnect...');
+          reconnectTimeout = setTimeout(connectWebSocket, 3000);
         }
       };
 
@@ -49,16 +60,21 @@ export const useWebSocket = (userId) => {
       wsRef.current = ws;
     };
 
-    connectWebSocket();
+    if (isOnChatPage) {
+      connectWebSocket();
+    }
 
     return () => {
+      console.log('Cleanup - Disconnecting WebSocket');
       isSubscribed = false;
+      clearTimeout(reconnectTimeout);
       if (wsRef.current) {
         wsRef.current.close();
         wsRef.current = null;
       }
+      setWsStatus('disconnected');
     };
-  }, [userId, location.pathname]);
+  }, [userId, isOnChatPage]);
 
   return { wsStatus, messages, wsRef, setMessages };
 };

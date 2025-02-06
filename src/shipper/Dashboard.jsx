@@ -143,6 +143,74 @@ const Dashboard = () => {
     }
   };
 
+  const handleReschedule = async (transactionId) => {
+    try {
+      // Set status back to Accepted (2)
+      await axios.patch(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/transactions/status/${transactionId}/2`,
+        {},
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+
+      // Update local state
+      setShipperOrders((prev) =>
+        prev.map((tx) =>
+          tx.transactionId === transactionId
+            ? { ...tx, deliveryStatus: 2 }
+            : tx
+        )
+      );
+
+      setSnackbar({
+        open: true,
+        message: 'Order rescheduled successfully.',
+        severity: 'success',
+      });
+    } catch (error) {
+      console.error('Error rescheduling order:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to reschedule order.',
+        severity: 'error',
+      });
+    }
+  };
+
+  const handleCancel = async (transactionId) => {
+    try {
+      // Cancel order using new API endpoint
+      await axios.post(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/shippers/cancel-order/${transactionId}/${user.id}`,
+        {},
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+  
+      // Remove order from local state
+      setShipperOrders((prev) => 
+        prev.filter((tx) => tx.transactionId !== transactionId)
+      );
+  
+      setSnackbar({
+        open: true,
+        message: 'Order cancelled successfully.',
+        severity: 'success',
+      });
+    } catch (error) {
+      console.error('Error cancelling order:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to cancel order.',
+        severity: 'error',
+      });
+    }
+  };
+
   const handleCloseSnackbar = () => {
     setSnackbar({ ...snackbar, open: false });
   };
@@ -208,23 +276,42 @@ const Dashboard = () => {
                     View Details
                   </Button>
                   {tx.deliveryStatus === 2 && (
-                    <Button
-                      variant="contained"
-                      color="secondary"
-                      onClick={() => handleUpdateStatus(tx.transactionId, 3)}
-                      sx={{ marginRight: '8px' }}
-                    >
-                      Set On Delivery
-                    </Button>
+                    <>
+                      <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={() => handleUpdateStatus(tx.transactionId, 3)}
+                        sx={{ marginRight: '8px' }}
+                      >
+                        Set On Delivery
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleCancel(tx.transactionId)}
+                      >
+                        Cancel
+                      </Button>
+                    </>
                   )}
                   {tx.deliveryStatus === 3 && (
-                    <Button
-                      variant="contained"
-                      color="success"
-                      onClick={() => handleUpdateStatus(tx.transactionId, 4)}
-                    >
-                      Set Delivered
-                    </Button>
+                    <>
+                      <Button
+                        variant="contained"
+                        color="success"
+                        onClick={() => handleUpdateStatus(tx.transactionId, 4)}
+                        sx={{ marginRight: '8px' }}
+                      >
+                        Set Delivered
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="warning"
+                        onClick={() => handleReschedule(tx.transactionId)}
+                      >
+                        Reschedule
+                      </Button>
+                    </>
                   )}
                 </TableCell>
               </TableRow>

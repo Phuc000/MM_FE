@@ -14,8 +14,6 @@ import '../Cart/Cart.css';
 import './CheckOut.scss';
 import { fetchTimeLeft } from '../../Components/Timer/Timer';
 import { useTimer } from '../../Context/TimerContext';
-// import { fetchTimeLeft } from '../../Components/Timer/Timer';
-// import { useTimer } from '../../Context/TimerContext';
 
 const PromotionTicket = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(2),
@@ -70,6 +68,14 @@ const CheckOut = () => {
   const [totals, setTotals] = useState({ subtotal: 0, discountAmount: 0, temptotal: 0 });
   const amountDiscount = [];
   // const { fetchTimeLeft } = useTimer();
+
+  const [formData, setFormData] = useState({
+    fName: user?.fName || '',
+    lName: user?.lName || '',
+    address: user?.address || '',
+    phoneNumber: user?.phoneNumber || '',
+    email: user?.email || ''
+  });
 
   const calculateTotals = (cartItems, promotion) => {
     let subtotal = 0;
@@ -187,6 +193,18 @@ const CheckOut = () => {
 
   const handleBuyButtonClick = async () => {
     if (isProcessing) return;
+
+    // Validate required address
+    if (!formData.address) {
+      toast.error('Please provide a shipping address.', {
+        position: 'bottom-left',
+        autoClose: 5000,
+        hideProgressBar: false,
+        theme: 'colored',
+      });
+      return;
+    }
+
     setIsProcessing(true);
   
     try {
@@ -452,6 +470,7 @@ const CheckOut = () => {
           includes,
           totalPrice,
           totalWeight,
+          shippingAddress: formData.address // Add shipping address
         };
   
         // if (discountAmount > 0) {
@@ -1129,7 +1148,10 @@ const CheckOut = () => {
               </p>
               <div className="cart-items-wrapper">
                 <div className="shipping-info-check">
-                  <InfoForm />
+                  <InfoForm 
+                    userData={formData}
+                    setUserData={setFormData}
+                  />
                   <div className="payment-method">
                     <h2>Choose Payment Method</h2>
                     <div>

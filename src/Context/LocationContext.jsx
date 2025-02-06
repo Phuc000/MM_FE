@@ -12,7 +12,7 @@ const getCoordinates = async (address) => {
   }
 
   // some static address to avoid api call (for now)
-  if (address === '102 Dương Bá Trạc, Phường 1, Quận 8, Thành phố Hồ Chí Minh') {
+  if (address === '102 Dương Bá Trạc, Phường 2, Quận 8, Thành phố Hồ Chí Minh') {
     const coords = {
       lat: 10.7442071,
       lon: 106.6889035
@@ -20,7 +20,7 @@ const getCoordinates = async (address) => {
     coordinatesCache.set(address, coords);
     return coords;
   }
-  if (address === '23 Pasteur, Phường Bến Nghé, Quận 1, Thành phố Hồ Chí Minh') {
+  if (address === '23 Pasteur, Phường Nguyễn Thái Bình, Quận 1, Hồ Chí Minh, Việt Nam') {
     const coords = {
       lat: 10.780088517948807,
       lon: 106.69634554631084
@@ -28,7 +28,7 @@ const getCoordinates = async (address) => {
     coordinatesCache.set(address, coords);
     return coords;
   }
-  if (address === '88 Tô Hiến Thành, Phường 15, Quận 10, Thành phố Hồ Chí Minh') {
+  if (address === '88 Đ. Tô Hiến Thành, Phường 15, Quận 10, Hồ Chí Minh, Việt Nam') {
     const coords = {
       lat: 10.778066018083416,
       lon: 106.66580020202629
