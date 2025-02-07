@@ -35,7 +35,7 @@ const DeliveryHistory = () => {
           }
         );
         const filteredDeliveries = response.data.filter(
-          (transaction) => transaction.shipperID === user.id && transaction.deliveryStatus === 4
+          (transaction) => transaction.shipperID === user.id && (transaction.deliveryStatus === 4 || transaction.deliveryStatus === 6)
         );
         setDeliveries(filteredDeliveries);
       } catch (error) {

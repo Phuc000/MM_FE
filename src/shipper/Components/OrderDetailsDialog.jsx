@@ -22,6 +22,7 @@ const OrderDetailsDialog = ({ open, onClose, transactionId }) => {
   const [transaction, setTransaction] = useState(null);
   const { user } = useAuth();
   const [customer, setCustomer] = useState(null);
+  const [store, setStore] = useState(null);
 
   useEffect(() => {
     const fetchTransactionDetails = async () => {
@@ -34,6 +35,16 @@ const OrderDetailsDialog = ({ open, onClose, transactionId }) => {
           }
         );
         setTransaction(response.data);
+        
+        // Fetch store details
+        const storeResponse = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/stores/${response.data.storeID}`,
+          {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true,
+          }
+        );
+        setStore(storeResponse.data);
 
         if (user.role === "Customer") {
           setCustomer(user);
@@ -71,8 +82,12 @@ const OrderDetailsDialog = ({ open, onClose, transactionId }) => {
         Order Details
       </DialogTitle>
       <DialogContent>
-        {transaction && customer ? (
+        {transaction && customer && store ? (
           <>
+            <Typography variant="h6">Store Information</Typography>
+            <Typography>Name: {store.name}</Typography>
+            <Typography>Location: {store.location}</Typography>
+            <Typography>Contact: {store.contactInfo}</Typography>
             <Typography variant="h6">Customer Information</Typography>
             <Typography>
               Name: {customer.fName} {customer.lName}
@@ -119,6 +134,9 @@ const OrderDetailsDialog = ({ open, onClose, transactionId }) => {
             <Typography>Payment Method: {transaction.paymentMethod}</Typography>
             <Typography>
               Order Date: {new Date(transaction.dateAndTime).toLocaleString()}
+            </Typography>
+            <Typography>
+              Shipping Adress: {transaction.shippingAddress}
             </Typography>
           </>
         ) : (

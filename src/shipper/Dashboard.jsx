@@ -15,6 +15,7 @@ import {
   Snackbar,
   Alert,
   LinearProgress,
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
 } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import OrderDetailsDialog from './Components/OrderDetailsDialog';
@@ -27,6 +28,8 @@ const Dashboard = () => {
   const [selectedTransactionId, setSelectedTransactionId] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const { user } = useAuth(); // Get the current shipper's information
+
+  const [bombConfirmation, setBombConfirmation] = useState({ open: false, transactionId: null });
 
   useEffect(() => {
     const fetchShipperInfo = async () => {
@@ -183,7 +186,7 @@ const Dashboard = () => {
     try {
       // Cancel order using new API endpoint
       await axios.post(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/shippers/cancel-order/${transactionId}/${user.id}`,
+        `${import.meta.env.VITE_REACT_APP_API_URL}/shippers/cancel-order/${transactionId}`,
         {},
         {
           headers: { 'Content-Type': 'application/json' },
@@ -208,6 +211,47 @@ const Dashboard = () => {
         message: 'Failed to cancel order.',
         severity: 'error',
       });
+    }
+  };
+
+  // Add confirmation handler
+  const handleBombConfirmOpen = (transactionId) => {
+    setBombConfirmation({ open: true, transactionId });
+  };
+
+  const handleBombConfirmClose = () => {
+    setBombConfirmation({ open: false, transactionId: null });
+  };
+
+  const handleBombed = async () => {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/shippers/get-bombed/${bombConfirmation.transactionId}`,
+        {},
+        {
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,
+        }
+      );
+
+      setShipperOrders((prev) => 
+        prev.filter((tx) => tx.transactionId !== bombConfirmation.transactionId)
+      );
+
+      setSnackbar({
+        open: true,
+        message: 'Order marked as bombed.',
+        severity: 'warning',
+      });
+    } catch (error) {
+      console.error('Error marking order as bombed:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to mark order as bombed.',
+        severity: 'error',
+      });
+    } finally {
+      handleBombConfirmClose();
     }
   };
 
@@ -253,6 +297,7 @@ const Dashboard = () => {
               <TableCell>Date and Time</TableCell>
               <TableCell>Payment Method</TableCell>
               <TableCell>Delivery Status</TableCell>
+              <TableCell>Shipping Address</TableCell>
               <TableCell>Total Price</TableCell>
               <TableCell>Total Weight</TableCell>
               <TableCell align="center">Actions</TableCell>
@@ -264,6 +309,7 @@ const Dashboard = () => {
                 <TableCell>{new Date(tx.dateAndTime).toLocaleString()}</TableCell>
                 <TableCell>{tx.paymentMethod}</TableCell>
                 <TableCell>{getStatusText(tx.deliveryStatus)}</TableCell>
+                <TableCell>{tx.shippingAddress}</TableCell>
                 <TableCell>${tx.totalPrice.toFixed(2)}</TableCell>
                 <TableCell>{tx.totalWeight} g</TableCell>
                 <TableCell align="center">
@@ -308,8 +354,16 @@ const Dashboard = () => {
                         variant="contained"
                         color="warning"
                         onClick={() => handleReschedule(tx.transactionId)}
+                        sx={{ marginRight: '8px' }}
                       >
                         Reschedule
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        onClick={() => handleBombConfirmOpen(tx.transactionId)}
+                      >
+                        Bombed
                       </Button>
                     </>
                   )}
@@ -335,6 +389,26 @@ const Dashboard = () => {
           transactionId={selectedTransactionId}
         />
       )}
+
+      <Dialog
+        open={bombConfirmation.open}
+        onClose={handleBombConfirmClose}
+      >
+        <DialogTitle>Confirm Order Bombing</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to mark this order as bombed? This action cannot be undone and should only be used when the customer refuses delivery.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleBombConfirmClose} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleBombed} color="error" variant="contained">
+            Confirm Bomb
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {/* Snackbar for notifications */}
       <Snackbar
