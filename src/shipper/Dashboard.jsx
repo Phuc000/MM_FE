@@ -29,6 +29,9 @@ const Dashboard = () => {
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const { user } = useAuth(); // Get the current shipper's information
 
+  const [routingData, setRoutingData] = useState(null);
+  const [isGeneratingRoute, setIsGeneratingRoute] = useState(false);
+
   const [bombConfirmation, setBombConfirmation] = useState({ open: false, transactionId: null });
 
   useEffect(() => {
@@ -272,6 +275,118 @@ const Dashboard = () => {
     }
   };
 
+  const handleGenerateRoute = async () => {
+    setIsGeneratingRoute(true);
+    try {
+      // Group orders by store
+      const ordersByStore = shipperOrders.reduce((acc, order) => {
+        if (!acc[order.storeID]) {
+          acc[order.storeID] = {
+            storeAddress: '', // Will be fetched
+            orders: []
+          };
+        }
+        acc[order.storeID].orders.push(order);
+        return acc;
+      }, {});
+  
+      // Fetch store addresses and generate routes
+      const routeResults = [];
+      for (const storeId of Object.keys(ordersByStore)) {
+        // Fetch store info
+        const storeResponse = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/stores/${storeId}`,
+          {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true,
+          }
+        );
+        
+        const shopAddress = storeResponse.data.location;
+        const deliveryAddresses = ordersByStore[storeId].orders.map(
+          order => order.shippingAddress
+        );
+  
+        // Get optimal route
+        const routeResponse = await axios.post(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/delivery/optimize`,
+          {
+            shopAddress,
+            deliveryAddresses
+          },
+          {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true,
+          }
+        );
+  
+        routeResults.push({
+          storeId,
+          storeName: storeResponse.data.name,
+          route: routeResponse.data.optimalRoute,
+          distance: routeResponse.data.totalDistance
+        });
+      }
+  
+      setRoutingData(routeResults);
+      setSnackbar({
+        open: true,
+        message: 'Route generated successfully',
+        severity: 'success'
+      });
+    } catch (error) {
+      console.error('Error generating route:', error);
+      setSnackbar({
+        open: true,
+        message: 'Failed to generate route',
+        severity: 'error'
+      });
+    } finally {
+      setIsGeneratingRoute(false);
+    }
+  };
+  
+  const RouteTable = ({ routingData }) => {
+    if (!routingData) return null;
+  
+    return (
+      <Box sx={{ mt: 4 }}>
+        <Typography variant="h6" gutterBottom>
+          Delivery Routes
+        </Typography>
+        {routingData.map((storeRoute, storeIndex) => (
+          <Box key={storeRoute.storeId} sx={{ mb: 4 }}>
+            <Typography variant="subtitle1" gutterBottom>
+              {storeRoute.storeName} - Total Distance: {(storeRoute.distance / 1000).toFixed(2)} km
+            </Typography>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Step</TableCell>
+                    <TableCell>From</TableCell>
+                    <TableCell>To</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {storeRoute.route.map((address, index) => (
+                    index < storeRoute.route.length - 1 && (
+                      <TableRow key={index}>
+                        <TableCell>{index + 1}</TableCell>
+                        <TableCell>{address}</TableCell>
+                        <TableCell>{storeRoute.route[index + 1]}</TableCell>
+                      </TableRow>
+                    )
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+        ))}
+      </Box>
+    );
+  };
+
   const vehicleCapacity = shipperInfo ? shipperInfo.vehicleCapacity * 60 : 0;
   const capacityPercentage = vehicleCapacity
     ? Math.min((capacityUsage / vehicleCapacity) * 100, 100)
@@ -290,6 +405,17 @@ const Dashboard = () => {
           <LinearProgress variant="determinate" value={capacityPercentage} />
         </Box>
       )}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleGenerateRoute}
+        disabled={isGeneratingRoute || shipperOrders.length === 0}
+        sx={{ mt: 2 }}
+      >
+        {isGeneratingRoute ? 'Generating Route...' : 'Create Route'}
+      </Button>
+      
+      <RouteTable routingData={routingData} />
       <TableContainer component={Paper}>
         <Table aria-label="shipper orders table">
           <TableHead>
@@ -297,6 +423,7 @@ const Dashboard = () => {
               <TableCell>Date and Time</TableCell>
               <TableCell>Payment Method</TableCell>
               <TableCell>Delivery Status</TableCell>
+              <TableCell>Store ID</TableCell>
               <TableCell>Shipping Address</TableCell>
               <TableCell>Total Price</TableCell>
               <TableCell>Total Weight</TableCell>
@@ -309,6 +436,7 @@ const Dashboard = () => {
                 <TableCell>{new Date(tx.dateAndTime).toLocaleString()}</TableCell>
                 <TableCell>{tx.paymentMethod}</TableCell>
                 <TableCell>{getStatusText(tx.deliveryStatus)}</TableCell>
+                <TableCell>{tx.storeID}</TableCell>
                 <TableCell>{tx.shippingAddress}</TableCell>
                 <TableCell>${tx.totalPrice.toFixed(2)}</TableCell>
                 <TableCell>{tx.totalWeight} g</TableCell>
