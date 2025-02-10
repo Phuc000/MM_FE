@@ -275,6 +275,23 @@ const Dashboard = () => {
     }
   };
 
+  const handleOrderUpdate = (transactionId, newStatus) => {
+    setShipperOrders(prev =>
+      prev.map(tx =>
+        tx.transactionId === transactionId
+          ? { ...tx, deliveryStatus: newStatus }
+          : tx
+      )
+    );
+  };
+  
+  const handleOrderRemove = (transactionId) => {
+    setShipperOrders(prev => 
+      prev.filter(tx => tx.transactionId !== transactionId)
+    );
+  };
+  
+
   const handleGenerateRoute = async () => {
     setIsGeneratingRoute(true);
     try {
@@ -324,7 +341,8 @@ const Dashboard = () => {
           storeId,
           storeName: storeResponse.data.name,
           route: routeResponse.data.optimalRoute,
-          distance: routeResponse.data.totalDistance
+          distance: routeResponse.data.totalDistance,
+          orders: ordersByStore[storeId].orders // Include orders in route data
         });
       }
   
@@ -348,13 +366,23 @@ const Dashboard = () => {
   
   const RouteTable = ({ routingData }) => {
     if (!routingData) return null;
+
+    const getOrderByAddress = (storeRoute, address) => {
+      return storeRoute.orders?.find(order => order.shippingAddress === address);
+    };
   
+    const createGoogleMapsLink = (from, to) => {
+      const encodedFrom = encodeURIComponent(from);
+      const encodedTo = encodeURIComponent(to);
+      return `https://www.google.com/maps/dir/${encodedFrom}/${encodedTo}`;
+    };
+
     return (
       <Box sx={{ mt: 4 }}>
         <Typography variant="h6" gutterBottom>
           Delivery Routes
         </Typography>
-        {routingData.map((storeRoute, storeIndex) => (
+        {routingData.map((storeRoute) => (
           <Box key={storeRoute.storeId} sx={{ mb: 4 }}>
             <Typography variant="subtitle1" gutterBottom>
               {storeRoute.storeName} - Total Distance: {(storeRoute.distance / 1000).toFixed(2)} km
@@ -366,6 +394,7 @@ const Dashboard = () => {
                     <TableCell>Step</TableCell>
                     <TableCell>From</TableCell>
                     <TableCell>To</TableCell>
+                    <TableCell align="center">Actions</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -375,6 +404,29 @@ const Dashboard = () => {
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>{address}</TableCell>
                         <TableCell>{storeRoute.route[index + 1]}</TableCell>
+                        <TableCell align="center">
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            href={createGoogleMapsLink(address, storeRoute.route[index + 1])}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{ marginRight: '8px' }}
+                          >
+                            View on Maps
+                          </Button>
+                          {getOrderByAddress(storeRoute, storeRoute.route[index + 1]) && (
+                            <Button
+                              variant="contained"
+                              color="secondary"
+                              onClick={() => handleOpenDetails(
+                                getOrderByAddress(storeRoute, storeRoute.route[index + 1]).transactionId
+                              )}
+                            >
+                              View Order
+                            </Button>
+                          )}
+                        </TableCell>
                       </TableRow>
                     )
                   ))}
@@ -414,11 +466,13 @@ const Dashboard = () => {
       >
         {isGeneratingRoute ? 'Generating Route...' : 'Create Route'}
       </Button>
-      
+
       <RouteTable routingData={routingData} />
       <TableContainer component={Paper}>
         <Table aria-label="shipper orders table">
-          <TableHead>
+          <TableHead
+            sx={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }}
+          >
             <TableRow>
               <TableCell>Date and Time</TableCell>
               <TableCell>Payment Method</TableCell>
@@ -515,6 +569,8 @@ const Dashboard = () => {
           open={openDetailsDialog}
           onClose={handleCloseDetails}
           transactionId={selectedTransactionId}
+          onOrderUpdate={handleOrderUpdate}
+          onOrderRemove={handleOrderRemove}
         />
       )}
 
