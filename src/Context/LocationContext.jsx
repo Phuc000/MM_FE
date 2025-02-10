@@ -140,7 +140,7 @@ export const LocationProvider = ({ children }) => {
             const storeAddress = `${store.location}`;
             const storeCoords = await getCoordinates(storeAddress);
             // console.log('Store:', store.storeID, 'Coords:', storeCoords);
-            console.log('Store:', store.storeID, 'Store Adress:', storeAddress, 'Coords:', storeCoords);
+            // console.log('Store:', store.storeID, 'Store Adress:', storeAddress, 'Coords:', storeCoords);
             
             if (!storeCoords) return { ...store, distance: Infinity };
             

@@ -439,7 +439,7 @@ const Dashboard = () => {
     );
   };
 
-  const vehicleCapacity = shipperInfo ? shipperInfo.vehicleCapacity * 60 : 0;
+  const vehicleCapacity = shipperInfo ? shipperInfo.vehicleCapacity : 0;
   const capacityPercentage = vehicleCapacity
     ? Math.min((capacityUsage / vehicleCapacity) * 100, 100)
     : 0;
