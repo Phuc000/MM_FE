@@ -18,8 +18,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useWebSocket } from '../../hooks/useWebSocket';
 import AddRecipe from '../../Components/Common/AddRecipe';
 
-const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-const recognition = new SpeechRecognition();
+import { useVoiceInput } from '../../hooks/useVoiceInput';
 
 // Hardcoded product list (same as in Header.jsx)
 const products = [
@@ -74,93 +73,10 @@ const ChatUI = () => {
   const [error, setError] = useState('');
 
   // voice chat function
-  const [listening, setListening] = useState(false);
+  const { listening, handleVoiceInput, barsRef } = useVoiceInput((voiceInput) => {
+    setUserInput(voiceInput);
+  });
 
-  // Refs for audio processing
-  const audioContextRef = useRef(null);
-  const analyserRef = useRef(null);
-  const dataArrayRef = useRef(null);
-  const sourceRef = useRef(null);
-  const rafIdRef = useRef(null);
-  const barsRef = useRef([]);
-
-  const handleVoiceInput = async () => {
-    if (listening) {
-      recognition.stop();
-      setListening(false);
-
-      // Stop audio processing
-      cancelAnimationFrame(rafIdRef.current);
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
-    } else {
-      recognition.start();
-      setListening(true);
-
-      // Set up audio context for visualization
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-        analyserRef.current = audioContextRef.current.createAnalyser();
-        sourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
-        sourceRef.current.connect(analyserRef.current);
-        analyserRef.current.fftSize = 2048;
-        const bufferLength = analyserRef.current.fftSize;
-        dataArrayRef.current = new Uint8Array(bufferLength);
-
-        visualizeAudio();
-      } catch (err) {
-        console.error('Microphone access error:', err);
-      }
-    }
-
-    recognition.onresult = (event) => {
-      const voiceInput = event.results[0][0].transcript;
-      setUserInput(voiceInput);
-    };
-
-    recognition.onerror = (event) => {
-      console.error('Voice recognition error:', event.error);
-      setListening(false);
-    };
-
-    recognition.onend = () => {
-      setListening(false);
-
-      // Stop audio processing
-      cancelAnimationFrame(rafIdRef.current);
-      if (audioContextRef.current) {
-        audioContextRef.current.close();
-      }
-    };
-  };
-
-  const visualizeAudio = () => {
-    rafIdRef.current = requestAnimationFrame(visualizeAudio);
-
-    analyserRef.current.getByteTimeDomainData(dataArrayRef.current);
-
-    // Update the bars based on time-domain data
-    if (barsRef.current.length > 0) {
-      const step = Math.floor(dataArrayRef.current.length / barsRef.current.length);
-      for (let i = 0; i < barsRef.current.length; i++) {
-        let sum = 0;
-        for (let j = 0; j < step; j++) {
-          const value = dataArrayRef.current[i * step + j] - 128; // Center wave around zero
-          sum += Math.abs(value);
-        }
-        const average = sum / step;
-        let barHeight = (average / 128) * 160 + 2; // Scale to desired height
-        if (barHeight > 24) {
-          barHeight = 24;
-        }
-        if (barsRef.current[i]) {
-          barsRef.current[i].style.height = `${barHeight}px`;
-        }
-      }
-    }
-  };
 
   // Add function to handle image selection
   const handleImageSelect = (event) => {
