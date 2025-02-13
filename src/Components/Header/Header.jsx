@@ -211,25 +211,69 @@ const Header = () => {
         <i className="fa fa-bars wrap-menu" onClick={toggleMenu} aria-label="Open menu"></i>
       </nav>
       <div className="secondary-header">
-        {/* User current location on the right with MUI styling */}
-        <Box 
-          display="flex" 
-          alignItems="center" 
-          justifyContent="flex-end" 
-          sx={{ cursor: 'pointer', pr: 2 }} 
-          onClick={() => setShowSelector(true)} // Open Location Selector on click
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+          width="100%"
+          flexWrap="wrap"
+          sx={{ padding: { xs: '10px', sm: '20px' } }}
         >
-          <LocationOnIcon color="primary" />
-          <Typography 
-            variant="body1" 
-            sx={{ 
-              fontWeight: 900, 
-              fontFamily: 'Quicksand, sans-serif',
-              ml: 1 
-            }}
+          <Box display="flex" alignItems="center" gap={3}>
+            <Link to="/RecipesArticles" className={getNavItemClass("/RecipesArticles")}>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: 900,
+                  fontFamily: 'Quicksand, sans-serif',
+                  transition: 'color 0.3s',
+                  color: 'rgb(24, 40, 51)',
+                  '&:hover': {
+                    color: '#fe3bd4',
+                  },
+                }}
+              >
+                Recipes Articles
+              </Typography>
+            </Link>
+            <Link to="/MealPlanner" className={getNavItemClass("/MealPlanner")}>
+              <Typography
+                variant="body1"
+                sx={{
+                  fontWeight: 900,
+                  fontFamily: 'Quicksand, sans-serif',
+                  transition: 'color 0.3s',
+                  color: 'rgb(24, 40, 51)',
+                  '&:hover': {
+                    color: '#fe3bd4',
+                  },
+                }}
+              >
+                Meal Planner
+              </Typography>
+            </Link>
+          </Box>
+          {/* User current location on the right with MUI styling */}
+          <Box 
+            display="flex" 
+            alignItems="center" 
+            justifyContent="flex-end" 
+            sx={{ cursor: 'pointer', pr: { xs: 1, sm: 2 } }} 
+            onClick={() => setShowSelector(true)} // Open Location Selector on click
+            aria-label="Change Location"
           >
-            {location?.ward.name}, {location?.city.name}
-          </Typography>
+            <LocationOnIcon color="primary" />
+            <Typography 
+              variant="body1" 
+              sx={{ 
+                fontWeight: 900, 
+                fontFamily: 'Quicksand, sans-serif',
+                ml: 1 
+              }}
+            >
+              {location?.ward.name}, {location?.city.name}
+            </Typography>
+          </Box>
         </Box>
       </div>
     </div>
