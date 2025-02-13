@@ -1,5 +1,4 @@
 // src/Pages/ChatPage/ChatPage.jsx
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Header, Footer } from '../../Components';
 import ReactMarkdown from 'react-markdown';
@@ -19,18 +18,8 @@ import { useWebSocket } from '../../hooks/useWebSocket';
 import AddRecipe from '../../Components/Common/AddRecipe';
 
 import { useVoiceInput } from '../../hooks/useVoiceInput';
+import { useLocationContext } from '../../Context/LocationContext';
 
-// Hardcoded product list (same as in Header.jsx)
-const products = [
-  'Tomato Pasta Sauce', 'Crab Legs', 'Pork Belly', 'Pork Loin', 'Pork Chops',
-  'Pork Ribs', 'Ground Pork', 'Ground Beef', 'Beef Brisket', 'Beef Ribeye',
-  'Beef Tenderloin', 'Beef Stew Meat', 'Salmon Fillet', 'Shrimp', 'Scallops',
-  'Cod', 'Whole Milk', 'Skim Milk', 'Almond Milk', 'Oranges', 'Soy Milk',
-  'Coconut Milk', 'Black Pepper', 'Cinnamon', 'Paprika', 'Turmeric', 'Cumin',
-  'Spinach', 'Carrots', 'Broccoli', 'Bell Peppers', 'Tomatoes', 'Tomato Sauce',
-  'Soy Sauce', 'Hot Sauce', 'BBQ Sauce', 'Fish Sauce', 'Bananas', 'Grapes',
-  'Strawberries', 'Quinoa', 'Barley', 'Oats', 'Wheat Flour', 'Apples', 'Rice',
-];
 
 const mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
 const dietaryPreferences = ['Vegetarian', 'Vegan', 'Gluten-Free', 'Dairy-Free'];
@@ -60,9 +49,18 @@ const validateImageFile = (file) => {
 };
 
 const ChatUI = () => {
+  const locationContext = useLocationContext();
   const { user } = useAuth();
   const [userInput, setUserInput] = useState('');
-  const { wsStatus, messages, wsRef, setMessages } = useWebSocket(user?.id);
+  const { 
+    wsStatus, 
+    messages, 
+    wsRef, 
+    setMessages, 
+    error,
+    setError,
+    cartActionInProgress 
+  } = useWebSocket(user?.id, locationContext);
 
   const [selectedMealType, setSelectedMealType] = useState('');
   const [selectedDietaryPreference, setSelectedDietaryPreference] = useState('');
@@ -70,7 +68,7 @@ const ChatUI = () => {
   // Add state for image
   const [selectedImage, setSelectedImage] = useState(null);
   const fileInputRef = useRef(null);
-  const [error, setError] = useState('');
+  // const [error, setError] = useState('');
 
   // voice chat function
   const { listening, handleVoiceInput, barsRef } = useVoiceInput((voiceInput) => {
@@ -335,36 +333,47 @@ const ChatUI = () => {
               </Typography>
             </Box>
           ) : (
-          messages.map((message, index) => (
-            <div
-              key={index}
-              className={`message-group ${
-                message.sender === 'user' ? 'message-group-user' : 'message-group-bot'
-              }`}
-            >
-              {/* Image message */}
-              {message.image && (
-                <div className="message message-image-container">
-                  <img 
-                    src={message.image} 
-                    alt="User uploaded"
-                    className="message-image" 
-                  />
-                </div>
-              )}
-              
-              {/* Text message */}
-              {message.text && (
-                <div className="message">
-                  {message.sender === 'bot' ? (
-                    <ReactMarkdown>{message.text}</ReactMarkdown>
-                  ) : (
-                    message.text
+            <>
+              {messages.map((message, index) => (
+                <div
+                  key={index}
+                  className={`message-group ${
+                    message.sender === 'user' ? 'message-group-user' : 'message-group-bot'
+                  }`}
+                >
+                  {/* Image message */}
+                  {message.image && (
+                    <div className="message message-image-container">
+                      <img 
+                        src={message.image} 
+                        alt="User uploaded"
+                        className="message-image" 
+                      />
+                    </div>
+                  )}
+
+                  {/* Text message */}
+                  {message.text && (
+                    <div className="message">
+                      {message.sender === 'bot' ? (
+                        <ReactMarkdown>{message.text}</ReactMarkdown>
+                      ) : (
+                        message.text
+                      )}
+                    </div>
                   )}
                 </div>
+              ))}
+              {cartActionInProgress && (
+                <div className="message-group message-group-bot">
+                  <div className="message">
+                    <Typography sx={{ fontStyle: 'italic' }}>
+                      Adding item to cart...
+                    </Typography>
+                  </div>
+                </div>
               )}
-            </div>
-          ))
+            </>
           )}
         </div>
         {selectedImage && (
@@ -442,10 +451,10 @@ const ChatUI = () => {
       <Snackbar 
         open={!!error} 
         autoHideDuration={6000} 
-        onClose={() => setError('')}
+        onClose={() => setError(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert onClose={() => setError('')} severity="error">
+        <Alert onClose={() => setError(null)} severity="error">
           {error}
         </Alert>
       </Snackbar>

@@ -1,12 +1,41 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+import { addToCart } from '../Components/utils/cartUtils';
 
-export const useWebSocket = (userId) => {
+
+export const useWebSocket = (userId, locationContext) => {
   const [wsStatus, setWsStatus] = useState('disconnected');
   const [messages, setMessages] = useState([]);
+  const [error, setError] = useState(null);
+  const [cartActionInProgress, setCartActionInProgress] = useState(false);
   const wsRef = useRef(null);
   const location = useLocation();
   const isOnChatPage = location.pathname === '/Chat';
+
+  const handleCartAction = async (action) => {
+    // if (!user || user.role !== 'Customer') {
+    //   setError('Please log in as a customer to add items to cart');
+    //   return;
+    // }
+
+    try {
+      setCartActionInProgress(true);
+      console.log('Processing cart action:', action);
+      const success = await addToCart(userId, action.product.id, 1, locationContext);
+      
+      if (success) {
+        setMessages(prev => [...prev, {
+          sender: 'bot',
+          text: `✅ Successfully added product to your cart!`
+        }]);
+      }
+    } catch (err) {
+      console.error('Error processing cart action:', err);
+      setError('Failed to add item to cart');
+    } finally {
+      setCartActionInProgress(false);
+    }
+  };
 
   useEffect(() => {
     let isSubscribed = true;
@@ -33,14 +62,32 @@ export const useWebSocket = (userId) => {
         setWsStatus('connected');
       };
 
-      ws.onmessage = (event) => {
+      ws.onmessage = async (event) => {
         if (!isSubscribed || !isOnChatPage) return;
         const data = JSON.parse(event.data);
+        
         if (data.error) {
           console.error('WebSocket error:', data.error);
+          setError(data.error);
           return;
         }
-        setMessages(prev => [...prev, { sender: 'bot', text: data.message }]);
+
+        console.log('WebSocket Message:', data);
+
+        // Add bot's message
+        setMessages(prev => [...prev, { 
+          sender: 'bot', 
+          text: data.message 
+        }]);
+
+        // Process any actions
+        if (data.actions && data.actions.length > 0) {
+          for (const action of data.actions) {
+            if (action.action === 'add_to_cart') {
+              await handleCartAction(action);
+            }
+          }
+        }
       };
 
       ws.onclose = () => {
@@ -76,5 +123,13 @@ export const useWebSocket = (userId) => {
     };
   }, [userId, isOnChatPage]);
 
-  return { wsStatus, messages, wsRef, setMessages };
+  return { 
+    wsStatus, 
+    messages, 
+    wsRef, 
+    setMessages, 
+    error,
+    setError,
+    cartActionInProgress 
+  };
 };
