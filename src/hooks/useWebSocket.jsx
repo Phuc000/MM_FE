@@ -21,7 +21,7 @@ export const useWebSocket = (userId, locationContext) => {
     try {
       setCartActionInProgress(true);
       console.log('Processing cart action:', action);
-      const success = await addToCart(userId, action.product.id, 1, locationContext);
+      const success = await addToCart(userId, action.product.id, action.product.quantity, locationContext);
       
       if (success) {
         setMessages(prev => [...prev, {
