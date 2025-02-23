@@ -1,16 +1,8 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { Home, Login, Cart, Category, BuyProduct, Store, Profile, AboutUs, CheckOut, Admin, Shipper, ChatPage, RecipesArticles, MealPlanner } from "./Pages";
+import { Suspense, lazy } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import AdminDashboard from "./admin/Dashboard";
-import ManageUsers from './admin/ManageUsers';
-import ManageProducts from './admin/ManageProducts';
-import ManagePromotions from './admin/ManagePromotions';
-import ManageInventory from "./admin/ManageInventory";
-import ViewOrders from "./admin/ViewOrders";
 import { CartProvider } from './Context/CartContext';
-// import { AuthProvider } from "./Context/AuthContext";
-
 import { MealPlannerProvider } from "./Context/MealPlannerContext";
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -18,9 +10,38 @@ import Timer from "./Components/Timer/Timer";
 import { TimerProvider } from "./Context/TimerContext";
 import { LocationProvider } from "./Context/LocationContext";
 import { useAuth } from "./hooks/useAuth";
-
-
 import "./App.css";
+
+// Lazy load components
+const Home = lazy(() => import('./Pages/Home'));
+const Login = lazy(() => import('./Pages/Login/Login'));
+const Cart = lazy(() => import('./Pages/Cart/Cart'));
+const Category = lazy(() => import('./Pages/Category/Category'));
+const BuyProduct = lazy(() => import('./Pages/BuyProduct/BuyProduct'));
+const Store = lazy(() => import('./Pages/Store/Store'));
+const Profile = lazy(() => import('./Pages/Profile/Profile'));
+const AboutUs = lazy(() => import('./Pages/AboutUs/AboutUs'));
+const CheckOut = lazy(() => import('./Pages/CheckOut/CheckOut'));
+const Admin = lazy(() => import('./Pages/Administrator/Admin'));
+const Shipper = lazy(() => import('./Pages/Shipper/Shipper'));
+const ChatPage = lazy(() => import('./Pages/ChatPage/ChatPage'));
+const RecipesArticles = lazy(() => import('./Pages/RecipesArticles/RecipesArticles'));
+const MealPlanner = lazy(() => import('./Pages/MealPlanner/MealPlanner'));
+
+// Lazy load admin components
+const AdminDashboard = lazy(() => import('./admin/Dashboard'));
+const ManageUsers = lazy(() => import('./admin/ManageUsers'));
+const ManageProducts = lazy(() => import('./admin/ManageProducts'));
+const ManagePromotions = lazy(() => import('./admin/ManagePromotions'));
+const ManageInventory = lazy(() => import('./admin/ManageInventory'));
+const ViewOrders = lazy(() => import('./admin/ViewOrders'));
+
+// Loading fallback component
+const LoadingSpinner = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    Loading...
+  </div>
+);
 
 function App() {
   const {user} = useAuth();
@@ -29,12 +50,12 @@ function App() {
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <MealPlannerProvider>
           <CartProvider>
-          <TimerProvider>
-            {/* <AuthProvider> */}
-                <Router>
-                  <div className="App">
-                    <div className="content">
+            <TimerProvider>
+              <Router>
+                <div className="App">
+                  <div className="content">
                     {user && user.role === 'Customer' && <Timer customerId={user.id} />}
+                    <Suspense fallback={<LoadingSpinner />}>
                       <Routes>
                         <Route path="/" element={<Home />} />
                         <Route path="/Login" element={<Login />} />
@@ -57,15 +78,13 @@ function App() {
                           <Route path="manage-inventory" element={<ManageInventory />} />
                           <Route path="view-orders" element={<ViewOrders />} />
                         </Route>
-                        <Route path="/Shipper/*" element={<Shipper />}>
-    
-                        </Route>
+                        <Route path="/Shipper/*" element={<Shipper />} />
                       </Routes>
-                      <ToastContainer />
-                    </div>
+                    </Suspense>
+                    <ToastContainer />
                   </div>
-                </Router>
-            {/* </AuthProvider> */}
+                </div>
+              </Router>
             </TimerProvider>
           </CartProvider>
         </MealPlannerProvider>
