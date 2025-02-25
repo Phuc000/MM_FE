@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { Suspense, lazy } from 'react';
+import { Home, Login, Cart, Category, BuyProduct, Store, Profile, AboutUs, CheckOut, ChatPage, RecipesArticles, MealPlanner } from "./Pages";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { CartProvider } from './Context/CartContext';
@@ -13,20 +14,8 @@ import { useAuth } from "./hooks/useAuth";
 import "./App.css";
 
 // Lazy load components
-const Home = lazy(() => import('./Pages/Home'));
-const Login = lazy(() => import('./Pages/Login/Login'));
-const Cart = lazy(() => import('./Pages/Cart/Cart'));
-const Category = lazy(() => import('./Pages/Category/Category'));
-const BuyProduct = lazy(() => import('./Pages/BuyProduct/BuyProduct'));
-const Store = lazy(() => import('./Pages/Store/Store'));
-const Profile = lazy(() => import('./Pages/Profile/Profile'));
-const AboutUs = lazy(() => import('./Pages/AboutUs/AboutUs'));
-const CheckOut = lazy(() => import('./Pages/CheckOut/CheckOut'));
 const Admin = lazy(() => import('./Pages/Administrator/Admin'));
 const Shipper = lazy(() => import('./Pages/Shipper/Shipper'));
-const ChatPage = lazy(() => import('./Pages/ChatPage/ChatPage'));
-const RecipesArticles = lazy(() => import('./Pages/RecipesArticles/RecipesArticles'));
-const MealPlanner = lazy(() => import('./Pages/MealPlanner/MealPlanner'));
 
 // Lazy load admin components
 const AdminDashboard = lazy(() => import('./admin/Dashboard'));

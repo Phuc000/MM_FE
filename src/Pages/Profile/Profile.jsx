@@ -1,23 +1,35 @@
 // src/Pages/Profile/Profile.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, Footer, UserMenu } from "../../Components";
 import "./Profile.scss";
-import MyAccount from "../../Components/Common/UserComponents/MyAccount";
-import MyOrders from "../../Components/Common/UserComponents/MyOrders";
-import Promotions from "../../Components/Common/UserComponents/Promotions";
-import Restock from "../../Components/Common/ManagerComponents/Restock";
-import CreateProduct from "../../Components/Common/ManagerComponents/CreateProduct";
-import CreatePromotion from "../../Components/Common/ManagerComponents/CreatePromotion";
-import Dashboard from "../../Components/Common/ManagerComponents/Dashboard";
-import StoreOrders from "../../Components/Common/ManagerComponents/StoreOrders";
-import AccountDetails from "../../Components/Common/UserComponents/AccountDetail";
+// import MyAccount from "../../Components/Common/UserComponents/MyAccount";
+// import MyOrders from "../../Components/Common/UserComponents/MyOrders";
+// import Promotions from "../../Components/Common/UserComponents/Promotions";
+// import Restock from "../../Components/Common/ManagerComponents/Restock";
+// import CreateProduct from "../../Components/Common/ManagerComponents/CreateProduct";
+// import CreatePromotion from "../../Components/Common/ManagerComponents/CreatePromotion";
+// import Dashboard from "../../Components/Common/ManagerComponents/Dashboard";
+// import StoreOrders from "../../Components/Common/ManagerComponents/StoreOrders";
+// import AccountDetails from "../../Components/Common/UserComponents/AccountDetail";
 import axios from "axios";
-import { Modal, IconButton, Box, Typography, Button, Badge, Snackbar, Alert } from '@mui/material';
+import { Modal, IconButton, Box, Typography, Button, Badge, Snackbar, Alert, CircularProgress } from '@mui/material';
 import { keyframes } from '@mui/system';
 import CasinoIcon from '@mui/icons-material/Casino';
-import { Wheel } from 'react-custom-roulette';
+// import { Wheel } from 'react-custom-roulette';
 import { useAuth } from "../../hooks/useAuth";
+
+// Lazy load components
+const MyAccount = lazy(() => import("../../Components/Common/UserComponents/MyAccount"));
+const MyOrders = lazy(() => import("../../Components/Common/UserComponents/MyOrders"));
+const Promotions = lazy(() => import("../../Components/Common/UserComponents/Promotions"));
+const Restock = lazy(() => import("../../Components/Common/ManagerComponents/Restock"));
+const CreateProduct = lazy(() => import("../../Components/Common/ManagerComponents/CreateProduct"));
+const Dashboard = lazy(() => import("../../Components/Common/ManagerComponents/Dashboard"));
+const StoreOrders = lazy(() => import("../../Components/Common/ManagerComponents/StoreOrders"));
+const AccountDetails = lazy(() => import("../../Components/Common/UserComponents/AccountDetail"));
+
+const Wheel = lazy(() => import('react-custom-roulette').then(module => ({ default: module.Wheel })));
 
 // Define the pulse animation
 const pulse = keyframes`
@@ -208,10 +220,12 @@ const Profile = () => {
           <div className="profile-content-wrapper">
             <UserMenu username={`${user.fName} ${user.lName}`} onMenuClick={handleMenuClick} mode="Customer" />
             <div className="component-container">
+            <Suspense fallback={<CircularProgress />}>
               {activeComponent === "MyOrders" && <MyOrders />}
               {activeComponent === "Promotions" && <Promotions />}
               {activeComponent === "MyAccount" && <MyAccount />}
               {activeComponent === "AccountDetails" && <AccountDetails />}
+            </Suspense>
             </div>
           </div>
         )}
@@ -219,11 +233,13 @@ const Profile = () => {
           <div className="profile-content-wrapper">
             <UserMenu username={`${user.fName} ${user.lName}`} onMenuClick={handleMenuClick} mode="Manager" />
             <div className="component-container">
+            <Suspense fallback={<CircularProgress />}>
               {activeComponent === "Dashboard" && <Dashboard />}
               {activeComponent === "Restock" && <Restock />}
               {activeComponent === "CreateProduct" && <CreateProduct />}
               {/* {activeComponent === "CreatePromotion" && <CreatePromotion />} */}
               {activeComponent === "StoreOrders" && <StoreOrders />}
+            </Suspense>
             </div>
           </div>
         )}
