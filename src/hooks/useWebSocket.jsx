@@ -8,6 +8,7 @@ export const useWebSocket = (userId, locationContext) => {
   const [messages, setMessages] = useState([]);
   const [error, setError] = useState(null);
   const [cartActionInProgress, setCartActionInProgress] = useState(false);
+  const [botTyping, setBotTyping] = useState(false);
   const wsRef = useRef(null);
   const location = useLocation();
   const isOnChatPage = location.pathname === '/Chat';
@@ -65,6 +66,9 @@ export const useWebSocket = (userId, locationContext) => {
       ws.onmessage = async (event) => {
         if (!isSubscribed || !isOnChatPage) return;
         const data = JSON.parse(event.data);
+        
+        // Set botTyping to false when response is received
+        setBotTyping(false);
         
         if (data.error) {
           console.error('WebSocket error:', data.error);
@@ -130,6 +134,8 @@ export const useWebSocket = (userId, locationContext) => {
     setMessages, 
     error,
     setError,
-    cartActionInProgress 
+    cartActionInProgress,
+    botTyping,
+    setBotTyping
   };
 };

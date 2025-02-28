@@ -59,7 +59,9 @@ const ChatUI = () => {
     setMessages, 
     error,
     setError,
-    cartActionInProgress 
+    cartActionInProgress,
+    botTyping,
+    setBotTyping
   } = useWebSocket(user?.id, locationContext);
 
   const [selectedMealType, setSelectedMealType] = useState('');
@@ -183,6 +185,9 @@ const ChatUI = () => {
     // Reset input and image
     setUserInput('');
     setSelectedImage(null);
+
+    // Set bot typing indicator
+    setBotTyping(true);
 
     // Send via WebSocket
     wsRef.current.send(JSON.stringify(message));
@@ -364,6 +369,18 @@ const ChatUI = () => {
                   )}
                 </div>
               ))}
+              {botTyping && (
+                <div className="message-group message-group-bot">
+                  <div className="message typing-indicator">
+                  <div class="loading"> 
+                    <svg width="16px" height="12px">
+                      <polyline id="back" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+                      <polyline id="front" points="1 6 4 6 6 11 10 1 12 6 15 6"></polyline>
+                    </svg>
+                  </div>
+                  </div>
+                </div>
+              )}
               {cartActionInProgress && (
                 <div className="message-group message-group-bot">
                   <div className="message">
