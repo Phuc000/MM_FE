@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Header, Footer } from '../../Components';
 import FeatureAd from '../../Components/Common/Feature_Ad/FeatureAd';
+import RecipeCard from '../../Components/Common/RecipeCard/RecipeCard';
 import AddRecipe from '../../Components/Common/AddRecipe';
 import './RecipesArticles.scss';
 import Pagination from '@mui/material/Pagination'; // Import Material-UI Pagination
@@ -54,15 +55,11 @@ const RecipesArticles = () => {
         </h1>
         <div className="recipes-grid">
           {currentRecipes.map((recipe) => (
-            <div
+            <RecipeCard 
               key={recipe.id}
-              className="recipe-card"
-              onClick={() => handleRecipeClick(recipe)}
-            >
-              <img src={recipe.image} alt={recipe.title} />
-              <h2>{recipe.title}</h2>
-              {/* Other recipe details */}
-            </div>
+              recipe={recipe}
+              onClick={handleRecipeClick}
+            />
           ))}
         </div>
         <div className="pagination-container">

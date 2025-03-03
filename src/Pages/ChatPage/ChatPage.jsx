@@ -15,6 +15,7 @@ import { Typography, Box } from '@mui/material';
 
 import { useAuth } from '../../hooks/useAuth';
 import { useWebSocket } from '../../hooks/useWebSocket';
+import RecipeCard from '../../Components/Common/RecipeCard/RecipeCard';
 import AddRecipe from '../../Components/Common/AddRecipe';
 
 import { useVoiceInput } from '../../hooks/useVoiceInput';
@@ -64,6 +65,9 @@ const ChatUI = () => {
     setBotTyping
   } = useWebSocket(user?.id, locationContext);
 
+  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
+  const [selectedViewRecipe, setSelectedViewRecipe] = useState(null);
+
   const [selectedMealType, setSelectedMealType] = useState('');
   const [selectedDietaryPreference, setSelectedDietaryPreference] = useState('');
 
@@ -76,6 +80,11 @@ const ChatUI = () => {
   const { listening, handleVoiceInput, barsRef } = useVoiceInput((voiceInput) => {
     setUserInput(voiceInput);
   });
+
+  const handleChatRecipeClick = (recipe) => {
+    setSelectedViewRecipe(recipe);
+    setIsRecipeModalOpen(true);
+  };
 
 
   // Add function to handle image selection
@@ -367,6 +376,17 @@ const ChatUI = () => {
                       )}
                     </div>
                   )}
+                  {message.recipe && (
+                    // message
+                  <div className="message-recipe-container">
+                    <div className="chat-recipe-card">
+                      <RecipeCard 
+                        recipe={message.recipe} 
+                        onClick={handleChatRecipeClick} 
+                      />
+                    </div>
+                  </div>
+                )}
                 </div>
               ))}
               {botTyping && (
@@ -465,6 +485,13 @@ const ChatUI = () => {
           recipe={gumboRecipe}
         />
       )} */}
+      {isRecipeModalOpen && selectedViewRecipe && (
+        <AddRecipe
+          open={isRecipeModalOpen}
+          handleClose={() => setIsRecipeModalOpen(false)}
+          recipe={selectedViewRecipe}
+        />
+      )}
       <Snackbar 
         open={!!error} 
         autoHideDuration={6000} 

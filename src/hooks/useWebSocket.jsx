@@ -13,6 +13,23 @@ export const useWebSocket = (userId, locationContext) => {
   const location = useLocation();
   const isOnChatPage = location.pathname === '/Chat';
 
+  const [recipe, setRecipe] = useState(null);
+
+  const handleViewRecipe = async (recipeId) => {
+    try {
+      const response = await fetch('/assets/processed_recipes.json');
+      const data = await response.json();
+      const selectedRecipe = data.find((recipe) => recipe.id == recipeId);
+      console.log('Selected Recipe:', selectedRecipe);
+      setRecipe(selectedRecipe);
+      return selectedRecipe;
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+      return null;
+    }
+  };
+
+
   const handleCartAction = async (action) => {
     // if (!user || user.role !== 'Customer') {
     //   setError('Please log in as a customer to add items to cart');
@@ -81,14 +98,33 @@ export const useWebSocket = (userId, locationContext) => {
         // Add bot's message
         setMessages(prev => [...prev, { 
           sender: 'bot', 
-          text: data.message 
+          text: data.message,
+          // Add recipe if it exists in the action
+          recipe: data.actions?.find(action => action.action === 'view_recipe')?.recipe_id ? null : null // Will be populated below
         }]);
 
         // Process any actions
         if (data.actions && data.actions.length > 0) {
           for (const action of data.actions) {
+            console.log('Processing action:', action);
             if (action.action === 'add_to_cart') {
               await handleCartAction(action);
+            }
+            else if (action.action === 'view_recipe') {
+              // Handle view recipe action
+              const recipeData = await handleViewRecipe(action.recipe_id);
+              if (recipeData) {
+                // Add recipe to the last message
+                setMessages(prev => {
+                  const newMessages = [...prev];
+                  const lastMessage = newMessages[newMessages.length - 1];
+                  newMessages[newMessages.length - 1] = {
+                    ...lastMessage,
+                    recipe: recipeData
+                  };
+                  return newMessages;
+                });
+              }
             }
           }
         }

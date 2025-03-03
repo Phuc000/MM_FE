@@ -282,3 +282,35 @@
     stroke-dashoffset: 0;
   }
 }
+
+.message-recipe-container {
+  width: 100%;
+  max-width: 320px;
+  margin: 8px 0;
+}
+
+.chat-recipe-card {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.2s ease;
+}
+
+.chat-recipe-card:hover {
+  transform: translateY(-3px);
+}
+
+/* Style overrides for RecipeCard when displayed in chat */
+.message-recipe-container .recipe-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.message-recipe-container h2 {
+  font-size: 0.9rem;
+  padding: 0.5rem;
+}
+
+.message-recipe-container .recipe-info {
+  padding: 0.25rem 0.5rem 0.5rem;
+}

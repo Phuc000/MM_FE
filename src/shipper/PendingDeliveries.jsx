@@ -134,7 +134,7 @@ const PendingDeliveries = () => {
   useEffect(() => {
     const fetchPendingTransactions = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/transactions`, {
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/transactions/status/1`, {
           headers: { 'Content-Type': 'application/json' },
           withCredentials: true,
         });
