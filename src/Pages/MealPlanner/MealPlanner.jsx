@@ -115,7 +115,7 @@ const MealPlanner = () => {
                         {recipes.map((recipe, index) => {
                           const recipeKey = `${dateKey}-${mealType.toLowerCase()}-${index}`;
                           return (
-                            <Card key={index} className="recipe-card">
+                            <Card key={index} className="recipe-card-mini">
                               <CardContent className="recipe-content">
                                 <div className="recipe-info">
                                   <Checkbox
