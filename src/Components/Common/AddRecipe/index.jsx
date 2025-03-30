@@ -13,7 +13,7 @@ const AddRecipe = ({ open, handleClose, recipe }) => {
 
     const maxTagsToShow = 5;
   const extraTagsCount = recipe.tags.length - maxTagsToShow;
-  const maxIngredientsToShow = 5;
+  const maxIngredientsToShow = 20;
   const extraIngredientsCount = recipe.ingredients.length - maxIngredientsToShow;
 
 

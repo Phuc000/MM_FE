@@ -366,8 +366,8 @@ const ChatUI = () => {
                     </div>
                   )}
 
-                  {/* Text message */}
-                  {message.text && (
+                  {/* Only show text div if there's text or it's not a recipe-only message */}
+                  {(message.text && !message.recipeOnly) && (
                     <div className="message">
                       {message.sender === 'bot' ? (
                         <ReactMarkdown>{message.text}</ReactMarkdown>
@@ -376,17 +376,18 @@ const ChatUI = () => {
                       )}
                     </div>
                   )}
+                  
+                  {/* Recipe card within chat */}
                   {message.recipe && (
-                    // message
-                  <div className="message-recipe-container">
-                    <div className="chat-recipe-card">
-                      <RecipeCard 
-                        recipe={message.recipe} 
-                        onClick={handleChatRecipeClick} 
-                      />
+                    <div className={`message-recipe-container ${message.recipeOnly ? 'recipe-only' : ''}`}>
+                      <div className="chat-recipe-card">
+                        <RecipeCard 
+                          recipe={message.recipe} 
+                          onClick={handleChatRecipeClick} 
+                        />
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
                 </div>
               ))}
               {botTyping && (
