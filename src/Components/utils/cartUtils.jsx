@@ -50,7 +50,7 @@ export const addToCart = async (userId, productId, quantity, locationContext) =>
 
     const purchaseInfo = {
       productID: product.productID,
-      pName: product.pName,
+      name: product.name,
       quantity, 
       price: product.price,
       storeID: selectedStoreInfo.storeID,
@@ -58,7 +58,7 @@ export const addToCart = async (userId, productId, quantity, locationContext) =>
       discount: product.discount || 0,
       discountedPrice: product.discountedPrice || product.price,
       weight: product.weight || 0,
-      imageURL: product.imageURL || '/Images/no-image.jpg',
+      image: product.image || '/Images/no-image.jpg',
     };
 
     // Add to cart
@@ -67,7 +67,7 @@ export const addToCart = async (userId, productId, quantity, locationContext) =>
       purchaseInfo
     );
 
-    toast.success(`Added ${quantity} ${product.pName} to the cart.`, {
+    toast.success(`Added ${quantity} ${product.name} to the cart.`, {
         position: "bottom-left",
         autoClose: 5000,
         hideProgressBar: false,

@@ -35,8 +35,8 @@ const EditProductDialog = ({ open, handleClose, handleSave, product }) => {
         <TextField
           margin="dense"
           label="Product Name"
-          name="pName"
-          value={updatedProduct.pName}
+          name="name"
+          value={updatedProduct.name}
           onChange={handleChange}
           fullWidth
           required
@@ -81,8 +81,8 @@ const EditProductDialog = ({ open, handleClose, handleSave, product }) => {
         <TextField
           margin="dense"
           label="Image URL"
-          name="imageURL"
-          value={updatedProduct.imageURL}
+          name="image"
+          value={updatedProduct.image}
           onChange={handleChange}
           fullWidth
           required

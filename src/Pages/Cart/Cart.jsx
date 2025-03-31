@@ -329,11 +329,11 @@ const Cart = () => {
                 {cart.map((item, index) => (
                   <div key={index} className="cart-item">
                     <div className="cart-img-wrapper">
-                      <img src={item.imageURL || "/Images/no-image.jpg"} alt={item.pName} className="cart__img" />
+                      <img src={item.image || "/Images/no-image.jpg"} alt={item.name} className="cart__img" />
                     </div>
                     <div className="item-details">
                       <Link to={`/buy-product/${item.productID}/${item.storeID}`} className="product-link">
-                        <p className="item-name">{item.pName}</p>
+                        <p className="item-name">{item.name}</p>
                       </Link>
                       <p className="item-storeid">Store: {item.storeName}</p>
                       {item.discount > 0 ? (

@@ -221,7 +221,7 @@ const ManageInventory = () => {
                 {inventoryData.map((record) => (
                   <TableRow key={`${record.productID}-${record.storeID}`}>
                     <TableCell>{record.productID}</TableCell>
-                    <TableCell>{record.product.pName}</TableCell>
+                    <TableCell>{record.product.name}</TableCell>
                     <TableCell>{record.numberAtStore}</TableCell>
                     <TableCell>${record.product.price.toFixed(2)}</TableCell>
                     <TableCell align="right">

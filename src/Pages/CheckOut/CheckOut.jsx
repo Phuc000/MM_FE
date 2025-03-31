@@ -1208,10 +1208,10 @@ const CheckOut = () => {
                   {cart.map((item, index) => (
                     <div key={index} className="cart-item">
                       <div className="cart-img-wrapper">
-                        {item.imageURL ? (
-                          <img src={item.imageURL} alt={item.pName} className="cart__img" />
+                        {item.image ? (
+                          <img src={item.image} alt={item.name} className="cart__img" />
                         ) : (
-                          <img src="/Images/no-image.jpg" alt={item.pName} className="cart__img" />
+                          <img src="/Images/no-image.jpg" alt={item.name} className="cart__img" />
                         )}
                       </div>
                       <div className="item-details">
@@ -1219,7 +1219,7 @@ const CheckOut = () => {
                           to={`/buy-product/${item.productID}/${item.storeID}`}
                           className="product-link"
                         >
-                          <p className="item-name">{item.pName}</p>
+                          <p className="item-name">{item.name}</p>
                         </Link>
                         <p className="item-quantity_2">x {item.quantity}</p>
                         <p className="item-storeid">Store: {item.storeName}</p>

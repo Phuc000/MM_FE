@@ -48,9 +48,9 @@ const BuyProduct = () => {
         setProduct(productResponse.data);
         
         // Set images and discount if available
-        if (productResponse.data.imageURL) {
-          setImages(Array(4).fill(productResponse.data.imageURL));
-          setSelectedImage(productResponse.data.imageURL);
+        if (productResponse.data.image) {
+          setImages(Array(4).fill(productResponse.data.image));
+          setSelectedImage(productResponse.data.image);
         } else {
           setImages(defaultImages);
           setSelectedImage(defaultImages[0]);
@@ -144,10 +144,10 @@ const BuyProduct = () => {
   //     .then((response) => {
   //       // console.log('Product Data:', response.data);
   //       setProduct(response.data);
-  //       // Set images based on imageURL
-  //       if (response.data.imageURL) {
-  //         setImages(Array(4).fill(response.data.imageURL));
-  //         setSelectedImage(response.data.imageURL);
+  //       // Set images based on image
+  //       if (response.data.image) {
+  //         setImages(Array(4).fill(response.data.image));
+  //         setSelectedImage(response.data.image);
   //       } else {
   //         setImages(defaultImages);
   //         setSelectedImage(defaultImages[0]);
@@ -322,7 +322,7 @@ const BuyProduct = () => {
     try {
       const purchaseInfo = {
         productID: product.productID,
-        pName: product.pName,
+        name: product.name,
         quantity,
         price: product.price,
         storeID: productAtStore.storeID,
@@ -330,14 +330,14 @@ const BuyProduct = () => {
         discount: product.discount || 0,
         discountedPrice: product.discountedPrice || product.price,
         weight: product.weight || 0,
-        imageURL: product.imageURL || '/Images/no-image.jpg',
+        image: product.image || '/Images/no-image.jpg',
       };
   
       // Send the item to the API for adding/updating the cart
       await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/cart/add/${user.id}`, purchaseInfo);
   
       // Show a success message
-      toast.success(`Added ${quantity} ${product.pName} to the cart.`, {
+      toast.success(`Added ${quantity} ${product.name} to the cart.`, {
         position: "bottom-left",
         autoClose: 5000,
         hideProgressBar: false,
@@ -366,7 +366,7 @@ const BuyProduct = () => {
             <div className="product-image-section">
               {/* Main Product Image */}
               <div className="main-image-container">
-                <img src={selectedImage} alt={product.pName} className="product-image" />
+                <img src={selectedImage} alt={product.name} className="product-image" />
               </div>
 
               {/* Thumbnail Images */}
@@ -388,7 +388,7 @@ const BuyProduct = () => {
               <Link to={`/Category/${product.category}`}>
                 <p className='product-category'>{product.category}</p>
               </Link>
-              <h2 className="product-name">{product.pName}</h2>
+              <h2 className="product-name">{product.name}</h2>
               <div className='info'>
                 <div className="product-info">
                   {/* Use Link to navigate to the Store page with storeId */}

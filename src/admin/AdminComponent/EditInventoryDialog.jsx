@@ -34,7 +34,7 @@ const EditInventoryDialog = ({ open, handleClose, handleSave, record }) => {
         <TextField
           margin="dense"
           label="Product Name"
-          value={record?.product?.pName || ''}
+          value={record?.product?.name || ''}
           fullWidth
           disabled
         />

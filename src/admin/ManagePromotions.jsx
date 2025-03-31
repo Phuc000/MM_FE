@@ -208,7 +208,7 @@ const ManagePromotions = () => {
                   )}
                   {promotion.type === 'Customer Promotion' && promotion.product && (
                     <Typography variant="body2">
-                      Product: {promotion.product.pName}
+                      Product: {promotion.product.name}
                     </Typography>
                   )}
                   {promotion.type === 'Product Promotion' && promotion.products && (
@@ -220,9 +220,9 @@ const ManagePromotions = () => {
                       {promotion.products.map((product) => (
                         <Tooltip
                           key={product.productID || product.productId}
-                          title={product.pName}
+                          title={product.name}
                         >
-                          <Chip label={product.pName} />
+                          <Chip label={product.name} />
                         </Tooltip>
                       ))}
                     </Stack>
