@@ -83,6 +83,7 @@ export const useWebSocket = (userId, locationContext) => {
       ws.onmessage = async (event) => {
         if (!isSubscribed || !isOnChatPage) return;
         const data = JSON.parse(event.data);
+        console.log('WebSocket Message:', data);
         
         // Set botTyping to false when response is received
         setBotTyping(false);
@@ -93,39 +94,41 @@ export const useWebSocket = (userId, locationContext) => {
           return;
         }
 
-        console.log('WebSocket Message:', data);
+        // Count recipe actions to determine how to display them
+        const recipeActions = data.actions?.filter(action => action.action === 'view_recipe') || [];
+        const hasRecipes = recipeActions.length > 0;
 
-        // Add bot's message
+        // First, add the text message without recipes
         setMessages(prev => [...prev, { 
           sender: 'bot', 
           text: data.message,
-          // Add recipe if it exists in the action
-          recipe: data.actions?.find(action => action.action === 'view_recipe')?.recipe_id ? null : null // Will be populated below
+          // Don't set any recipes yet
         }]);
 
         // Process any actions
         if (data.actions && data.actions.length > 0) {
-          for (const action of data.actions) {
-            console.log('Processing action:', action);
-            if (action.action === 'add_to_cart') {
-              await handleCartAction(action);
-            }
-            else if (action.action === 'view_recipe') {
-              // Handle view recipe action
-              const recipeData = await handleViewRecipe(action.recipe_id);
-              if (recipeData) {
-                // Add recipe to the last message
-                setMessages(prev => {
-                  const newMessages = [...prev];
-                  const lastMessage = newMessages[newMessages.length - 1];
-                  newMessages[newMessages.length - 1] = {
-                    ...lastMessage,
-                    recipe: recipeData
-                  };
-                  return newMessages;
-                });
-              }
-            }
+          const cartActions = data.actions.filter(action => action.action === 'add_to_cart');
+          for (const action of cartActions) {
+            await handleCartAction(action);
+          }
+          
+          // Then handle recipe actions - fetch all recipe data first
+          const recipePromises = recipeActions.map(action => 
+            handleViewRecipe(action.recipe_id)
+          );
+          
+          const recipes = await Promise.all(recipePromises);
+          const validRecipes = recipes.filter(Boolean); // Remove any null results
+          
+          if (validRecipes.length > 0) {
+            // Add each recipe as a separate message after the text
+            validRecipes.forEach(recipeData => {
+              setMessages(prev => [...prev, {
+                sender: 'bot',
+                recipeOnly: true, // Flag to indicate this is just a recipe with no text
+                recipe: recipeData
+              }]);
+            });
           }
         }
       };
