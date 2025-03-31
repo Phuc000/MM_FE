@@ -115,7 +115,7 @@ const AddInventoryDialog = ({
               )}
               {availableProducts.map((product) => (
                 <MenuItem key={product.productID} value={product.productID}>
-                  {product.pName}
+                  {product.name}
                 </MenuItem>
               ))}
             </Select>

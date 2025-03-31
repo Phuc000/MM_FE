@@ -11,12 +11,12 @@ import {
 
 const AddProductDialog = ({ open, handleClose, handleSave }) => {
   const [product, setProduct] = useState({
-    pName: '',
+    name: '',
     category: '',
     description: '',
     price: '',
     weight: '',
-    imageURL: '',
+    image: '',
   });
 
   const handleChange = (e) => {
@@ -36,8 +36,8 @@ const AddProductDialog = ({ open, handleClose, handleSave }) => {
         <TextField
           margin="dense"
           label="Product Name"
-          name="pName"
-          value={product.pName}
+          name="name"
+          value={product.name}
           onChange={handleChange}
           fullWidth
           required
@@ -82,8 +82,8 @@ const AddProductDialog = ({ open, handleClose, handleSave }) => {
         <TextField
           margin="dense"
           label="Image URL"
-          name="imageURL"
-          value={product.imageURL}
+          name="image"
+          value={product.image}
           onChange={handleChange}
           fullWidth
           required

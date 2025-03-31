@@ -206,7 +206,7 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
                 selected
                   .map(
                     (productId) =>
-                      filteredProducts.find((product) => product.productID === productId)?.pName || ''
+                      filteredProducts.find((product) => product.productID === productId)?.name || ''
                   )
                   .join(', ')
               }
@@ -219,7 +219,7 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
                       false
                     }
                   />
-                  <ListItemText primary={product.pName} />
+                  <ListItemText primary={product.name} />
                 </MenuItem>
               ))}
             </Select>
@@ -263,7 +263,7 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
             >
               {filteredProducts.map((product) => (
                 <MenuItem key={product.productID} value={product.productID}>
-                  {product.pName}
+                  {product.name}
                 </MenuItem>
               ))}
             </Select>

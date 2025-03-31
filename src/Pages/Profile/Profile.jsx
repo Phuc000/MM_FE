@@ -117,7 +117,7 @@ const Profile = () => {
       // Map promotions to wheel data
       const promotions = response.data.map((promo) => ({
         promotionId: promo.promotionId,
-        option: `${promo.product.pName} - ${(promo.discount * 100).toFixed(0)}% OFF`,
+        option: `${promo.product.name} - ${(promo.discount * 100).toFixed(0)}% OFF`,
         discount: promo.discount,
         name: promo.name,
         description: promo.description,

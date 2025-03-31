@@ -174,11 +174,11 @@ const ManageProducts = () => {
               products.map((product) => (
                 <TableRow key={product.productID}>
                   <TableCell>{product.productID}</TableCell>
-                  <TableCell>{product.pName}</TableCell>
+                  <TableCell>{product.name}</TableCell>
                   <TableCell>{product.category}</TableCell>
                   <TableCell align="right">${product.price}</TableCell>
                   <TableCell align="right">{product.weight}g</TableCell>
-                  <TableCell>{product.imageURL}</TableCell>
+                  <TableCell>{product.image}</TableCell>
                   <TableCell align="right">
                     <IconButton
                       color="primary"

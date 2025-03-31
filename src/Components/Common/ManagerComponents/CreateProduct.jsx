@@ -7,7 +7,7 @@ const CreateProduct = () => {
     productID: "",
     category: "",
     description: "",
-    pName: "",
+    name: "",
     price: "",
     weight: "",
   });
@@ -55,8 +55,8 @@ const CreateProduct = () => {
           <label>Product Name</label>
           <input
             type="text"
-            name="PName"
-            value={productData.pName}
+            name="name"
+            value={productData.name}
             onChange={handleInputChange}
             required
           />

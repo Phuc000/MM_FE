@@ -98,23 +98,23 @@ const ShowProduct = ({ product, storeId }) => {
         key={product.productID}
         className="product-link"
       >
-      <article className="product-card" key={product.pName}>
+      <article className="product-card" key={product.name}>
       {/* <div className='product-img-wrapper'>
         {product.Image ? (
-          <img src={`${product.Image}`} alt={product.pName} className="product-card__img" />
+          <img src={`${product.Image}`} alt={product.name} className="product-card__img" />
         ) : (
-          <img src="/Images/no-image.jpg" alt={product.pName} className="product-card__img" />
+          <img src="/Images/no-image.jpg" alt={product.name} className="product-card__img" />
         )}
       </div> */}
       <div className="product-card__body">
         <div className="product-img-wrapper">
-          {product.imageURL ? (
-            <img src={product.imageURL} alt={product.pName} className="product-card__img" />
+          {product.image ? (
+            <img src={product.image} alt={product.name} className="product-card__img" />
           ) : (
-            <img src="/Images/no-image.jpg" alt={product.pName} className="product-card__img" />
+            <img src="/Images/no-image.jpg" alt={product.name} className="product-card__img" />
           )}
         </div>
-        <p className="product-card__name">{product.pName}</p>
+        <p className="product-card__name">{product.name}</p>
         {promotions && promotions.length > 0 ? (
             <>
                 <p className="promo-product-price">${product.price.toFixed(2)}</p>

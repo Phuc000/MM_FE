@@ -238,9 +238,9 @@ const Promotions = () => {
                           {promo.products.map((product) => (
                             <Tooltip
                               key={product.productID}
-                              title={product.pName}
+                              title={product.name}
                             >
-                              <Chip label={product.pName} />
+                              <Chip label={product.name} />
                             </Tooltip>
                           ))}
                         </Stack>
@@ -358,9 +358,9 @@ const Promotions = () => {
                           <Stack direction="row" spacing={1} sx={{ marginTop: 1 }}>
                             <Tooltip
                               key={promo.product.productID}
-                              title={promo.product.pName}
+                              title={promo.product.name}
                             >
-                              <Chip label={promo.product.pName} />
+                              <Chip label={promo.product.name} />
                             </Tooltip>
                           </Stack>
                         )}

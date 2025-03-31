@@ -248,7 +248,7 @@ const ChatUI = () => {
   //         // Map product names to product IDs
   //         const productMap = {};
   //         productsData.forEach((product) => {
-  //           productMap[product.pName.toLowerCase()] = product.productID;
+  //           productMap[product.name.toLowerCase()] = product.productID;
   //         });
 
   //         // Replace ingredient names with links in the response text

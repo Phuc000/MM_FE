@@ -45,7 +45,7 @@ const Restock = () => {
         const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/product/${storeID}`);
         const formattedProducts = response.data.map(item => ({
           id: item.productID,
-          name: item.product.pName,
+          name: item.product.name,
           stock: item.numberAtStore,
           description: item.product.description,
           ...item

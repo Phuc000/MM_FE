@@ -244,7 +244,7 @@ const OrderDetailsDialog = ({
                 <TableBody>
                   {transaction.includes.map((item) => (
                     <TableRow key={item.productID}>
-                      <TableCell>{item.product.pName}</TableCell>
+                      <TableCell>{item.product.name}</TableCell>
                       <TableCell>{item.product.description}</TableCell>
                       <TableCell>{item.product.category}</TableCell>
                       <TableCell>{item.numberOfProductInBill}</TableCell>
