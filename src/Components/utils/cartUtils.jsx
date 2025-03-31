@@ -49,16 +49,19 @@ export const addToCart = async (userId, productId, quantity, locationContext) =>
     const store = storeDetailsResponse.data;
 
     const purchaseInfo = {
+      cartItemId: product.productID,
       productID: product.productID,
-      pName: product.pName,
+      pName: product.name,
       quantity, 
       price: product.price,
       storeID: selectedStoreInfo.storeID,
+      hasStock: true,
       storeName: store.name,
       discount: product.discount || 0,
+      unit: product.unit || '',
       discountedPrice: product.discountedPrice || product.price,
-      weight: product.weight || 0,
-      imageURL: product.imageURL || '/Images/no-image.jpg',
+      // weight: product.weight || 0,
+      imageURL: product.image || '/Images/no-image.jpg',
     };
 
     // Add to cart
