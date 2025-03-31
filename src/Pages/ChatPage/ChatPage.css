@@ -20,7 +20,7 @@
     max-width: 800px;
     gap: 12px;
     padding: 24px;
-    height: 70vh;
+    height: 80vh;
     overflow-y: auto;
 
     @media screen and (max-width: 768px) {
@@ -103,7 +103,7 @@
 .options-container {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
   gap: 10px;
 }
 
@@ -313,4 +313,10 @@
 
 .message-recipe-container .recipe-info {
   padding: 0.25rem 0.5rem 0.5rem;
+}
+
+.message-shop-recipe {
+  width: 100%;
+  max-width: 450px;
+  margin: 12px 0;
 }

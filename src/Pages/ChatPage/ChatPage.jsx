@@ -17,6 +17,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useWebSocket } from '../../hooks/useWebSocket';
 import RecipeCard from '../../Components/Common/RecipeCard/RecipeCard';
 import AddRecipe from '../../Components/Common/AddRecipe';
+import ShopRecipeConfirmation from '../../Components/Common/ShowRecipeConfirmation';
 
 import { useVoiceInput } from '../../hooks/useVoiceInput';
 import { useLocationContext } from '../../Context/LocationContext';
@@ -62,7 +63,8 @@ const ChatUI = () => {
     setError,
     cartActionInProgress,
     botTyping,
-    setBotTyping
+    setBotTyping,
+    handleShopRecipeConfirm
   } = useWebSocket(user?.id, locationContext);
 
   const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
@@ -386,6 +388,16 @@ const ChatUI = () => {
                           onClick={handleChatRecipeClick} 
                         />
                       </div>
+                    </div>
+                  )}
+                  
+                  {/* Add this new block for shop recipe confirmation */}
+                  {message.shopRecipe && (
+                    <div className="message-shop-recipe">
+                      <ShopRecipeConfirmation
+                        recipeData={message.shopRecipe}
+                        onConfirm={handleShopRecipeConfirm}
+                      />
                     </div>
                   )}
                 </div>

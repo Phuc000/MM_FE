@@ -14,6 +14,7 @@ export const useWebSocket = (userId, locationContext) => {
   const isOnChatPage = location.pathname === '/Chat';
 
   const [recipe, setRecipe] = useState(null);
+  const [shopRecipeData, setShopRecipeData] = useState(null);
 
   const handleViewRecipe = async (recipeId) => {
     try {
@@ -50,6 +51,37 @@ export const useWebSocket = (userId, locationContext) => {
     } catch (err) {
       console.error('Error processing cart action:', err);
       setError('Failed to add item to cart');
+    } finally {
+      setCartActionInProgress(false);
+    }
+  };
+
+  // Add a function to handle shop recipe confirmation
+  const handleShopRecipeConfirm = async (shopRecipeItems) => {
+    try {
+      setCartActionInProgress(true);
+      
+      // Filter only selected items
+      const selectedItems = shopRecipeItems.filter(item => item.selected);
+      
+      // Process each selected item
+      for (const item of selectedItems) {
+        await addToCart(
+          userId, 
+          item.product.id, 
+          item.product.quantity, 
+          locationContext
+        );
+      }
+      
+      setMessages(prev => [...prev, {
+        sender: 'bot',
+        text: `✅ Successfully added ${selectedItems.length} items to your cart!`
+      }]);
+      
+    } catch (error) {
+      console.error('Error adding recipe items to cart:', error);
+      setError('Failed to add some recipe items to cart');
     } finally {
       setCartActionInProgress(false);
     }
@@ -107,6 +139,7 @@ export const useWebSocket = (userId, locationContext) => {
 
         // Process any actions
         if (data.actions && data.actions.length > 0) {
+          // Handle cart actions
           const cartActions = data.actions.filter(action => action.action === 'add_to_cart');
           for (const action of cartActions) {
             await handleCartAction(action);
@@ -129,6 +162,24 @@ export const useWebSocket = (userId, locationContext) => {
                 recipe: recipeData
               }]);
             });
+          }
+
+          // Handle shop_recipe action
+          const shopRecipeAction = data.actions.find(action => action.action === 'shop_recipe');
+          if (shopRecipeAction) {
+            // Set shop recipe data including items with selected state (all true by default)
+            const itemsWithSelection = shopRecipeAction.cart_actions.map(item => ({
+              ...item,
+              selected: true // Default all to selected
+            }));
+
+            setMessages(prev => [...prev, {
+              sender: 'bot',
+              shopRecipe: {
+                ...shopRecipeAction,
+                cart_actions: itemsWithSelection
+              }
+            }]);
           }
         }
       };
@@ -175,6 +226,7 @@ export const useWebSocket = (userId, locationContext) => {
     setError,
     cartActionInProgress,
     botTyping,
-    setBotTyping
+    setBotTyping,
+    handleShopRecipeConfirm
   };
 };

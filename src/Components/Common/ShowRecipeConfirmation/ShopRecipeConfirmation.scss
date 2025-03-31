@@ -1,0 +1,16 @@
+/* src/Components/Common/ShopRecipeConfirmation/ShopRecipeConfirmation.css */
+.shop-recipe-confirmation {
+    border-radius: 8px;
+    overflow: hidden;
+    margin: 12px 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  
+  .item-list {
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  
+  .list-item:hover {
+    background-color: rgba(0,0,0,0.04);
+  }
