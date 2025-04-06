@@ -260,7 +260,6 @@ const OrderDetailsDialog = ({
               Order Summary
             </Typography>
             <Typography>Total Price: ${transaction.totalPrice.toFixed(2)}</Typography>
-            <Typography>Total Weight: {transaction.totalWeight} g</Typography>
             <Typography>Payment Method: {transaction.paymentMethod}</Typography>
             <Typography>
               Order Date: {new Date(transaction.dateAndTime).toLocaleString()}

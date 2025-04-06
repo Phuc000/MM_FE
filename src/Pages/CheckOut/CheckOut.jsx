@@ -144,6 +144,7 @@ const CheckOut = () => {
 
 
   const handlePaymentMethodChange = (event) => {
+    console.log('Selected payment method:', event.target.value);
     setSelectedPaymentMethod(event.target.value);
   };
 
@@ -315,7 +316,7 @@ const CheckOut = () => {
         return;
       }
 
-      await handleCreateBill();
+      await handleCreateBill('Cash');
     } catch (error) {
       console.error('Error while processing the purchase:', error);
       toast.error('There was an error processing your purchase. Please try again.', {
@@ -409,7 +410,7 @@ const CheckOut = () => {
     }
   };
 
-  const handleCreateBill = async () => {
+  const handleCreateBill = async (currentPaymentMethod) => {
     console.log('Creating bill...');
     console.log("Cart: ", cart);
     try {
@@ -426,13 +427,10 @@ const CheckOut = () => {
   
       const transactionPromises = Object.entries(itemsByStore).map(async ([storeID, items]) => {
         let totalPrice = 0;
-        let totalWeight = 0;
         // let discountAmount = 0;
   
         const includes = items.map((item) => {
           let itemTotal = item.discountedPrice * item.quantity;
-          totalWeight += item.weight * item.quantity;
-        
           const applicablePromotions = selectedCustomerPromotion.filter(
             (promotion) => promotion.product.productId === item.productID
           );
@@ -463,15 +461,16 @@ const CheckOut = () => {
         }
   
         const transactionData = {
-          paymentMethod: selectedPaymentMethod,
+          paymentMethod: currentPaymentMethod ,
           dateAndTime: purchaseTime,
           customerID: user.id,
           storeID,
           includes,
           totalPrice,
-          totalWeight,
           shippingAddress: formData.address // Add shipping address
         };
+
+        console.log('Transaction data:', transactionData);
   
         // if (discountAmount > 0) {
         //   transactionData.discount = parseFloat(discountAmount.toFixed(2));
@@ -866,18 +865,20 @@ const CheckOut = () => {
   //   }
   // };
 
+
+
   useEffect(() => {
     if (step === 2) {
       const handleMomoPaymentSuccess = async () => {
         setSelectedPaymentMethod('Momo');
         setIsProcessing(true);
-        await handleCreateBill();
+        await handleCreateBill('Momo');
       };
     
       const handleVNPayPaymentSuccess = async () => {
         setSelectedPaymentMethod('VNPay');
         setIsProcessing(true);
-        await handleCreateBill();
+        await handleCreateBill('VNPay');
       };  
   
       // Parse query parameters using URLSearchParams
@@ -1208,10 +1209,10 @@ const CheckOut = () => {
                   {cart.map((item, index) => (
                     <div key={index} className="cart-item">
                       <div className="cart-img-wrapper">
-                        {item.image ? (
-                          <img src={item.image} alt={item.name} className="cart__img" />
+                        {item.imageURL ? (
+                          <img src={item.imageURL} alt={item.pName} className="cart__img" />
                         ) : (
-                          <img src="/Images/no-image.jpg" alt={item.name} className="cart__img" />
+                          <img src="/Images/no-image.jpg" alt={item.pName} className="cart__img" />
                         )}
                       </div>
                       <div className="item-details">
@@ -1219,7 +1220,7 @@ const CheckOut = () => {
                           to={`/buy-product/${item.productID}/${item.storeID}`}
                           className="product-link"
                         >
-                          <p className="item-name">{item.name}</p>
+                          <p className="item-name">{item.pName}</p>
                         </Link>
                         <p className="item-quantity_2">x {item.quantity}</p>
                         <p className="item-storeid">Store: {item.storeName}</p>
