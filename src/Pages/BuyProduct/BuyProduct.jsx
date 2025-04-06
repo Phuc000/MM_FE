@@ -322,16 +322,17 @@ const BuyProduct = () => {
     try {
       const purchaseInfo = {
         productID: product.productID,
-        name: product.name,
+        pName: product.name,
         quantity,
         price: product.price,
         storeID: productAtStore.storeID,
         storeName: store.name,
         discount: product.discount || 0,
         discountedPrice: product.discountedPrice || product.price,
-        weight: product.weight || 0,
-        image: product.image || '/Images/no-image.jpg',
+        imageUrl: product.image || '/Images/no-image.jpg',
       };
+
+      console.log('Purchase Info:', purchaseInfo);
   
       // Send the item to the API for adding/updating the cart
       await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/cart/add/${user.id}`, purchaseInfo);
