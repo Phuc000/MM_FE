@@ -7,13 +7,13 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
   const [filters, setFilters] = React.useState({
     aisle: 'All',
     priceRange: { min: '', max: '' },
-    consistency: 'All',
+    // consistency: 'All',
     onSale: false
   });
 
   // Get unique values for filters
   const uniqueAisles = ['All', ...new Set(items.map(item => item.aisle).filter(Boolean))];
-  const uniqueConsistencies = ['All', ...new Set(items.map(item => item.consistency).filter(Boolean))];
+  // const uniqueConsistencies = ['All', ...new Set(items.map(item => item.consistency).filter(Boolean))];
 
   // Filter items
   const filteredItems = items.filter(item => {
@@ -22,10 +22,11 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
     const minPrice = filters.priceRange.min ? parseFloat(filters.priceRange.min) : -Infinity;
     const maxPrice = filters.priceRange.max ? parseFloat(filters.priceRange.max) : Infinity;
     const matchesPrice = price >= minPrice && price <= maxPrice;
-    const matchesConsistency = filters.consistency === 'All' || item.consistency === filters.consistency;
+    // const matchesConsistency = filters.consistency === 'All' || item.consistency === filters.consistency;
     const matchesSale = !showOnSaleFilter || !filters.onSale || (item.discount > 0);
     
-    return matchesAisle && matchesPrice && matchesConsistency && matchesSale;
+    // return matchesAisle && matchesPrice && matchesConsistency && matchesSale;
+    return matchesAisle && matchesPrice && matchesSale;
   });
 
   // Pagination calculations
@@ -54,7 +55,7 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
       if (filterType === 'aisle') newFilters.aisle = value;
       else if (filterType === 'priceMin') newFilters.priceRange.min = value;
       else if (filterType === 'priceMax') newFilters.priceRange.max = value;
-      else if (filterType === 'consistency') newFilters.consistency = value;
+      // else if (filterType === 'consistency') newFilters.consistency = value;
       else if (filterType === 'onSale') newFilters.onSale = value;
       return newFilters;
     });
@@ -145,7 +146,7 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
     <div className="pagination-filter">
       <div className="filter-controls">
         <div className="filter-group">
-          <label htmlFor="aisle-filter">Aisle: </label>
+          <label htmlFor="aisle-filter">Category: </label>
           <select
             id="aisle-filter"
             value={filters.aisle}
@@ -179,7 +180,7 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
             step="0.01"
           />
         </div>
-        <div className="filter-group">
+        {/* <div className="filter-group">
           <label htmlFor="consistency-filter">Consistency: </label>
           <select
             id="consistency-filter"
@@ -191,7 +192,7 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
               <option key={consistency} value={consistency}>{consistency}</option>
             ))}
           </select>
-        </div>
+        </div> */}
         {showOnSaleFilter && (
           <div className="filter-group">
             <label>
