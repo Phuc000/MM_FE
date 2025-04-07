@@ -10,30 +10,37 @@ import {
   TableHead, 
   TableRow,
   IconButton,
-  Card,
-  CardContent,
   Typography,
-  Checkbox,
-  Fab,
-  Avatar,
-  Tooltip,
+  Box,
+  Chip,
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
+import BreakfastDiningIcon from '@mui/icons-material/BreakfastDining';
+import LunchDiningIcon from '@mui/icons-material/LunchDining';
+import DinnerDiningIcon from '@mui/icons-material/DinnerDining';
+import IcecreamIcon from '@mui/icons-material/Icecream';
+import ModalRecipe from '../../Components/Common/AddRecipe';
 import './MealPlanner.scss';
 
-const mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
+const mealTypes = [
+  { name: 'Breakfast', icon: <BreakfastDiningIcon /> },
+  { name: 'Lunch', icon: <LunchDiningIcon /> },
+  { name: 'Dinner', icon: <DinnerDiningIcon /> },
+  { name: 'Snack', icon: <IcecreamIcon /> },
+];
 
 const MealPlanner = () => {
-    const { mealPlan, setMealPlan } = useMealPlanner();
-    const [currentWeek] = useState(new Date());
-    const [selectedRecipes, setSelectedRecipes] = useState([]); // Format: [{date, mealType, index}]
-  
-  // Get dates for current week
+  const { mealPlan } = useMealPlanner();
+  const [currentWeek, setCurrentWeek] = useState(new Date());
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
   const getWeekDates = (date) => {
     const week = [];
     const start = new Date(date);
-    start.setDate(start.getDate() - start.getDay()); // Start from Sunday
-
+    start.setDate(start.getDate() - start.getDay());
     for (let i = 0; i < 7; i++) {
       const day = new Date(start);
       day.setDate(start.getDate() + i);
@@ -42,102 +49,113 @@ const MealPlanner = () => {
     return week;
   };
 
-  // Format date as YYYY-MM-DD
   const formatDate = (date) => date.toISOString().split('T')[0];
 
-  // Delete recipe from meal plan
-  const handleDelete = (date, mealType, recipeIndex) => {
-    const dateKey = formatDate(date);
-    setMealPlan(prev => {
-      const newPlan = { ...prev };
-      newPlan[dateKey][mealType] = newPlan[dateKey][mealType].filter((_, i) => i !== recipeIndex);
-      return newPlan;
-    });
+  const handlePreviousWeek = () => {
+    const newWeek = new Date(currentWeek);
+    newWeek.setDate(newWeek.getDate() - 7);
+    setCurrentWeek(newWeek);
+  };
+
+  const handleNextWeek = () => {
+    const newWeek = new Date(currentWeek);
+    newWeek.setDate(newWeek.getDate() + 7);
+    setCurrentWeek(newWeek);
+  };
+
+  const handleRecipeClick = (recipe) => {
+    setSelectedRecipe(recipe);
+    setModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setSelectedRecipe(null);
   };
 
   const weekDates = getWeekDates(currentWeek);
 
-  const handleSelect = (date, mealType, index) => {
-    const recipeKey = `${formatDate(date)}-${mealType}-${index}`;
-    setSelectedRecipes(prev => {
-      if (prev.includes(recipeKey)) {
-        return prev.filter(key => key !== recipeKey);
-      }
-      return [...prev, recipeKey];
-    });
-  };
-
-  const handleBulkDelete = () => {
-    const newPlan = { ...mealPlan };
-    selectedRecipes.forEach(key => {
-      const [date, mealType, index] = key.split('-');
-      if (newPlan[date]?.[mealType]) {
-        const recipes = [...newPlan[date][mealType]];
-        recipes.splice(parseInt(index), 1);
-        newPlan[date][mealType] = recipes;
-      }
-    });
-    setMealPlan(newPlan);
-    setSelectedRecipes([]);
-  };
-
   return (
     <div>
       <Header />
-      <div className="meal-planner-container">
-        <h1>Weekly Meal Planner</h1>
-        <TableContainer component={Paper}>
-          <Table>
+      <Box className="meal-planner-container">
+        <Box className="planner-header">
+          <Typography variant="h3" className="title">
+            Your Weekly Feast
+          </Typography>
+          <Box className="week-navigation">
+            <IconButton onClick={handlePreviousWeek} aria-label="previous week">
+              <ArrowBackIosIcon />
+            </IconButton>
+            <Typography variant="subtitle1" className="week-range">
+              {weekDates[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - 
+              {weekDates[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+            </Typography>
+            <IconButton onClick={handleNextWeek} aria-label="next week">
+              <ArrowForwardIosIcon />
+            </IconButton>
+          </Box>
+          <Chip 
+            icon={<RestaurantMenuIcon />}
+            label="Plan Your Meals"
+            color="primary"
+            variant="outlined"
+            className="plan-chip"
+          />
+        </Box>
+        <TableContainer component={Paper} elevation={3} className="table-container">
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell className="meal-type-cell">Meal Type</TableCell>
+                <TableCell className="meal-type-cell">Meal</TableCell>
                 {weekDates.map(date => (
                   <TableCell key={date} className="date-cell">
-                    {date.toLocaleDateString('en-US', { 
-                      weekday: 'short',
-                      month: 'short',
-                      day: 'numeric'
-                    })}
+                    <Box className="date-box">
+                      <Typography variant="subtitle2">
+                        {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                      </Typography>
+                      <Typography variant="h6">
+                        {date.getDate()}
+                      </Typography>
+                    </Box>
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
               {mealTypes.map(mealType => (
-                <TableRow key={mealType}>
-                  <TableCell className="meal-type-cell">{mealType}</TableCell>
+                <TableRow key={mealType.name} className="meal-row">
+                  <TableCell className="meal-type-cell">
+                    <Box className="meal-type-content">
+                      {mealType.icon}
+                      <Typography variant="subtitle1">{mealType.name}</Typography>
+                    </Box>
+                  </TableCell>
                   {weekDates.map(date => {
                     const dateKey = formatDate(date);
-                    const recipes = mealPlan[dateKey]?.[mealType.toLowerCase()] || [];
+                    const recipes = mealPlan[dateKey]?.[mealType.name.toLowerCase()] || [];
 
                     return (
                       <TableCell key={dateKey} className="recipe-cell">
-                        {recipes.map((recipe, index) => {
-                          const recipeKey = `${dateKey}-${mealType.toLowerCase()}-${index}`;
-                          return (
-                            <Card key={index} className="recipe-card-mini">
-                              <CardContent className="recipe-content">
-                                <div className="recipe-info">
-                                  <Checkbox
-                                    size="small"
-                                    checked={selectedRecipes.includes(recipeKey)}
-                                    onChange={() => handleSelect(date, mealType.toLowerCase(), index)}
-                                  />
-                                  <img 
-                                    src={recipe.image} 
-                                    alt={recipe.title}
-                                    className="recipe-image"
-                                  />
-                                  <Tooltip title={recipe.title}>
-                                    <Typography className="recipe-title" noWrap>
-                                      {recipe.title}
-                                    </Typography>
-                                  </Tooltip>
-                                </div>
-                              </CardContent>
-                            </Card>
-                          );
-                        })}
+                        {recipes.length > 0 ? (
+                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                            {recipes.map((recipe, index) => (
+                              <Typography
+                                key={index}
+                                className="recipe-name"
+                                variant="body2"
+                                onClick={() => handleRecipeClick(recipe)}
+                                sx={{ cursor: 'pointer' }}
+                              >
+                                {recipe.title}
+                              </Typography>
+                            ))}
+                          </Box>
+                        ) : (
+                          <Typography variant="body2" className="empty-slot">
+                            -
+                          </Typography>
+                        )}
                       </TableCell>
                     );
                   })}
@@ -146,17 +164,14 @@ const MealPlanner = () => {
             </TableBody>
           </Table>
         </TableContainer>
-        {selectedRecipes.length > 0 && (
-          <Fab
-            color="error"
-            className="delete-fab"
-            onClick={handleBulkDelete}
-            aria-label="delete selected"
-          >
-            <DeleteIcon />
-          </Fab>
-        )}
-      </div>
+      </Box>
+      {selectedRecipe && (
+        <ModalRecipe
+          open={modalOpen}
+          handleClose={handleModalClose}
+          recipe={selectedRecipe}
+        />
+      )}
       <FeatureAd />
       <Footer />
     </div>

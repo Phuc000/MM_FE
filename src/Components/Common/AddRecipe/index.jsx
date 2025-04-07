@@ -119,7 +119,7 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
           <div className="modal-buttons">
             <Button
               variant="contained"
-              className="modal-button add-to-cart"
+              className="modal-button"
               startIcon={<ShoppingCartIcon />}
               onClick={() =>
                 toast.success('Ingredients added to cart', {
