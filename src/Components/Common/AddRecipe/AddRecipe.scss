@@ -1,78 +1,272 @@
 .add-recipe-modal {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .modal-content {
-    position: relative;
-    background-color: #fff;
-    max-width: 900px;
-    width: 90%;
-    padding: 25px;
-    border-radius: 8px;
-    outline: none;
-    overflow-y: auto;
-    max-height: 90vh;
-  }
-  
-  .close-button {
-    position: absolute;
-    top: -10px;
-    right: 20px;
-    color: #fe3bd4;
-  }
-  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  position: relative;
+  background: #fff5f7; /* Light pinkish background */
+  max-width: 950px;
+  width: 100%;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(255, 105, 180, 0.2); /* Pink shadow */
+  outline: none;
+  overflow-y: auto;
+  max-height: 90vh;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Header with Image */
+.modal-header {
+  position: relative;
+  margin-bottom: 20px;
+
   .recipe-image {
     width: 100%;
-    height: auto;
-    border-radius: 8px;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3); /* Light pink shadow */
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.02);
+    }
   }
-  
-  .recipe-title {
-    text-align: center;
-    color: #fe3bd4;
-    margin-top: 20px;
+
+  .close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    color: #ff69b4; /* Hot pink */
+    padding: 6px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: #ff69b4;
+      color: white;
+      transform: rotate(90deg);
+    }
   }
-  
-  .recipe-tags {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 10px;
+}
+
+/* Title and Meta */
+.recipe-title {
+  text-align: center;
+  color: #ff1493; /* Deep pink */
+  font-weight: 700;
+  font-family: 'Quicksand', sans-serif;
+  margin: 0 0 15px;
+  font-size: 2.2em;
+}
+
+.recipe-meta {
+  text-align: center;
+  margin-bottom: 20px;
+
+  .meta-info {
+    color: #ff85a2; /* Softer pink */
+    font-size: 1em;
+    font-family: 'Quicksand', sans-serif;
+
+    span {
+      margin: 0 10px;
+    }
   }
-  
+}
+
+/* Tags */
+.recipe-tags {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+
   .tag-chip {
-    margin: 5px;
-    background-color: #fe3bd4 !important;
-    color: #fff !important;
+    background-color: #ffb6c1 !important; /* Light pink */
+    color: #ffffff !important;
+    font-size: 0.85em;
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #ff8c94 !important; /* Slightly darker pink */
+    }
   }
-  
-  .ingredients-list {
-    list-style-type: disc;
-    margin-left: 20px;
+
+  .more-chip {
+    background-color: #ffe4e1 !important; /* Very light pink */
+    color: #ff69b4 !important;
+
+    &:hover {
+      background-color: #ffccd5 !important;
+    }
   }
-  
+}
+
+/* Ingredients */
+.section-title {
+  color: #ff1493; /* Deep pink */
+  font-weight: 600;
+  font-family: 'Quicksand', sans-serif;
+  margin: 30px 0 15px;
+  font-size: 1.5em;
+  position: relative;
+
+  &:after {
+    content: '';
+    width: 50px;
+    height: 3px;
+    background: #ff69b4; /* Hot pink underline */
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+  }
+}
+
+.ingredients-container {
+  background: #fff0f5; /* Very light pink */
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.ingredients-columns {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.ingredients-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  flex: 1; /* Each column takes equal space */
+
   .ingredient-item {
-    margin-bottom: 5px;
-  }
-  
-  .instructions {
-    white-space: pre-wrap;
-    margin-top: 10px;
-  }
-  
-  .modal-buttons {
+    margin-bottom: 12px;
+    font-size: 1em;
+    color: #444;
     display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
+    align-items: center;
+    font-family: 'Quicksand', sans-serif;
+
+    .ingredient-amount {
+      font-weight: 600;
+      color: #ff69b4; /* Hot pink */
+      margin-right: 8px;
+    }
+
+    &:before {
+      content: '✔';
+      color: #ff85a2; /* Softer pink */
+      margin-right: 10px;
+      font-size: 1.1em;
+    }
   }
-  
+
+  .extra-count {
+    color: #ff85a2; /* Softer pink */
+    font-style: italic;
+    font-size: 0.95em;
+
+    &:before {
+      content: '…';
+    }
+  }
+}
+
+/* Instructions */
+.instructions {
+  color: #444;
+  line-height: 1.7;
+  font-size: 1em;
+  font-family: 'Quicksand', sans-serif;
+  margin-bottom: 30px;
+  padding: 15px;
+  background: #fff0f5; /* Very light pink */
+  border-radius: 10px;
+
+  li {
+    margin-bottom: 10px;
+  }
+}
+
+/* Buttons */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+
   .modal-button {
-    background-color: #fe3bd4 !important;
-    color: #fff !important;
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    text-transform: none;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 600;
+    font-size: 1em;
+    transition: all 0.3s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(255, 105, 180, 0.3); /* Pink shadow */
+    }
   }
-  
-  .modal-button:hover {
-    background-color: #e134bf !important;
+
+  .add-to-cart {
+    background-color: #ff69b4 !important; /* Hot pink */
+    color: white !important;
+
+    &:hover {
+      background-color: #ff1493 !important; /* Deep pink */
+    }
   }
+
+  .add-to-planner {
+    background-color: #ffb6c1 !important; /* Light pink */
+    color: white !important;
+
+    &:hover {
+      background-color: #ff8c94 !important; /* Slightly darker pink */
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .modal-content {
+    padding: 25px;
+    max-height: 85vh;
+  }
+
+  .modal-header .recipe-image {
+    height: 250px;
+  }
+
+  .recipe-title {
+    font-size: 1.8em;
+  }
+
+  .ingredients-columns {
+    flex-direction: column; /* Stack columns on smaller screens */
+    gap: 10px;
+  }
+
+  .modal-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .section-title {
+    font-size: 1.3em;
+  }
+}
