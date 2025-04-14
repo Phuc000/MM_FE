@@ -47,7 +47,7 @@
   .main-content {
     display: flex;
     gap: 20px;
-    flex-wrap: nowrap; /* Ensure filter and recipes stay side-by-side */
+    flex-wrap: wrap; /* Ensure filter and recipes stay side-by-side */
 
     .recipes-list {
       flex: 1;
@@ -63,20 +63,20 @@
 
       .recipe-item {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         background: #ffffff;
         border: 1px solid #e0e0e0;
         border-radius: 10px;
         margin-bottom: 15px;
         padding: 10px;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
-
+      
         &:hover {
           transform: scale(1.02);
           box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
           border-color: #cccccc;
         }
-
+      
         .recipe-image {
           width: 100px;
           height: 100px;
@@ -84,34 +84,87 @@
           border-radius: 8px;
           margin-right: 15px;
         }
-
-        .recipe-details {
+      
+        .recipe-content {
           flex: 1;
-
-          h3 {
-            font-family: 'Quicksand', sans-serif;
-            color: #333333;
-            font-size: 1.2em;
-            margin: 0 0 5px;
-            cursor: pointer;
-
-            &:hover {
-              text-decoration: underline;
+          display: flex;
+          flex-direction: column;
+      
+          .recipe-title-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+      
+            .recipe-text {
+              display: flex;
+              flex-direction: column;
+      
+              h3 {
+                font-family: 'Quicksand', sans-serif;
+                color: #333333;
+                font-size: 1.2em;
+                margin: 0;
+                cursor: pointer;
+                line-height: 2; // Increased for better spacing
+      
+                &:hover {
+                  text-decoration: underline;
+                }
+              }
+      
+              .recipe-ingredients {
+                font-family: 'Quicksand', sans-serif;
+                color: #666666;
+                font-size: 0.9em;
+                margin: 0;
+                line-height: 2; // Increased for better spacing
+              }
+            }
+      
+            .recipe-meta {
+              display: flex;
+              flex-direction: column;
+              align-items: flex-end;
+              font-family: 'Quicksand', sans-serif;
+              color: #666666;
+              font-size: 0.9em;
+      
+              p {
+                margin: 0;
+                line-height: 2; // Increased for better spacing
+              }
             }
           }
+        }
+      }
 
-          .recipe-ingredients {
-            font-family: 'Quicksand', sans-serif;
-            color: #666666;
-            font-size: 0.9em;
-            margin: 5px 0;
+      .recipe-rating {
+        display: flex;
+        align-items: center;
+        font-size: 1em;
+        color: #666666; // For "No rating yet" text
+      
+        .star {
+          font-size: 1.2em;
+          color: #e0e0e0; // White/empty star (light gray for visibility)
+          margin-left: 2px;
+      
+          &.filled {
+            color: #f5c518; // Yellow for filled stars
           }
-
-          .recipe-meta {
-            font-family: 'Quicksand', sans-serif;
-            color: #666666;
-            font-size: 0.9em;
-            margin: 5px 0 0;
+      
+          &.half-filled {
+            position: relative;
+            color: #e0e0e0; // Base color for the star
+      
+            // Create a half-filled effect using a gradient
+            background: linear-gradient(
+              to right,
+              #f5c518 50%, // Yellow for the left half
+              #e0e0e0 50% // White/empty for the right half
+            );
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
           }
         }
       }
@@ -133,7 +186,7 @@
 
     /* Filter Section */
     .filter-container {
-      width: 250px; /* Fixed width */
+      width: 350px; /* Fixed width */
       flex-shrink: 0; /* Prevents shrinking */
       display: block; /* Ensure it’s always visible */
 

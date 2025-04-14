@@ -27,26 +27,41 @@ const RecipesArticles = () => {
 
   // Filter recipes based on include/exclude filters
   const filteredRecipes = recipes.filter((recipe) => {
-    const includeMatch = includeFilter
-      ? (recipe.tags &&
-          recipe.tags.some((tag) =>
-            tag.toLowerCase().includes(includeFilter.toLowerCase())
-          )) ||
-        (recipe.ingredients &&
-          recipe.ingredients.some((ing) =>
-            ing.name.toLowerCase().includes(includeFilter.toLowerCase())
-          ))
+    // Split the include and exclude filters into arrays of tags
+    const includeTags = includeFilter
+      ? includeFilter.split(',').map((tag) => tag.trim().toLowerCase()).filter((tag) => tag)
+      : [];
+    const excludeTags = excludeFilter
+      ? excludeFilter.split(',').map((tag) => tag.trim().toLowerCase()).filter((tag) => tag)
+      : [];
+
+    // Check if recipe matches all include tags (if any)
+    const includeMatch = includeTags.length
+      ? includeTags.every((tag) =>
+          (recipe.tags &&
+            recipe.tags.some((recipeTag) =>
+              recipeTag.toLowerCase().includes(tag)
+            )) ||
+          (recipe.ingredients &&
+            recipe.ingredients.some((ing) =>
+              ing.name.toLowerCase().includes(tag)
+            ))
+        )
       : true;
 
-    const excludeMatch = excludeFilter
-      ? !(recipe.tags &&
-          recipe.tags.some((tag) =>
-            tag.toLowerCase().includes(excludeFilter.toLowerCase())
-          )) &&
-        !(recipe.ingredients &&
-          recipe.ingredients.some((ing) =>
-            ing.name.toLowerCase().includes(excludeFilter.toLowerCase())
-          ))
+    // Check if recipe does not contain any exclude tags (if any)
+    const excludeMatch = excludeTags.length
+      ? excludeTags.every(
+          (tag) =>
+            !(recipe.tags &&
+              recipe.tags.some((recipeTag) =>
+                recipeTag.toLowerCase().includes(tag)
+              )) &&
+            !(recipe.ingredients &&
+              recipe.ingredients.some((ing) =>
+                ing.name.toLowerCase().includes(tag)
+              ))
+        )
       : true;
 
     return includeMatch && excludeMatch;
@@ -109,19 +124,40 @@ const RecipesArticles = () => {
                     alt={recipe.title}
                     className="recipe-image"
                   />
-                  <div className="recipe-details">
-                    <h3 onClick={() => handleRecipeClick(recipe)}>{recipe.title}</h3>
-                    <p className="recipe-ingredients">
-                      {recipe.ingredients && recipe.ingredients.length > 0
-                        ? recipe.ingredients
-                            .slice(0, 5)
-                            .map((ing) => ing.name)
-                            .join(' • ')
-                        : recipe.tags.slice(0, 5).join(' • ')}
-                    </p>
-                    <p className="recipe-meta">
-                      ⏰ {recipe.readyInMinutes} min • 🍽️ {recipe.servings} person
-                    </p>
+                  <div className="recipe-content">
+                    <div className="recipe-title-meta">
+                      <div className="recipe-text">
+                        <h3 onClick={() => handleRecipeClick(recipe)}>{recipe.title}</h3>
+                        <p className="recipe-ingredients">
+                          {recipe.ingredients && recipe.ingredients.length > 0
+                            ? recipe.ingredients
+                                .slice(0, 5)
+                                .map((ing) => ing.name)
+                                .join(' • ')
+                            : recipe.tags.slice(0, 5).join(' • ')}
+                        </p>
+                      </div>
+                      <div className="recipe-meta">
+                        <p>⏰ {recipe.readyInMinutes} min</p>
+                        <p>🍽️ {recipe.servings} people</p>
+                        <div className="recipe-rating">
+                          {recipe.averageRating === 0 ? (
+                            <span>No rating yet</span>
+                          ) : (
+                            Array.from({ length: 5 }, (_, index) => (
+                              <span
+                                key={index}
+                                className={`star ${index + 1 <= Math.floor(recipe.averageRating) ? 'filled' : ''} ${
+                                  index + 1 === Math.ceil(recipe.averageRating) && recipe.averageRating % 1 !== 0 ? 'half-filled' : ''
+                                }`}
+                              >
+                                ★
+                              </span>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))

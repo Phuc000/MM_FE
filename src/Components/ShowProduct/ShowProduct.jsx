@@ -7,10 +7,9 @@ import "./ShowProduct.scss";
 const ShowProduct = ({ product, storeId }) => {
   const [promotions, setPromotions] = useState([]);
   const [totalDiscount, setTotalDiscount] = useState(0);
+  const [imageError, setImageError] = useState(false); // Track if the image fails to load
   const navigate = useNavigate();
   const { getRankedStoresForProduct } = useLocationContext();
-
-  // console.log("Product:", product);
 
   // Set promotion immediately if provided
   useEffect(() => {
@@ -60,14 +59,26 @@ const ShowProduct = ({ product, storeId }) => {
     navigate(`/buy-product/${product.productID}/${finalStoreId}`);
   };
 
+  // Check if the image is valid (not null, undefined, or empty)
+  const hasValidImage = product.image && product.image.trim() !== "";
+
+  // Debug if there's no valid image
+  if (!hasValidImage) {
+    console.log(`No valid image for product: ${product.name}`, product);
+  }
+
   return (
     <div className="item-product">
       <a href={`/buy-product/${product.productID}/${storeId || ''}`} onClick={handleClick} className="product-link">
         <article className="product-card" key={product.name}>
           <div className="product-card__body">
             <div className="product-img-wrapper">
-              {product.image ? (
-                <img src={product.image} alt={product.name} className="product-card__img" />
+              {hasValidImage && !imageError ? (
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="product-card__img"
+                />
               ) : (
                 <img src="/Images/no-image.jpg" alt={product.name} className="product-card__img" />
               )}
