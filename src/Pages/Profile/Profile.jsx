@@ -78,8 +78,9 @@ const Profile = () => {
       fetchCustomerData(user.id);
       fetchWheelData();
     } else if (user.role === "StoreManager") {
-      setShowManager(true);
-      setActiveComponent("Dashboard");
+      // setShowManager(true);
+      // setActiveComponent("Dashboard");
+      navigate("/Manager");
     } else if (user.role === "Admin") {
       navigate("/Admin");
     } else if (user.role === "Shipper") {
