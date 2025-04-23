@@ -17,7 +17,8 @@ const RecipesArticles = () => {
   const [itemsPerPage] = useState(10); // Adjust this number as needed
 
   useEffect(() => {
-    fetch('https://localhost:7288/recipes')
+    fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/recipes`,
+            { withCredentials: true })
       .then((response) => response.json())
       .then((data) => {
         setRecipes(data);
