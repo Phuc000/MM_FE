@@ -29,7 +29,7 @@ const Admin = () => {
     { text: 'Manage Inventory', icon: <InventoryIcon />, path: '/admin/manage-inventory' },
     { text: 'Manage Promotions', icon: <LocalOfferIcon />, path: '/admin/manage-promotions' },
     { text: 'View Orders', icon: <ShoppingBagIcon />, path: '/admin/view-orders' },
-    { text: 'Manage Users', icon: <PeopleIcon />, path: '/admin/manage-users' },
+    // { text: 'Manage Users', icon: <PeopleIcon />, path: '/admin/manage-users' },
   ];
 
   return (

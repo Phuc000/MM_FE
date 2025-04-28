@@ -19,7 +19,7 @@ const Shipper = lazy(() => import('./Pages/Shipper/Shipper'));
 
 // Lazy load admin components
 const AdminDashboard = lazy(() => import('./admin/Dashboard'));
-const ManageUsers = lazy(() => import('./admin/ManageUsers'));
+// const ManageUsers = lazy(() => import('./admin/ManageUsers'));
 const ManageProducts = lazy(() => import('./admin/ManageProducts'));
 const ManagePromotions = lazy(() => import('./admin/ManagePromotions'));
 const ManageInventory = lazy(() => import('./admin/ManageInventory'));
@@ -61,7 +61,7 @@ function App() {
                         <Route path="/RecipesArticles" element={<RecipesArticles />} />
                         <Route path="/Admin/*" element={<Admin />}>
                           <Route path="dashboard" element={<AdminDashboard />} />
-                          <Route path="manage-users" element={<ManageUsers />} />
+                          {/* <Route path="manage-users" element={<ManageUsers />} /> */}
                           <Route path="manage-products" element={<ManageProducts />} />
                           <Route path="manage-promotions" element={<ManagePromotions />} />
                           <Route path="manage-inventory" element={<ManageInventory />} />
