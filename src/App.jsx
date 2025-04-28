@@ -26,6 +26,12 @@ const ManagePromotions = lazy(() => import('./admin/ManagePromotions'));
 const ManageInventory = lazy(() => import('./admin/ManageInventory'));
 const ViewOrders = lazy(() => import('./admin/ViewOrders'));
 
+// Lazy load manager components
+const Dashboard = lazy(() => import("./Components/Common/ManagerComponents/Dashboard"));
+const CreateProduct = lazy(() => import("./Components/Common/ManagerComponents/CreateProduct"));
+const StoreOrders = lazy(() => import("./Components/Common/ManagerComponents/StoreOrders"));
+const Restock = lazy(() => import("./Components/Common/ManagerComponents/Restock"));
+
 // Loading fallback component
 const LoadingSpinner = () => (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -61,7 +67,7 @@ function App() {
                         <Route path="/MealPlanner" element={<MealPlanner />} />
                         <Route path="/RecipesArticles" element={<RecipesArticles />} />
                         <Route path="/Admin/*" element={<Admin />}>
-                          <Route path="dashboard" element={<AdminDashboard />} />
+                          <Route index element={<AdminDashboard />} />
                           <Route path="manage-users" element={<ManageUsers />} />
                           <Route path="manage-products" element={<ManageProducts />} />
                           <Route path="manage-promotions" element={<ManagePromotions />} />
@@ -69,7 +75,12 @@ function App() {
                           <Route path="view-orders" element={<ViewOrders />} />
                         </Route>
                         <Route path="/Shipper/*" element={<Shipper />} />
-                        <Route path="/Manager/*" element={<Manager />} />
+                        <Route path="/manager/*" element={<Manager />}>
+                          <Route index element={<Dashboard />} />
+                          <Route path="create-product" element={<CreateProduct />} />
+                          <Route path="store-orders" element={<StoreOrders />} />
+                          <Route path="restock" element={<Restock />} />
+                        </Route>
                       </Routes>
                     </Suspense>
                     <ToastContainer />

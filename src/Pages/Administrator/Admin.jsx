@@ -1,5 +1,5 @@
 // src/Admin.jsx
-import React from 'react';
+import React, {Suspense} from 'react';
 import { Outlet } from 'react-router-dom';
 import { Navigate } from 'react-router-dom';
 import UserLayout from '../../Components/UserLayout/UserLayout';
@@ -13,6 +13,14 @@ import {
 } from '@mui/icons-material';
 import { useAuth } from '../../hooks/useAuth';
 
+// Your loading spinner
+const LoadingSpinner = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+    Loading...
+  </div>
+);
+
+
 const Admin = () => {
   const { user } = useAuth();
   const [open, setOpen] = React.useState(true);
@@ -24,12 +32,12 @@ const Admin = () => {
 
   // Menu items for the admin sidebar
   const adminMenuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/admin/dashboard' },
-    { text: 'Manage Products', icon: <ShoppingCartIcon />, path: '/admin/manage-products' },
-    { text: 'Manage Inventory', icon: <InventoryIcon />, path: '/admin/manage-inventory' },
-    { text: 'Manage Promotions', icon: <LocalOfferIcon />, path: '/admin/manage-promotions' },
-    { text: 'View Orders', icon: <ShoppingBagIcon />, path: '/admin/view-orders' },
-    { text: 'Manage Users', icon: <PeopleIcon />, path: '/admin/manage-users' },
+    { text: 'Dashboard', icon: <DashboardIcon />, path: '/Admin' },
+    { text: 'Manage Products', icon: <ShoppingCartIcon />, path: '/Admin/manage-products' },
+    { text: 'Manage Inventory', icon: <InventoryIcon />, path: '/Admin/manage-inventory' },
+    { text: 'Manage Promotions', icon: <LocalOfferIcon />, path: '/Admin/manage-promotions' },
+    { text: 'View Orders', icon: <ShoppingBagIcon />, path: '/Admin/view-orders' },
+    { text: 'Manage Users', icon: <PeopleIcon />, path: '/Admin/manage-users' },
   ];
 
   return (
@@ -41,7 +49,10 @@ const Admin = () => {
       open={open}
       setOpen={setOpen}
     >
-      <Outlet />
+      {/* Suspense wraps Outlet */}
+      <Suspense fallback={<LoadingSpinner />}>
+        <Outlet />
+      </Suspense>
     </UserLayout>
   );
 };

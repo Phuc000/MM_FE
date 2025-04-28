@@ -182,9 +182,9 @@ const UserLayout = ({
 
         {/* AppBar */}
         <AppBarStyled position="fixed" open={open}>
-          <Toolbar>
+          <Toolbar sx={{ display: 'flex', justifyContent:'end' }}>
             {/* Menu Icon for toggling drawer */}
-            <IconButton
+            {/* <IconButton
               color="inherit"
               aria-label="toggle drawer"
               onClick={handleDrawerToggle}
@@ -192,10 +192,10 @@ const UserLayout = ({
               sx={{ marginRight: '16px' }}
             >
               {open ? <ChevronLeftIcon /> : <MenuIcon />}
-            </IconButton>
-            <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+            </IconButton> */}
+            {/* <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
               Dashboard
-            </Typography>
+            </Typography> */}
             {/* Profile Box */}
             <Box
               sx={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}
