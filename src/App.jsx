@@ -16,6 +16,7 @@ import "./App.css";
 // Lazy load components
 const Admin = lazy(() => import('./Pages/Administrator/Admin'));
 const Shipper = lazy(() => import('./Pages/Shipper/Shipper'));
+const Manager = lazy(() => import('./Pages/Manager/Manager'));
 
 // Lazy load admin components
 const AdminDashboard = lazy(() => import('./admin/Dashboard'));
@@ -68,6 +69,7 @@ function App() {
                           <Route path="view-orders" element={<ViewOrders />} />
                         </Route>
                         <Route path="/Shipper/*" element={<Shipper />} />
+                        <Route path="/Manager/*" element={<Manager />} />
                       </Routes>
                     </Suspense>
                     <ToastContainer />

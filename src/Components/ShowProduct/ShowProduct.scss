@@ -61,6 +61,13 @@ $aeon_pink: #fe3bd4;
     width: 100%;
 }
 
+.product-price-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
 .product__disscount {
     margin: 0px;
 
@@ -115,16 +122,16 @@ $aeon_pink: #fe3bd4;
 /* when has discount */
 .promo-product-price {
     font-size: 18px;
-    margin-top: 8px;
+    margin-top: 0px;
     color: #3a3a3a; /* Set a color for the price */
     text-decoration: line-through;
     font-weight: 900;
     font-family: 'Quicksand', sans-serif;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
   }
   
   .promo-product-discount {
-    margin-top: 10px;
+    margin-top: 0px;
     margin-bottom: 10px;
     font-size: 20px;
     color: #df4923; /* Set a color for the price */

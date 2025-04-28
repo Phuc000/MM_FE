@@ -85,11 +85,12 @@ const ShowProduct = ({ product, storeId }) => {
             </div>
             <p className="product-card__name">{product.name}</p>
             {promotions && promotions.length > 0 ? (
-              <>
+              <div className="product-price-container">
+                <p className="promo-product-discount">${totalDiscount.toFixed(2)}</p>
                 <p className="promo-product-price">${product.price.toFixed(2)}</p>
                 <p className="product__disscount">-{(product.discount * 100).toFixed(0)}%</p>
-                <p className="promo-product-discount">${totalDiscount.toFixed(2)}</p>
-              </>
+                {/* <p className="promo-product-discount">${totalDiscount.toFixed(2)}</p> */}
+              </div>
             ) : (
               <p className="product-card__price">${product.price.toFixed(2)}</p>
             )}
