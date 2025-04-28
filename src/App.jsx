@@ -20,7 +20,7 @@ const Manager = lazy(() => import('./Pages/Manager/Manager'));
 
 // Lazy load admin components
 const AdminDashboard = lazy(() => import('./admin/Dashboard'));
-const ManageUsers = lazy(() => import('./admin/ManageUsers'));
+// const ManageUsers = lazy(() => import('./admin/ManageUsers'));
 const ManageProducts = lazy(() => import('./admin/ManageProducts'));
 const ManagePromotions = lazy(() => import('./admin/ManagePromotions'));
 const ManageInventory = lazy(() => import('./admin/ManageInventory'));
