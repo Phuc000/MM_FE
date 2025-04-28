@@ -10,7 +10,9 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  InputAdornment,
 } from '@mui/material';
+import SearchIcon from '@mui/icons-material/Search';
 import { DataGrid } from '@mui/x-data-grid';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
@@ -19,6 +21,8 @@ const Restock = () => {
   const { user } = useAuth();
   const [storeID, setStoreID] = useState("");
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [amount, setAmount] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
@@ -51,6 +55,7 @@ const Restock = () => {
           ...item
         }));
         setProducts(formattedProducts);
+        setFilteredProducts(formattedProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
         toast.error('Error fetching products');
@@ -61,6 +66,22 @@ const Restock = () => {
       fetchProducts();
     }
   }, [storeID]);
+
+  // Filter products when search term changes
+  useEffect(() => {
+    if (searchTerm.trim() === '') {
+      setFilteredProducts(products);
+    } else {
+      const filtered = products.filter(product => 
+        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setFilteredProducts(filtered);
+    }
+  }, [searchTerm, products]);
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+  };
 
   const handleStockChange = (product, restock) => {
     setSelectedProduct(product);
@@ -83,7 +104,8 @@ const Restock = () => {
         }
       );
 
-      setProducts(prevProducts => prevProducts.map(prod => {
+      // Update both products and filtered products
+      const updateProductList = (prevList) => prevList.map(prod => {
         if (prod.id === selectedProduct.id) {
           return {
             ...prod,
@@ -91,7 +113,10 @@ const Restock = () => {
           };
         }
         return prod;
-      }));
+      });
+      
+      setProducts(updateProductList);
+      setFilteredProducts(updateProductList);
 
       toast.success(`Successfully ${isRestock ? 'restocked' : 'removed'} products`);
       setOpenDialog(false);
@@ -147,13 +172,52 @@ const Restock = () => {
 
   return (
     <Box sx={{ height: 600, width: '100%' }}>
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{
+          fontWeight: "900",
+          fontFamily: "Quicksand",
+        }}
+      >
+        Restock
+      </Typography>
+      
+      {/* Search field */}
+      <Box sx={{ mb: 2 }}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Search products by name..."
+          value={searchTerm}
+          onChange={handleSearchChange}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '8px',
+            }
+          }}
+        />
+      </Box>
+
       <DataGrid
-        rows={products}
+        rows={filteredProducts}
         columns={columns}
         pageSize={10}
         rowsPerPageOptions={[10, 25, 50]}
         disableSelectionOnClick
         density="compact"
+        sx={{
+          '& .MuiDataGrid-row:hover': {
+            backgroundColor: 'rgba(0, 0, 0, 0.04)'
+          }
+        }}
       />
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
