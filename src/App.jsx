@@ -20,7 +20,7 @@ const Manager = lazy(() => import('./Pages/Manager/Manager'));
 
 // Lazy load admin components
 const AdminDashboard = lazy(() => import('./admin/Dashboard'));
-// const ManageUsers = lazy(() => import('./admin/ManageUsers'));
+const ManageUsers = lazy(() => import('./admin/ManageUsers'));
 const ManageProducts = lazy(() => import('./admin/ManageProducts'));
 const ManagePromotions = lazy(() => import('./admin/ManagePromotions'));
 const ManageInventory = lazy(() => import('./admin/ManageInventory'));
@@ -78,7 +78,7 @@ function App() {
                         <Route path="/manager/*" element={<Manager />}>
                           <Route index element={<Dashboard />} />
                           <Route path="create-product" element={<CreateProduct />} />
-                          <Route path="store-orders" element={<StoreOrders />} />
+                          <Route path="store-orders" element={<StoreOrders/>} />
                           <Route path="restock" element={<Restock />} />
                         </Route>
                       </Routes>

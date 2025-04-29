@@ -18,18 +18,47 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Skeleton,
 } from "@mui/material";
+import { useAuth } from "../../../hooks/useAuth";
 import "./StoreOrders.scss";
 
 const StoreOrders = () => {
   const [transactions, setTransactions] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
   const [statusFilter, setStatusFilter] = useState("All");
+  const [loading, setLoading] = useState(true); // Add loading state
+  const [storeId, setStoreId] = useState(null);
+  const user = useAuth().user; // Assuming you have a useAuth hook to get the user info
+
+  useEffect(() => {
+    const fetchEmployeeInfo = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/employees/${user.id}`,
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          }
+        );
+        const employeeData = response.data;
+        setStoreId(employeeData.storeID);
+        console.log("Store ID:", employeeData.storeID); // Log the store ID for debugging
+      } catch (error) {
+        console.error(`Error fetching employee ${user.id} data:`, error);
+      }
+    };
+
+    if (user && user.id) {
+      fetchEmployeeInfo();
+    }
+  }, [user]);
 
   useEffect(() => {
     const fetchTransactions = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/transactions`, {
+        setLoading(true);
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/transactions/store/${storeId}`, {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
         });
@@ -41,11 +70,15 @@ const StoreOrders = () => {
       } catch (error) {
         console.error("Error fetching transactions:", error);
         setSnackbar({ open: true, message: "Failed to fetch transactions.", severity: "error" });
+      } finally {
+        setLoading(false); // Set loading to false after fetching
       }
     };
 
-    fetchTransactions();
-  }, []);
+    if (storeId) {
+      fetchTransactions();
+    }
+  }, [storeId]);
 
   const handlePrepare = async (transactionId) => {
     try {
@@ -150,7 +183,25 @@ const StoreOrders = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredTransactions.map((tx) => (
+          {loading ? (
+            // Display skeleton rows while loading
+            Array.from(new Array(5)).map((_, index) => ( // Show 5 skeleton rows
+              <TableRow key={index}>
+                <TableCell><Skeleton variant="text" /></TableCell>
+                <TableCell><Skeleton variant="text" /></TableCell>
+                <TableCell><Skeleton variant="text" /></TableCell>
+                <TableCell><Skeleton variant="text" /></TableCell>
+                <TableCell><Skeleton variant="text" /></TableCell>
+                <TableCell><Skeleton variant="text" /></TableCell>
+                <TableCell><Skeleton variant="text" /></TableCell>
+                <TableCell><Skeleton variant="text" /></TableCell>
+                <TableCell><Skeleton variant="text" /></TableCell>
+                <TableCell align="center"><Skeleton variant="rectangular" width={80} height={36} /></TableCell>
+              </TableRow>
+            ))
+          ) : filteredTransactions.length > 0 ? (
+            // Display actual transactions when not loading and data exists
+            filteredTransactions.map((tx) => (
               <TableRow key={tx.transactionId}>
                 <TableCell>{tx.transactionId}</TableCell>
                 <TableCell>{tx.customerID}</TableCell>
@@ -175,14 +226,15 @@ const StoreOrders = () => {
                   )}
                 </TableCell>
               </TableRow>
-            ))}
-            {filteredTransactions.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={10} align="center">
-                  No transactions found for the selected status.
-                </TableCell>
-              </TableRow>
-            )}
+            ))
+          ) : (
+            // Display skeleton or empty message when no transactions match filter
+            <TableRow>
+              <TableCell colSpan={10} align="center">
+                No transactions found for the selected status.
+              </TableCell>
+            </TableRow>
+          )}
           </TableBody>
         </Table>
       </TableContainer>
