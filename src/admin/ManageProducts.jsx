@@ -27,20 +27,42 @@ import {
 import axios from 'axios';
 
 const categoryList = [
-  { name: 'Vegetable' },
+  { name: 'Alcoholic Beverages' },
+  { name: 'Bakery/Bread' },
+  { name: 'Baking' },
+  { name: 'Beverages' },
+  { name: 'Bread' },
+  { name: 'Canned and Jarred' },
+  { name: 'Cereal' },
+  { name: 'Cheese' },
+  { name: 'Condiments' },
+  { name: 'Dried Fruits' },
+  { name: 'Ethnic' },
+  { name: 'Ethnic Foods' },
+  { name: 'Frozen' },
+  { name: 'Gluten Free' },
+  { name: 'Gourmet' },
+  { name: 'Health Foods' },
+  { name: 'Meat' },
+  { name: 'Milk, Eggs, Other Dairy' },
+  { name: 'Not in Grocery Store/Homemade' },
+  { name: 'Nut butters, Jams, and Honey' },
+  { name: 'Nuts' },
+  { name: 'Oil, Vinegar, Salad Dressing' },
+  { name: 'Pasta and Rice' },
+  { name: 'Produce' },
+  { name: 'Refrigerated' },
+  { name: 'Savory Snacks' },
   { name: 'Seafood' },
-  { name: 'Spice' },
-  { name: 'Grain' },
-  { name: 'Sauce' },
-  { name: 'Beef' },
-  { name: 'Milk' },
-  { name: 'Fruit' },
-  { name: 'Pork' },
+  { name: 'Spices and Seasonings' },
+  { name: 'Sweet Snacks' },
+  { name: 'Tea and Coffee' }
 ];
+
 
 const ManageProducts = () => {
   const [products, setProducts] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('Vegetable');
+  const [selectedCategory, setSelectedCategory] = useState('Alcoholic Beverages');
 
   useEffect(() => {
     // Fetch products by selected category using axios
@@ -162,9 +184,11 @@ const ManageProducts = () => {
             <TableRow>
               <TableCell>Product ID</TableCell>
               <TableCell>Product Name</TableCell>
-              <TableCell>Category</TableCell>
+              {/* <TableCell>Category</TableCell> */}
               <TableCell align="right">Price</TableCell>
-              <TableCell align="right">Weight</TableCell>
+              <TableCell align="right">Unit</TableCell>
+              <TableCell align="right">Amount</TableCell>
+              <TableCell align="right">Consistency</TableCell>
               <TableCell>Image URL</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
@@ -175,9 +199,11 @@ const ManageProducts = () => {
                 <TableRow key={product.productID}>
                   <TableCell>{product.productID}</TableCell>
                   <TableCell>{product.name}</TableCell>
-                  <TableCell>{product.category}</TableCell>
+                  {/* <TableCell>{product.category}</TableCell> */}
                   <TableCell align="right">${product.price}</TableCell>
-                  <TableCell align="right">{product.weight}g</TableCell>
+                  <TableCell align="right">{product.unit}</TableCell>
+                  <TableCell align="right">{product.amount}</TableCell>
+                  <TableCell align="right">{product.consistency}</TableCell>
                   <TableCell>{product.image}</TableCell>
                   <TableCell align="right">
                     <IconButton
