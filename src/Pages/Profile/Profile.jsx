@@ -24,7 +24,7 @@ const MyAccount = lazy(() => import("../../Components/Common/UserComponents/MyAc
 const MyOrders = lazy(() => import("../../Components/Common/UserComponents/MyOrders"));
 const Promotions = lazy(() => import("../../Components/Common/UserComponents/Promotions"));
 const Restock = lazy(() => import("../../Components/Common/ManagerComponents/Restock"));
-const CreateProduct = lazy(() => import("../../Components/Common/ManagerComponents/CreateProduct"));
+// const CreateProduct = lazy(() => import("../../Components/Common/ManagerComponents/CreateProduct"));
 const Dashboard = lazy(() => import("../../Components/Common/ManagerComponents/Dashboard"));
 const StoreOrders = lazy(() => import("../../Components/Common/ManagerComponents/StoreOrders"));
 const AccountDetails = lazy(() => import("../../Components/Common/UserComponents/AccountDetail"));
@@ -237,7 +237,7 @@ const Profile = () => {
             <Suspense fallback={<CircularProgress />}>
               {activeComponent === "Dashboard" && <Dashboard />}
               {activeComponent === "Restock" && <Restock />}
-              {activeComponent === "CreateProduct" && <CreateProduct />}
+              {/* {activeComponent === "CreateProduct" && <CreateProduct />} */}
               {/* {activeComponent === "CreatePromotion" && <CreatePromotion />} */}
               {activeComponent === "StoreOrders" && <StoreOrders />}
             </Suspense>

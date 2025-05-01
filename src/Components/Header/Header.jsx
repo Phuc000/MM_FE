@@ -22,12 +22,12 @@ const Header = () => {
   const { location } = useLocationContext();
   const [showSelector, setShowSelector] = useState(false);
 
-  useEffect(() => {
-    console.log("Location context:", location);
-    if (!location) {
-      setShowSelector(true);
-    }
-  }, [location]);
+  // useEffect(() => {
+  //   console.log("Location context:", location);
+  //   if (!location) {
+  //     setShowSelector(true);
+  //   }
+  // }, [location]);
 
   // const products = ['Tomato Pasta Sauce', 'Crab Legs', 'Pork Belly', 'Pork Loin', 'Pork Chops', 'Pork Ribs', 'Ground Pork', 'Ground Beef', 'Beef Brisket', 'Beef Ribeye', 'Beef Tenderloin', 'Beef Stew Meat', 'Salmon Fillet', 'Shrimp', 'Scallops', 'Cod', 'Whole Milk', 'Skim Milk', 'Almond Milk', 'Oranges', 'Soy Milk', 'Coconut Milk', 'Black Pepper', 'Cinnamon', 'Paprika', 'Turmeric', 'Cumin', 'Spinach', 'Carrots', 'Broccoli', 'Bell Peppers', 'Tomatoes', 'Tomato Sauce', 'Soy Sauce', 'Hot Sauce', 'BBQ Sauce', 'Fish Sauce', 'Bananas', 'Grapes', 'Strawberries', 'Quinoa', 'Barley', 'Oats', 'Wheat Flour', 'Apples', 'Rice']
 
@@ -178,51 +178,57 @@ const Header = () => {
           </div>
         </div>
         <ul className={`nav__navigation ${isMenuOpen ? "nav__navigation_visible" : ""}`}>
-          {/* <Link to="/" className={getNavItemClass("/")}>
-            <p className="a__navbar btn btn--primary">HOME</p>
-          </Link> */}
-          <Link to="/MealPlanner" className={getNavItemClass("/MealPlanner")}>
-            <p className="a__navbar btn btn--primary">MEAL PLANNER</p>
-          </Link>
-          {/* <Link to="/AboutUs" className={getNavItemClass("/AboutUs")}>
-            <p className="a__navbar btn btn--primary">ABOUT US</p>
-          </Link> */}
-          <Link to="/Chat" className={getNavItemClass("/Chat")}>
-            <p className="a__navbar btn btn--primary">CHATBOT</p>
-          </Link>
-          <Link to="/Cart" className={getNavItemClass("/Cart")}>
-            <p className="a__navbar btn btn--primary">MY CART</p>
-            {/* {state.cart.length > 0 ? (
-              <StyledBadge badgeContent={state.cart.length} color="secondary">
-                <p className="a__navbar btn btn--primary">MY CART</p>
-              </StyledBadge>
-            ) : (
-              <p className="a__navbar btn btn--primary">MY CART</p>
-            )} */}
-          </Link>
-          {!user && (
-            <Link to="/Login" className={getNavItemClass("/Login")}>
-              <p className="a__navbar btn btn--primary">LOGIN</p>
-            </Link>
-          )}
-          {user && (
-            <Link to="/Profile" className={getNavItemClass("/Profile")}>
-              <p className="a__navbar btn btn--primary">PROFILE</p>
-            </Link>
-          )}
-        </ul>
+  <Link
+    to="/MealPlanner"
+    className={`a__navbar btn btn--primary ${getNavItemClass("/MealPlanner")}`}
+  >
+    MEAL PLANNER
+  </Link>
+
+  <Link
+    to="/Chat"
+    className={`a__navbar btn btn--primary ${getNavItemClass("/Chat")}`}
+  >
+    CHATBOT
+  </Link>
+
+  <Link
+    to="/Cart"
+    className={`a__navbar btn btn--primary ${getNavItemClass("/Cart")}`}
+  >
+    MY CART
+  </Link>
+
+  {!user && (
+    <Link
+      to="/Login"
+      className={`a__navbar btn btn--primary ${getNavItemClass("/Login")}`}
+    >
+      LOGIN
+    </Link>
+  )}
+
+  {user && (
+    <Link
+      to="/Profile"
+      className={`a__navbar btn btn--primary ${getNavItemClass("/Profile")}`}
+    >
+      PROFILE
+    </Link>
+  )}
+</ul>
         <i className="fa fa-bars wrap-menu" onClick={toggleMenu} aria-label="Open menu"></i>
       </nav>
       <div className="secondary-header">
         <Box
           display="flex"
           alignItems="center"
-          justifyContent="space-between"
+          justifyContent={{ xs: "center", sm: "space-between" }}
           width="100%"
           flexWrap="wrap"
-          sx={{ padding: { xs: '10px', sm: '20px' } }}
+          sx={{ padding: { xs: '10px', sm: '20px' }}}
         >
-          <Box display="flex" alignItems="center" gap={3}>
+          <Box sx={{marginBottom: { xs: '5px', sm: 0} }} display="flex" alignItems="center" gap={3}>
             <Link to="/" className={getNavItemClass("/")}>
               <Typography
                 variant="body1"

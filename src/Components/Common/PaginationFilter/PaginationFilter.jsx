@@ -18,10 +18,10 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
   // Filter items
   const filteredItems = items.filter(item => {
     const matchesAisle = filters.aisle === 'All' || item.aisle === filters.aisle;
-    const price = item.price || 0;
+    const discountedPrice = item.discountedPrice || 0;
     const minPrice = filters.priceRange.min ? parseFloat(filters.priceRange.min) : -Infinity;
     const maxPrice = filters.priceRange.max ? parseFloat(filters.priceRange.max) : Infinity;
-    const matchesPrice = price >= minPrice && price <= maxPrice;
+    const matchesPrice = discountedPrice >= minPrice && discountedPrice <= maxPrice;
     // const matchesConsistency = filters.consistency === 'All' || item.consistency === filters.consistency;
     const matchesSale = !showOnSaleFilter || !filters.onSale || (item.discount > 0);
     

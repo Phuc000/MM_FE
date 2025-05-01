@@ -60,21 +60,21 @@ const UserMenu = ({ username, onMenuClick, mode }) => {
       <div className="usr-menu-list">
         {mode === "Customer" && (
           <ul>
-            <li><span onClick={() => onMenuClick("MyOrders")}>My Orders</span></li>
-            <li><span onClick={() => onMenuClick("Promotions")}>Promotions</span></li>
-            <li><span onClick={() => onMenuClick("MyAccount")}>My Account</span></li>
-            <li><span onClick={() => onMenuClick("AccountDetails")}>Account Details</span></li>
-            <li><span onClick={handleClickOpen}>Logout</span></li>
+            <li onClick={() => onMenuClick("MyOrders")}><span >My Orders</span></li>
+            <li onClick={() => onMenuClick("Promotions")}><span >Promotions</span></li>
+            <li onClick={() => onMenuClick("MyAccount")}><span >My Account</span></li>
+            <li onClick={() => onMenuClick("AccountDetails")}><span >Account Details</span></li>
+            <li onClick={handleClickOpen}><span >Logout</span></li>
           </ul>
         )}
         {mode === "Manager" && (
           <ul>
-            <li><span onClick={() => onMenuClick("Dashboard")}>Dashboard</span></li>
-            <li><span onClick={() => onMenuClick("CreateProduct")}>Create New Product</span></li>
-            <li><span onClick={() => onMenuClick("Restock")}>Restock</span></li>
-            <li><span onClick={() => onMenuClick("StoreOrders")}>View All Orders</span></li>
+            <li onClick={() => onMenuClick("Dashboard")}><span >Dashboard</span></li>
+            <li onClick={() => onMenuClick("CreateProduct")}><span >Create New Product</span></li>
+            <li onClick={() => onMenuClick("Restock")}><span >Restock</span></li>
+            <li onClick={() => onMenuClick("StoreOrders")}><span >View All Orders</span></li>
             {/* <li><span onClick={() => onMenuClick("CreatePromotion")}>Create Promotion</span></li> */}
-            <li><span onClick={handleClickOpen}>Logout</span></li>
+            <li onClick={handleClickOpen}><span >Logout</span></li>
           </ul>
         )}
       </div>

@@ -26,7 +26,7 @@ import "./StoreOrders.scss";
 const StoreOrders = () => {
   const [transactions, setTransactions] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
-  const [statusFilter, setStatusFilter] = useState("All");
+  const [statusFilter, setStatusFilter] = useState("Pending");
   const [loading, setLoading] = useState(true); // Add loading state
   const [storeId, setStoreId] = useState(null);
   const user = useAuth().user; // Assuming you have a useAuth hook to get the user info
@@ -118,6 +118,10 @@ const StoreOrders = () => {
         return "On Delivery";
       case 4:
         return "Delivered";
+      case 5:
+        return "Cancelled";
+      case 6:
+          return "Ghost";
       default:
         return "Unknown";
     }
@@ -178,7 +182,6 @@ const StoreOrders = () => {
               <TableCell>Date and Time</TableCell>
               <TableCell>Delivery Status</TableCell>
               <TableCell>Total Price</TableCell>
-              <TableCell>Total Weight</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -213,7 +216,6 @@ const StoreOrders = () => {
                 <TableCell>{new Date(tx.dateAndTime).toLocaleString()}</TableCell>
                 <TableCell>{getStatusText(tx.deliveryStatus)}</TableCell>
                 <TableCell>${tx.totalPrice.toFixed(2)}</TableCell>
-                <TableCell>{tx.totalWeight} g</TableCell>
                 <TableCell align="center">
                   {tx.deliveryStatus === 0 && (
                     <Button

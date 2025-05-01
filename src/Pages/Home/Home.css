@@ -30,9 +30,8 @@ html {
 /*################*/
 
 .container {
-  width: 80%;
-  max-width: 1200px;
-
+  width: 85%;
+  max-width: 1300px;
   margin: 0px auto;
 }
 
@@ -50,8 +49,14 @@ html {
 }
 
 .btn--primary:hover {
+  background-color: #ff70e2; /* A lighter pink */
+  color: white;
+}
+
+.btn.current-page {
   background: var(--main_yellow);
   color: white;
+  border: 1px solid var(--main_yellow);
 }
 
 .btn--secondary {
@@ -409,7 +414,7 @@ html {
     background: url('/Images/promo-banner.jpg');
     background-size: cover;
     background-position: 57px -120px;
-    height: 500px;
+    height: 590px;
     margin-left: 10vw;
     margin-right: 10vw;
     border-radius: 10px;
@@ -530,12 +535,14 @@ html {
 
 .promo-products {
   margin-top: 20px;
+  width: 100%;
+  padding: 0 40px;
+  /* margin-left: 40px; */
 }
 
 .promo-products-title {
   font-size: 24px;
   margin-bottom: 10px;
-  /* margin-left: 5vw; */
 }
 
 .promo-products-container {

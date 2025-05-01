@@ -66,6 +66,8 @@ const MyOrders = () => {
     2: "Accepted",
     3: "On Delivery",
     4: "Delivered",
+    5: "Cancelled",
+    6: "Ghost",
   };
 
   useEffect(() => {

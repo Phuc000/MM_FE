@@ -159,12 +159,12 @@ const UserLayout = ({
   };
 
   // Handle menu item click
-  const handleMenuItemClick = (option) => {
+  const handleMenuItemClick = async (option) => {
     handleMenuClose();
     if (option === 'logout') {
       try {
         console.log('Logging out...');
-        logout(); // Call the logout function from useAuth
+        await logout(); // Call the logout function from useAuth and wait for completion
         navigate('/'); // Redirect to login page after logout
       } catch (error) {
         console.error('Error during logout:', error);

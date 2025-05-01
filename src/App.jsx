@@ -10,6 +10,9 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import Timer from "./Components/Timer/Timer";
 import { TimerProvider } from "./Context/TimerContext";
 import { LocationProvider } from "./Context/LocationContext";
+import { AuthProvider } from "./Context/AuthContext";
+import ProtectedRoute from "./Components/Route/ProtectedRoute";
+import Unauthorized from "./Pages/Route/Unauthorized";
 import { useAuth } from "./hooks/useAuth";
 import "./App.css";
 
@@ -28,7 +31,7 @@ const ViewOrders = lazy(() => import('./admin/ViewOrders'));
 
 // Lazy load manager components
 const Dashboard = lazy(() => import("./Components/Common/ManagerComponents/Dashboard"));
-const CreateProduct = lazy(() => import("./Components/Common/ManagerComponents/CreateProduct"));
+// const CreateProduct = lazy(() => import("./Components/Common/ManagerComponents/CreateProduct"));
 const StoreOrders = lazy(() => import("./Components/Common/ManagerComponents/StoreOrders"));
 const Restock = lazy(() => import("./Components/Common/ManagerComponents/Restock"));
 
@@ -43,6 +46,7 @@ function App() {
   const {user} = useAuth();
   return (
     <LocationProvider>
+      <AuthProvider>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <MealPlannerProvider>
           <CartProvider>
@@ -53,34 +57,50 @@ function App() {
                     {user && user.role === 'Customer' && <Timer customerId={user.id} />}
                     <Suspense fallback={<LoadingSpinner />}>
                       <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/Login" element={<Login />} />
-                        <Route path="/Profile" element={<Profile />} />
-                        <Route path="/Category/:categoryName" element={<Category />} />
-                        <Route path="/Cart" element={<Cart />} />
-                        <Route path="/Chat" element={<ChatPage />} />
-                        <Route path="/CheckOut" element={<CheckOut />} />
-                        <Route path="/Checkout/PaymentCallBack" element={<CheckOut />} />
-                        <Route path="/buy-product/:productId/:storeId" element={<BuyProduct />} />
-                        <Route path="/store/:storeId" element={<Store />} />
-                        <Route path="/AboutUs" element={<AboutUs />} />
-                        <Route path="/MealPlanner" element={<MealPlanner />} />
-                        <Route path="/RecipesArticles" element={<RecipesArticles />} />
-                        <Route path="/Admin/*" element={<Admin />}>
-                          <Route index element={<AdminDashboard />} />
-                          <Route path="manage-users" element={<ManageUsers />} />
-                          <Route path="manage-products" element={<ManageProducts />} />
-                          <Route path="manage-promotions" element={<ManagePromotions />} />
-                          <Route path="manage-inventory" element={<ManageInventory />} />
-                          <Route path="view-orders" element={<ViewOrders />} />
+
+                        <Route path="/Unauthorized" element={<Unauthorized />} /> {/* New route */}
+                        <Route element={<ProtectedRoute allowedRoles={null} />}>
+                          <Route path="/" element={<Home />} />
+                          <Route path="/Login" element={<Login />} />
+                          <Route path="/Profile" element={<Profile />} />
+                          <Route path="/Category/:categoryName" element={<Category />} />
+                          <Route path="/Cart" element={<Cart />} />
+                          <Route path="/Chat" element={<ChatPage />} />
+                          <Route path="/CheckOut" element={<CheckOut />} />
+                          <Route path="/Checkout/PaymentCallBack" element={<CheckOut />} />
+                          <Route path="/buy-product/:productId/:storeId" element={<BuyProduct />} />
+                          <Route path="/store/:storeId" element={<Store />} />
+                          <Route path="/AboutUs" element={<AboutUs />} />
+                          <Route path="/MealPlanner" element={<MealPlanner />} />
+                          <Route path="/RecipesArticles" element={<RecipesArticles />} />
                         </Route>
-                        <Route path="/Shipper/*" element={<Shipper />} />
-                        <Route path="/manager/*" element={<Manager />}>
-                          <Route index element={<Dashboard />} />
-                          <Route path="create-product" element={<CreateProduct />} />
-                          <Route path="store-orders" element={<StoreOrders/>} />
-                          <Route path="restock" element={<Restock />} />
+                         
+
+                        {/* Admin Routes */}
+                        <Route element={<ProtectedRoute allowedRoles={['Admin']} />}>
+                          <Route path="/Admin/*" element={<Admin />}>
+                            <Route index element={<AdminDashboard />} />
+                            <Route path="manage-users" element={<ManageUsers />} />
+                            <Route path="manage-products" element={<ManageProducts />} />
+                            <Route path="manage-promotions" element={<ManagePromotions />} />
+                            <Route path="manage-inventory" element={<ManageInventory />} />
+                          </Route>
                         </Route>
+
+                        {/* Shipper Routes */}
+                        <Route element={<ProtectedRoute allowedRoles={['Shipper']} />}>
+                          <Route path="/Shipper/*" element={<Shipper />} />
+                        </Route>
+                        
+                        {/* StoreManager Routes */}
+                        <Route element={<ProtectedRoute allowedRoles={['StoreManager']} />}>
+                          <Route path="/manager/*" element={<Manager />}>
+                            <Route index element={<Dashboard />} />
+                            <Route path="store-orders" element={<StoreOrders />} />
+                            <Route path="restock" element={<Restock />} />
+                          </Route>
+                        </Route>
+
                       </Routes>
                     </Suspense>
                     <ToastContainer />
@@ -91,6 +111,8 @@ function App() {
           </CartProvider>
         </MealPlannerProvider>
       </LocalizationProvider>
+      </AuthProvider>
+      
     </LocationProvider>
   );
 }

@@ -25,44 +25,28 @@ import {
   Add as AddIcon,
 } from '@mui/icons-material';
 import axios from 'axios';
-
-const categoryList = [
-  { name: 'Alcoholic Beverages' },
-  { name: 'Bakery/Bread' },
-  { name: 'Baking' },
-  { name: 'Beverages' },
-  { name: 'Bread' },
-  { name: 'Canned and Jarred' },
-  { name: 'Cereal' },
-  { name: 'Cheese' },
-  { name: 'Condiments' },
-  { name: 'Dried Fruits' },
-  { name: 'Ethnic' },
-  { name: 'Ethnic Foods' },
-  { name: 'Frozen' },
-  { name: 'Gluten Free' },
-  { name: 'Gourmet' },
-  { name: 'Health Foods' },
-  { name: 'Meat' },
-  { name: 'Milk, Eggs, Other Dairy' },
-  { name: 'Not in Grocery Store/Homemade' },
-  { name: 'Nut butters, Jams, and Honey' },
-  { name: 'Nuts' },
-  { name: 'Oil, Vinegar, Salad Dressing' },
-  { name: 'Pasta and Rice' },
-  { name: 'Produce' },
-  { name: 'Refrigerated' },
-  { name: 'Savory Snacks' },
-  { name: 'Seafood' },
-  { name: 'Spices and Seasonings' },
-  { name: 'Sweet Snacks' },
-  { name: 'Tea and Coffee' }
-];
-
+import { toast } from 'react-toastify';
 
 const ManageProducts = () => {
   const [products, setProducts] = useState([]);
+  const [categoryList, setCategoryList] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('Alcoholic Beverages');
+
+  useEffect(() => {
+    // Fetch categroies using axios
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/products/categories`
+        );
+        // console.log('Fetched categories:', response.data);
+        setCategoryList(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();  
+  }, []);
 
   useEffect(() => {
     // Fetch products by selected category using axios
@@ -180,19 +164,23 @@ const ManageProducts = () => {
       />
       <TableContainer component={Paper}>
         <Table aria-label="products table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Product ID</TableCell>
-              <TableCell>Product Name</TableCell>
-              {/* <TableCell>Category</TableCell> */}
-              <TableCell align="right">Price</TableCell>
-              <TableCell align="right">Unit</TableCell>
-              <TableCell align="right">Amount</TableCell>
-              <TableCell align="right">Consistency</TableCell>
-              <TableCell>Image URL</TableCell>
-              <TableCell align="right">Actions</TableCell>
-            </TableRow>
-          </TableHead>
+        <TableHead>
+          <TableRow>
+            <TableCell>Product ID</TableCell>
+            <TableCell>Product Name</TableCell>
+            {/* <TableCell>Category</TableCell> */}
+            <TableCell align="right">Price</TableCell>
+            <TableCell align="right">Unit</TableCell>
+            <TableCell align="right">Amount</TableCell>
+            <TableCell align="right">Consistency</TableCell>
+            <TableCell sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              Image URL
+            </TableCell>
+            <TableCell align="right" sx={{ minWidth: 120 }}>
+              Actions
+            </TableCell>
+          </TableRow>
+        </TableHead>
           <TableBody>
             {products && products.length > 0 ? (
               products.map((product) => (
@@ -201,11 +189,19 @@ const ManageProducts = () => {
                   <TableCell>{product.name}</TableCell>
                   {/* <TableCell>{product.category}</TableCell> */}
                   <TableCell align="right">${product.price}</TableCell>
-                  <TableCell align="right">{product.unit}</TableCell>
+                  <TableCell align="right">
+                    {product.unit === "milliliter" || product.unit === "milliliters"
+                      ? 'ml'
+                      : product.unit === "gram" || product.unit === "grams"
+                      ? 'g'
+                      : product.unit}
+                  </TableCell>
                   <TableCell align="right">{product.amount}</TableCell>
                   <TableCell align="right">{product.consistency}</TableCell>
-                  <TableCell>{product.image}</TableCell>
-                  <TableCell align="right">
+                  <TableCell sx={{ maxWidth: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    {product.image}
+                  </TableCell>
+                  <TableCell align="right" sx={{ minWidth: 120 }}>
                     <IconButton
                       color="primary"
                       onClick={() => handleEditProduct(product.productID)}

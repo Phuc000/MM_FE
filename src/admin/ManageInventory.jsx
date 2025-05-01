@@ -47,7 +47,7 @@ const ManageInventory = () => {
       // Fetch inventory data for selected store
       axios
         .get(
-          `${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/product/${selectedStore}`
+          `${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/product/lessdata/${selectedStore}`
         )
         .then((response) => setInventoryData(response.data))
         .catch((error) =>
@@ -221,9 +221,9 @@ const ManageInventory = () => {
                 {inventoryData.map((record) => (
                   <TableRow key={`${record.productID}-${record.storeID}`}>
                     <TableCell>{record.productID}</TableCell>
-                    <TableCell>{record.product.name}</TableCell>
+                    <TableCell>{record.productName}</TableCell>
                     <TableCell>{record.numberAtStore}</TableCell>
-                    <TableCell>${record.product.price.toFixed(2)}</TableCell>
+                    <TableCell>${record.price.toFixed(2)}</TableCell>
                     <TableCell align="right">
                       <IconButton
                         color="primary"

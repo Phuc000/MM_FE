@@ -36,7 +36,7 @@ const Admin = () => {
     { text: 'Manage Products', icon: <ShoppingCartIcon />, path: '/Admin/manage-products' },
     { text: 'Manage Inventory', icon: <InventoryIcon />, path: '/Admin/manage-inventory' },
     { text: 'Manage Promotions', icon: <LocalOfferIcon />, path: '/Admin/manage-promotions' },
-    { text: 'View Orders', icon: <ShoppingBagIcon />, path: '/Admin/view-orders' },
+    // { text: 'View Orders', icon: <ShoppingBagIcon />, path: '/Admin/view-orders' },
     { text: 'Manage Users', icon: <PeopleIcon />, path: '/Admin/manage-users' },
   ];
 

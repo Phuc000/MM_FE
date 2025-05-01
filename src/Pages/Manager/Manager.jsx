@@ -28,9 +28,10 @@ const Manager = () => {
 
   const managerMenuItems = [
     { text: 'Dashboard', icon: <DashboardIcon />, path: '/manager' },
-    { text: 'Create Product', icon: <AddBoxIcon />, path: '/manager/create-product' },
+    // { text: 'Create Product', icon: <AddBoxIcon />, path: '/manager/create-product' },
     { text: 'Store Orders', icon: <ListAltIcon />, path: '/manager/store-orders' },
     { text: 'Restock Inventory', icon: <InventoryIcon />, path: '/manager/restock' },
+    
   ];
 
   const managerName = `${user.fName} ${user.lName}`;

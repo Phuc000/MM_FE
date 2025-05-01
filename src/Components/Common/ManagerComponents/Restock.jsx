@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogActions,
   InputAdornment,
+  Skeleton
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { DataGrid } from '@mui/x-data-grid';
@@ -23,10 +24,12 @@ const Restock = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [amount, setAmount] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
   const [isRestock, setIsRestock] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchStoreID = async () => {
@@ -46,12 +49,12 @@ const Restock = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/product/${storeID}`);
+        setLoading(true);
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/product/lessdata/${storeID}`);
         const formattedProducts = response.data.map(item => ({
           id: item.productID,
-          name: item.product.name,
+          name: item.productName,
           stock: item.numberAtStore,
-          description: item.product.description,
           ...item
         }));
         setProducts(formattedProducts);
@@ -59,25 +62,39 @@ const Restock = () => {
       } catch (error) {
         console.error("Error fetching products:", error);
         toast.error('Error fetching products');
+      } finally {
+        setLoading(false);
       }
     };
-
+  
     if (storeID) {
       fetchProducts();
     }
   }, [storeID]);
 
-  // Filter products when search term changes
+  // Update debouncedSearchTerm 1 second after user stops typing
   useEffect(() => {
-    if (searchTerm.trim() === '') {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm);
+    }, 1000);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchTerm]);
+
+
+  // Filter products when debounced term changes
+  useEffect(() => {
+    if (debouncedSearchTerm.trim() === '') {
       setFilteredProducts(products);
     } else {
-      const filtered = products.filter(product => 
-        product.name.toLowerCase().includes(searchTerm.toLowerCase())
+      const filtered = products.filter(product =>
+        product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
       );
       setFilteredProducts(filtered);
     }
-  }, [searchTerm, products]);
+  }, [debouncedSearchTerm, products]);
 
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
@@ -140,7 +157,7 @@ const Restock = () => {
     { 
       field: 'stock', 
       headerName: 'Current Stock', 
-      width: 130 
+      width: 150 
     },
     {
       field: 'actions',
@@ -206,19 +223,27 @@ const Restock = () => {
         />
       </Box>
 
-      <DataGrid
-        rows={filteredProducts}
-        columns={columns}
-        pageSize={10}
-        rowsPerPageOptions={[10, 25, 50]}
-        disableSelectionOnClick
-        density="compact"
-        sx={{
-          '& .MuiDataGrid-row:hover': {
-            backgroundColor: 'rgba(0, 0, 0, 0.04)'
-          }
-        }}
-      />
+      {loading ? (
+  <>
+    {[...Array(10)].map((_, i) => (
+      <Skeleton key={i} variant="rectangular" height={40} sx={{ mb: 1 }} />
+    ))}
+  </>
+) : (
+  <DataGrid
+    rows={filteredProducts}
+    columns={columns}
+    pageSize={10}
+    rowsPerPageOptions={[10, 25, 50]}
+    disableSelectionOnClick
+    density="compact"
+    sx={{
+      '& .MuiDataGrid-row:hover': {
+        backgroundColor: 'rgba(0, 0, 0, 0.04)'
+      }
+    }}
+  />
+)}
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>

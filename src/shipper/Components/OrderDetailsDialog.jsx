@@ -235,7 +235,6 @@ const OrderDetailsDialog = ({
                   <TableRow>
                     <TableCell>Product Name</TableCell>
                     <TableCell>Description</TableCell>
-                    <TableCell>Category</TableCell>
                     <TableCell>Quantity</TableCell>
                     <TableCell>Price</TableCell>
                     <TableCell>Subtotal</TableCell>
@@ -246,7 +245,6 @@ const OrderDetailsDialog = ({
                     <TableRow key={item.productID}>
                       <TableCell>{item.product.name}</TableCell>
                       <TableCell>{item.product.description}</TableCell>
-                      <TableCell>{item.product.category}</TableCell>
                       <TableCell>{item.numberOfProductInBill}</TableCell>
                       <TableCell>${item.product.price.toFixed(2)}</TableCell>
                       <TableCell>${item.subTotal.toFixed(2)}</TableCell>
