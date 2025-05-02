@@ -108,7 +108,7 @@
 // export default PendingDeliveries;
 
 // src/shipper/PendingDeliveries.jsx
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
   Typography,
@@ -121,15 +121,26 @@ import {
   Snackbar,
   Alert,
   Box,
+  Skeleton,
   TableContainer,
   Paper,
+  Pagination,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
+import './Dashboard.css'; // Import your CSS file for styling
 
 const PendingDeliveries = () => {
   const [pendingTransactions, setPendingTransactions] = useState([]);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
   const { user } = useAuth(); // Get the shipper's user info
+  const [isLoading, setIsLoading] = useState(true); // Loading state  
+
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+  const itemsPerPage = isXs ? 5 : 10;
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchPendingTransactions = async () => {
@@ -138,7 +149,6 @@ const PendingDeliveries = () => {
           headers: { 'Content-Type': 'application/json' },
           withCredentials: true,
         });
-        // Filter transactions with deliveryStatus === 1 (Prepared)
         const preparedTransactions = response.data.filter(
           (tx) => tx.deliveryStatus === 1
         );
@@ -150,9 +160,11 @@ const PendingDeliveries = () => {
           message: 'Failed to fetch transactions.',
           severity: 'error',
         });
+      } finally {
+        setIsLoading(false);
       }
     };
-
+  
     fetchPendingTransactions();
   }, []);
 
@@ -202,14 +214,45 @@ const PendingDeliveries = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  // Calculate the data to display based on pagination
+  const paginatedTransactions = pendingTransactions.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(pendingTransactions.length / itemsPerPage);
+
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{
+          textAlign: { xs: 'center', sm: 'left' },
+        }}
+      >
         Pending Deliveries
       </Typography>
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          overflowX: 'auto',
+          boxShadow: '2px 4px 8px rgba(0, 0, 0, 0.1)',
+          borderRadius: 2,
+        }}
+      >
         <Table aria-label="pending deliveries table">
-          <TableHead>
+          <TableHead
+            sx={{
+              backgroundColor: 'rgba(0, 0, 0, 0.04)',
+              display: { xs: 'none', sm: 'table-header-group' },
+            }}
+          >
             <TableRow>
               <TableCell>Transaction ID</TableCell>
               <TableCell>Customer ID</TableCell>
@@ -217,41 +260,108 @@ const PendingDeliveries = () => {
               <TableCell>Payment Method</TableCell>
               <TableCell>Date and Time</TableCell>
               <TableCell>Total Price</TableCell>
-              <TableCell>Total Weight</TableCell>
               <TableCell>Action</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {pendingTransactions.map((tx) => (
-              <TableRow key={tx.transactionId}>
-                <TableCell>{tx.transactionId}</TableCell>
-                <TableCell>{tx.customerID}</TableCell>
-                <TableCell>{tx.storeID}</TableCell>
-                <TableCell>{tx.paymentMethod}</TableCell>
-                <TableCell>{new Date(tx.dateAndTime).toLocaleString()}</TableCell>
-                <TableCell>${tx.totalPrice.toFixed(2)}</TableCell>
-                <TableCell>{tx.totalWeight} g</TableCell>
-                <TableCell>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => handleAcceptDelivery(tx.transactionId)}
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, idx) => (
+                <TableRow key={idx}>
+                  {Array.from({ length: 8 }).map((__, i) => (
+                    <TableCell key={i}>
+                      <Skeleton variant="text" width="100%" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <>
+                {paginatedTransactions.map((tx) => (
+                  <TableRow
+                    key={tx.transactionId}
+                    sx={{
+                      display: { xs: 'block', sm: 'table-row' },
+                      marginBottom: { xs: 2, sm: 0 },
+                      border: { xs: '1px solid #ccc', sm: 'none' },
+                      borderRadius: { xs: 2, sm: 0 },
+                      padding: { xs: 2, sm: 0}
+                    }}
                   >
-                    Accept Delivery
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
-            {pendingTransactions.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={8} align="center">
-                  No pending deliveries found.
-                </TableCell>
-              </TableRow>
+                    <TableCell
+                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                    >
+                      <strong className="shipperTableItem">Transaction ID:</strong>
+                      {tx.transactionId}
+                    </TableCell>
+                    <TableCell
+                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                    >
+                      <strong className="shipperTableItem">Customer ID:</strong>
+                      {tx.customerID}
+                    </TableCell>
+                    <TableCell
+                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                    >
+                      <strong className="shipperTableItem">Store ID:</strong>
+                      {tx.storeID}
+                    </TableCell>
+                    <TableCell
+                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                    >
+                      <strong className="shipperTableItem">Payment Method:</strong>
+                      {tx.paymentMethod}
+                    </TableCell>
+                    <TableCell
+                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                    >
+                      <strong className="shipperTableItem">Date and Time:</strong>
+                      {new Date(tx.dateAndTime).toLocaleString()}
+                    </TableCell>
+                    <TableCell
+                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                    >
+                      <strong className="shipperTableItem">Total Price:</strong>
+                      ${tx.totalPrice.toFixed(2)}
+                    </TableCell>
+                    <TableCell
+                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                    >
+                      <strong className="shipperTableItem">Action:</strong>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleAcceptDelivery(tx.transactionId)}
+                      >
+                        Accept Delivery
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {paginatedTransactions.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      No pending deliveries found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </>
             )}
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Pagination */}
+      {pendingTransactions.length > itemsPerPage && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={handleChangePage}
+            color="primary"
+            size={isXs ? 'small' : 'medium'}
+          />
+        </Box>
+      )}
 
       {/* Snackbar for notifications */}
       <Snackbar

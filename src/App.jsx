@@ -89,7 +89,7 @@ function App() {
 
                         {/* Shipper Routes */}
                         <Route element={<ProtectedRoute allowedRoles={['Shipper']} />}>
-                          <Route path="/Shipper/*" element={<Shipper />} />
+                          <Route path="/shipper/*" element={<Shipper />} />
                         </Route>
                         
                         {/* StoreManager Routes */}

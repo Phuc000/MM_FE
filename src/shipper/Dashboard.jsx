@@ -19,6 +19,7 @@ import {
 } from '@mui/material';
 import { useAuth } from '../hooks/useAuth';
 import OrderDetailsDialog from './Components/OrderDetailsDialog';
+import "./Dashboard.css"; // Import your CSS file for styling
 
 const Dashboard = () => {
   const [shipperOrders, setShipperOrders] = useState([]);
@@ -439,22 +440,23 @@ const Dashboard = () => {
     );
   };
 
-  const vehicleCapacity = shipperInfo ? shipperInfo.vehicleCapacity : 0;
-  const capacityPercentage = vehicleCapacity
-    ? Math.min((capacityUsage / vehicleCapacity) * 100, 100)
+  const orderPercentage = shipperOrders.length > 0
+    ? Math.min((shipperOrders.length / 15) * 100, 100)
     : 0;
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom sx={{
+        textAlign: {xs: 'center', sm: 'left'}
+      }}>
         Shipper Dashboard
       </Typography>
       {shipperInfo && (
         <Box mb={2}>
           <Typography variant="h6">
-            Vehicle Capacity Usage: {capacityUsage}g / {vehicleCapacity}g
+            Order capacity: {shipperOrders.length} / 15 Orders
           </Typography>
-          <LinearProgress variant="determinate" value={capacityPercentage} />
+          <LinearProgress variant="determinate" value={orderPercentage} />
         </Box>
       )}
       <Button
@@ -468,11 +470,14 @@ const Dashboard = () => {
       </Button>
 
       <RouteTable routingData={routingData} />
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} sx={{ overflowX: 'auto' }}>
         <Table aria-label="shipper orders table">
-          <TableHead
-            sx={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }}
-          >
+        <TableHead
+          sx={{
+            backgroundColor: 'rgba(0, 0, 0, 0.04)',
+            display: { xs: 'none', sm: 'table-header-group' },
+          }}
+        >
             <TableRow>
               <TableCell>Date and Time</TableCell>
               <TableCell>Payment Method</TableCell>
@@ -480,26 +485,76 @@ const Dashboard = () => {
               <TableCell>Store ID</TableCell>
               <TableCell>Shipping Address</TableCell>
               <TableCell>Total Price</TableCell>
-              <TableCell>Total Weight</TableCell>
               <TableCell align="center">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {shipperOrders.map((tx) => (
-              <TableRow key={tx.transactionId}>
-                <TableCell>{new Date(tx.dateAndTime).toLocaleString()}</TableCell>
-                <TableCell>{tx.paymentMethod}</TableCell>
-                <TableCell>{getStatusText(tx.deliveryStatus)}</TableCell>
-                <TableCell>{tx.storeID}</TableCell>
-                <TableCell>{tx.shippingAddress}</TableCell>
-                <TableCell>${tx.totalPrice.toFixed(2)}</TableCell>
-                <TableCell>{tx.totalWeight} g</TableCell>
-                <TableCell align="center">
+  {shipperOrders.map((tx) => (
+    <TableRow
+      key={tx.transactionId}
+      sx={{
+        display: { xs: 'block', sm: 'table-row' },
+        marginBottom: { xs: 2, sm: 0 },
+        border: { xs: '1px solid #ccc', sm: 'none' },
+        borderRadius: { xs: 2, sm: 0 },
+        padding: { xs: 2, sm: 0 },
+      }}
+    >
+      <TableCell
+        sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+      >
+        <strong className="shipperTableItem">Date and Time:</strong>
+        {new Date(tx.dateAndTime).toLocaleString()}
+      </TableCell>
+      <TableCell
+        sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+      >
+        <strong className="shipperTableItem">Payment Method:</strong>
+        {tx.paymentMethod}
+      </TableCell>
+      <TableCell
+        sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+      >
+        <strong className="shipperTableItem">Delivery Status:</strong>
+        {getStatusText(tx.deliveryStatus)}
+      </TableCell>
+      <TableCell
+        sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+      >
+        <strong className="shipperTableItem">Store ID:</strong>
+        {tx.storeID}
+      </TableCell>
+      <TableCell
+        sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+      >
+        <strong className="shipperTableItem">Shipping Address:</strong>
+        {tx.shippingAddress}
+      </TableCell>
+      <TableCell
+        sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+      >
+        <strong className="shipperTableItem">Total Price:</strong>
+        ${tx.totalPrice.toFixed(2)}
+      </TableCell>
+      <TableCell
+        align="center"
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          flexWrap: 'wrap',
+          justifyContent: 'center',
+          gap: 1,
+          mt: { xs: 1, sm: 0 },
+        }}
+      >
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={() => handleOpenDetails(tx.transactionId)}
-                    sx={{ marginRight: '8px' }}
+                    sx={{ 
+                      marginRight: {xs: 0, sm: '8px'},
+                      width: {xs: '250px', sm: 'auto'} 
+                    }}
                   >
                     View Details
                   </Button>
@@ -509,7 +564,10 @@ const Dashboard = () => {
                         variant="contained"
                         color="secondary"
                         onClick={() => handleUpdateStatus(tx.transactionId, 3)}
-                        sx={{ marginRight: '8px' }}
+                        sx={{ 
+                          marginRight: {xs: 0, sm: '8px'},
+                          width: {xs: '250px', sm: 'auto'} 
+                        }}
                       >
                         Set On Delivery
                       </Button>
@@ -517,6 +575,9 @@ const Dashboard = () => {
                         variant="contained"
                         color="error"
                         onClick={() => handleCancel(tx.transactionId)}
+                        sx={{ 
+                          width: {xs: '250px', sm: 'auto'} 
+                        }}
                       >
                         Cancel
                       </Button>
@@ -528,7 +589,10 @@ const Dashboard = () => {
                         variant="contained"
                         color="success"
                         onClick={() => handleUpdateStatus(tx.transactionId, 4)}
-                        sx={{ marginRight: '8px' }}
+                        sx={{ 
+                          marginRight: {xs: 0, sm: '8px'},
+                          width: {xs: '250px', sm: 'auto'} 
+                        }}
                       >
                         Set Delivered
                       </Button>
@@ -536,7 +600,10 @@ const Dashboard = () => {
                         variant="contained"
                         color="warning"
                         onClick={() => handleReschedule(tx.transactionId)}
-                        sx={{ marginRight: '8px' }}
+                        sx={{ 
+                          marginRight: {xs: 0, sm: '8px'},
+                          width: {xs: '250px', sm: 'auto'} 
+                        }}
                       >
                         Reschedule
                       </Button>
@@ -544,22 +611,18 @@ const Dashboard = () => {
                         variant="contained"
                         color="error"
                         onClick={() => handleBombConfirmOpen(tx.transactionId)}
+                        sx={{ 
+                          width: {xs: '250px', sm: 'auto'} 
+                        }}
                       >
                         Bombed
                       </Button>
                     </>
                   )}
-                </TableCell>
-              </TableRow>
-            ))}
-            {shipperOrders.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={6} align="center">
-                  No current orders.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
+      </TableCell>
+    </TableRow>
+  ))}
+</TableBody>
         </Table>
       </TableContainer>
 

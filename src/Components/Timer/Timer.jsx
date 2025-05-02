@@ -89,17 +89,19 @@ Timer.propTypes = {
   customerId: PropTypes.string,
 };
 
+const isSmallScreen = window.innerWidth <= 480;
+
 // Example styles for the modal and timer
 const styles = {
   timerContainer: {
-    position: 'fixed', // Change to fixed
-    top: '30px', // Distance from the top of the viewport
-    right: '10px', // Distance from the right of the viewport
+    position: 'fixed',
+    top: isSmallScreen ? '140px' : '30px',
+    right: '10px',
     backgroundColor: 'black',
     color: 'white',
     padding: '10px',
     borderRadius: '5px',
-    zIndex: 1000, // Ensures the timer appears above most other elements
+    zIndex: 1000,
   },
   modalOverlay: {
     position: 'fixed',

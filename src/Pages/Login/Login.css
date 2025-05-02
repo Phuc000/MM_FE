@@ -119,6 +119,7 @@ form {
     width: 916px;
     max-width: 100%;
     min-height: 480px;
+    height: 550px;
     margin: 0px auto;
   }
   
@@ -151,7 +152,7 @@ form {
 
     @media (max-width: 480px) {
       width: 100%;
-      animation: show 0.6s;
+      /* animation: show 0.6s; */
 
       .social-container {
         margin-top: 0;
@@ -173,7 +174,7 @@ form {
     transform: translateX(100%);
     opacity: 1;
     z-index: 5;
-    animation: show 0.6s;
+    /* animation: show 0.6s; */
 
     @media (max-width: 480px) {
       transform: translateX(0%);

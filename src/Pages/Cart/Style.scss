@@ -128,8 +128,8 @@ $transition: all #{$speed} cubic-bezier(0.310, -0.105, 0.430, 1.400);
     margin-right: 0;
     line-height: 50px;
     box-shadow: none;
-    top: -120px;
-    right: 10px;
+    top: 120px;
+    right: 20px;
 
     span {
       display: none; /* Hide the text */

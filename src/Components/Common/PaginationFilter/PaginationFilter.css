@@ -4,6 +4,14 @@
     align-items: center;
     gap: 20px; /* Increased gap for spacing between filters */
   }
+
+  @media (max-width: 576px) {
+    .filter-controls {
+      flex-direction: column; /* Stack filters on smaller screens */
+      align-items: flex-start; /* Align to the left */
+    }
+    
+  }
   
   .filter-group {
     display: flex;

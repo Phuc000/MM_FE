@@ -58,6 +58,10 @@ const openedMixin = (theme) => ({
     duration: theme.transitions.duration.enteringScreen,
   }),
   overflowX: 'hidden',
+  // Override margin for small screens (<= 480px)
+  [theme.breakpoints.down(480)]: {
+    zIndex: 1000, // Ensure the drawer is above other elements  
+  },
 });
 
 const closedMixin = (theme) => ({
@@ -104,6 +108,14 @@ const DrawerStyled = styled(Drawer, {
   flexShrink: 0,
   whiteSpace: 'nowrap',
   boxSizing: 'border-box',
+  position: 'relative',
+  zIndex: 1,
+
+  '@media (max-width: 480px)': {
+    position: 'absolute',
+    zIndex: 1000,
+  },
+
   ...(open && {
     ...openedMixin(theme),
     '& .MuiDrawer-paper': openedMixin(theme),
@@ -123,8 +135,15 @@ const Main = styled('main', {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
-  margin: '0 10px',
   width: `calc(100% - ${open ? drawerWidth : closedDrawerWidth}px)`,
+
+  // Default margin for larger screens
+  margin: '0 10px',
+
+  // Override margin for small screens (<= 480px)
+  [theme.breakpoints.down(480)]: {
+    margin: '0 10px 0 64px',
+  },
 }));
 
 const UserLayout = ({
@@ -242,8 +261,9 @@ const UserLayout = ({
           <DrawerHeader>
             {open && (
               <Typography variant="subtitle1" sx={{ paddingLeft: '16px', color: '#fff' }}>
-                {userName}
-              </Typography>
+              {userName}
+            </Typography>
+              
             )}
             <IconButton onClick={handleDrawerToggle} sx={{ color: '#fff' }}>
               {open ? <ChevronLeftIcon /> : <MenuIcon />}

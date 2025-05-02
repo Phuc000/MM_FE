@@ -52,7 +52,7 @@ function SignInForm({ toggleSignState }) {
       const roleRedirectMap = {
         "Customer": "/",
         "StoreManager": "/Profile",
-        "Shipper": "/Shipper",
+        "Shipper": "/shipper",
         "Admin": "/Admin"
       };
 

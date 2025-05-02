@@ -287,11 +287,14 @@ html {
       display: flex;
       justify-content: center;
       align-items: center;
+      margin-right: 15px;
+      margin-left: -10px;
   }
 
   .nav__navigation_visible {
       left: 0;
       z-index: 9999;
+      background-color: var(--verysoft_yellow);
   }
 
   .body__fixed {
@@ -421,11 +424,12 @@ html {
     padding-bottom: 2vw;
   }
 
-  @media (max-width: 1200px) {
+  @media (max-width: 1550px) {
     .bannerblock {
       background-position: 0px 0px;
       margin-left: 8vw;
       margin-right: 8vw;
+      height: 520px;
     }
   }
   
@@ -440,8 +444,9 @@ html {
   @media (max-width: 480px) {
     .bannerblock {
       background-position: -100px 0px;
-      margin-left: 3vw;
-      margin-right: 3vw;
+      margin-left: 0vw;
+      margin-right: 15px;
+      border-radius: 0px;
     }
   }
 
@@ -536,13 +541,20 @@ html {
 .promo-products {
   margin-top: 20px;
   width: 100%;
-  padding: 0 40px;
+  padding: 0 40px 0 25px;
   /* margin-left: 40px; */
 }
 
 .promo-products-title {
   font-size: 24px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+@media (max-width: 576px) {
+  .promo-products-title {
+    text-align: center;
+  }
+  
 }
 
 .promo-products-container {
@@ -626,8 +638,8 @@ html {
   grid-template-columns: auto auto auto;
   gap: 15px;
   margin: 10px;
-  margin-left: 5vw;
-  margin-right: 5vw;
+  margin-left: 35px;
+  margin-right: 45px;
   padding: 5px 0;
   scrollbar-width: thin; /* Firefox */
   scrollbar-color: transparent transparent; /* Firefox */

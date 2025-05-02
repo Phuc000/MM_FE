@@ -270,15 +270,23 @@ const OrderDetailsDialog = ({
           <Typography>Loading...</Typography>
         )}
       </DialogContent>
-      <DialogActions sx={{ justifyContent: 'space-between', px: 3, py: 2 }}>
-        <Box>
+      <DialogActions sx={{ 
+        justifyContent: 'space-between', px: 3, py: 2,
+        display: 'flex',
+        flexDirection: {xs: 'column', sm: 'row'},
+        }}>
+        <Box sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: 1
+        }}>
           {transaction?.deliveryStatus === 2 && (
             <>
               <Button
                 variant="contained"
                 color="secondary"
                 onClick={() => handleUpdateStatus(3)}
-                sx={{ mr: 1 }}
+                sx={{ mr: 1, width: { xs: '180px', sm: 'auto' }, }}
               >
                 Set On Delivery
               </Button>
@@ -286,7 +294,7 @@ const OrderDetailsDialog = ({
                 variant="contained"
                 color="error"
                 onClick={handleCancel}
-                sx={{ mr: 1 }}
+                sx={{ mr: 1, width: { xs: '180px', sm: 'auto' }, }}
               >
                 Cancel
               </Button>
@@ -298,7 +306,7 @@ const OrderDetailsDialog = ({
                 variant="contained"
                 color="success"
                 onClick={() => handleUpdateStatus(4)}
-                sx={{ mr: 1 }}
+                sx={{ mr: 1, width: { xs: '180px', sm: 'auto' }, }}
               >
                 Set Delivered
               </Button>
@@ -306,7 +314,7 @@ const OrderDetailsDialog = ({
                 variant="contained"
                 color="warning"
                 onClick={handleReschedule}
-                sx={{ mr: 1 }}
+                sx={{ mr: 1, width: { xs: '180px', sm: 'auto' }, }}
               >
                 Reschedule
               </Button>
@@ -314,6 +322,7 @@ const OrderDetailsDialog = ({
                 variant="contained"
                 color="error"
                 onClick={() => setBombConfirmation({ open: true })}
+                sx={{ width: { xs: '180px', sm: 'auto' }, }}
               >
                 Bombed
               </Button>
@@ -323,7 +332,11 @@ const OrderDetailsDialog = ({
         <Button 
           onClick={onClose} 
           variant="contained"
-          sx={{ backgroundColor: '#fe3bd4' }}
+          sx={{ backgroundColor: '#fe3bd4', 
+            mt: { xs: 1, sm: 0 },
+            width: { xs: '180px', sm: 'auto' },
+            mr: { xs: 2, sm: 0 },
+           }}
         >
           Close
         </Button>

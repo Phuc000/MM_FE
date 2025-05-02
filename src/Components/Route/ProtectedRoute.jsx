@@ -16,7 +16,7 @@ const ProtectedRoute = ({ allowedRoles = null }) => {
     const roleRedirectMap = {
       Admin: '/Admin',
       StoreManager: '/manager',
-      Shipper: '/Shipper',
+      Shipper: '/shipper',
     };
     return <Navigate to={roleRedirectMap[user.role] || '/Login'} replace />;
   }

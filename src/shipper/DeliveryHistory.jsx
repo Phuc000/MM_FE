@@ -12,7 +12,11 @@ import {
   TableContainer,
   Paper,
   Snackbar,
+  Skeleton,
   Alert,
+  Pagination,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
 
 const DeliveryHistory = () => {
@@ -23,6 +27,13 @@ const DeliveryHistory = () => {
     message: '',
     severity: 'success',
   });
+
+  const [isLoading, setIsLoading] = useState(true); // Loading state  
+
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+  const itemsPerPage = isXs ? 5 : 10;
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchDeliveryHistory = async () => {
@@ -45,6 +56,8 @@ const DeliveryHistory = () => {
           message: 'Failed to fetch delivery history.',
           severity: 'error',
         });
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -57,46 +70,130 @@ const DeliveryHistory = () => {
     setSnackbar({ ...snackbar, open: false });
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+    };
+    
+    // Calculate the data to display based on pagination
+    const paginatedDeliveries = deliveries.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+    );
+    
+    // Calculate total number of pages
+    const totalPages = Math.ceil(deliveries.length / itemsPerPage);
+
   return (
     <div>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom sx={{
+          textAlign: { xs: 'center', sm: 'left' },
+        }}>
         Delivery History
       </Typography>
-      <TableContainer component={Paper}>
+      <TableContainer
+        component={Paper}
+        sx={{
+          overflowX: 'auto',
+          boxShadow: '2px 4px 8px rgba(0, 0, 0, 0.1)',
+          borderRadius: 2,
+        }}
+      >
         <Table aria-label="delivery history table">
-          <TableHead>
+        <TableHead
+            sx={{
+              backgroundColor: 'rgba(0, 0, 0, 0.04)',
+              display: { xs: 'none', sm: 'table-header-group' },
+            }}
+          >
             <TableRow>
-              <TableCell>Order ID</TableCell>
-              <TableCell>Date</TableCell>
+              <TableCell>Transaction ID</TableCell>
+              <TableCell>Date and Time</TableCell>
               <TableCell>Customer ID</TableCell>
               <TableCell>Total Price</TableCell>
               <TableCell>Status</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {deliveries.map((delivery) => (
-              <TableRow key={delivery.transactionId}>
-                <TableCell>{delivery.transactionId}</TableCell>
-                <TableCell>
-                  {new Date(delivery.dateAndTime).toLocaleDateString()}
-                </TableCell>
-                <TableCell>{delivery.customerID}</TableCell>
-                <TableCell>${delivery.totalPrice.toFixed(2)}</TableCell>
-                <TableCell>
-                  {delivery.deliveryStatus === 4 ? 'Delivered' : `Status ${delivery.deliveryStatus}`}
-                </TableCell>
-              </TableRow>
-            ))}
-            {deliveries.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={5} align="center">
-                  No delivery history found.
-                </TableCell>
-              </TableRow>
+            {isLoading ? (
+              Array.from({ length: 5 }).map((_, idx) => (
+                <TableRow key={idx}>
+                  {Array.from({ length: 5 }).map((__, i) => (
+                    <TableCell key={i}>
+                      <Skeleton variant="text" width="100%" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <>
+                {paginatedDeliveries.map((delivery) => (
+                  <TableRow
+                    key={delivery.transactionId}
+                    sx={{
+                      display: { xs: 'block', sm: 'table-row' },
+                      marginBottom: { xs: 2, sm: 0 },
+                      border: { xs: '1px solid #ccc', sm: 'none' },
+                      borderRadius: { xs: 2, sm: 0 },
+                      padding: { xs: 2, sm: 0 },
+                    }}
+                  >
+                    <TableCell
+                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                    >
+                      <strong className="shipperTableItem">Transaction ID:</strong>
+                      {delivery.transactionId}
+                    </TableCell>
+                    <TableCell
+                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                    >
+                      <strong className="shipperTableItem">Date and Time:</strong>
+                      {new Date(delivery.dateAndTime).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell
+                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                    >
+                      <strong className="shipperTableItem">Customer ID:</strong>
+                      {delivery.customerID}
+                    </TableCell>
+                    <TableCell
+                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                    >
+                      <strong className="shipperTableItem">Total Price:</strong>
+                      ${delivery.totalPrice.toFixed(2)}
+                    </TableCell>
+                    <TableCell
+                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                    >
+                      <strong className="shipperTableItem">Status:</strong>
+                      {delivery.deliveryStatus === 4 ? 'Delivered' : 'Ghost'}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {paginatedDeliveries.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={5} align="center">
+                      No delivery history found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </>
             )}
           </TableBody>
         </Table>
       </TableContainer>
+
+      {/* Pagination */}
+      {!isLoading && deliveries.length > itemsPerPage && (
+        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+          <Pagination
+            count={totalPages}
+            page={page}
+            onChange={handleChangePage}
+            color="primary"
+            size={isXs ? 'small' : 'medium'}
+          />
+        </div>
+      )}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}

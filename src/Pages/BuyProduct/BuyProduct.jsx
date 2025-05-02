@@ -138,7 +138,24 @@ const BuyProduct = () => {
   }, [chosenStoreId]);
 
   const handleQuantityChange = (e) => {
-    const newQuantity = parseInt(e.target.value);
+    const inputValue = e.target.value;
+  
+    // Allow empty input while typing
+    if (inputValue === '') {
+      setQuantity('');
+      return;
+    }
+  
+    // Parse the input value to a number
+    const newQuantity = parseInt(inputValue, 10);
+  
+    // If the input is not a valid number, keep it as is (allow typing)
+    if (isNaN(newQuantity)) {
+      setQuantity(inputValue);
+      return;
+    }
+  
+    // Enforce constraints based on user role
     if (user?.role === 'StoreManager') {
       // For StoreManager: Only enforce x > 0
       setQuantity(newQuantity > 0 ? newQuantity : 1);
@@ -146,6 +163,21 @@ const BuyProduct = () => {
       // For others: Enforce 0 < x <= stock
       const maxQuantity = productAtStore ? stock : 1;
       setQuantity(newQuantity > 0 ? Math.min(newQuantity, maxQuantity) : 1);
+    }
+  };
+  
+  // Handle blur to enforce min=1 if the input is empty or invalid
+  const handleBlur = () => {
+    if (quantity === '' || isNaN(parseInt(quantity, 10))) {
+      setQuantity(1); // Revert to 1 if the input is empty or invalid
+    } else {
+      const newQuantity = parseInt(quantity, 10);
+      if (user?.role === 'StoreManager') {
+        setQuantity(newQuantity > 0 ? newQuantity : 1);
+      } else {
+        const maxQuantity = productAtStore ? stock : 1;
+        setQuantity(newQuantity > 0 ? Math.min(newQuantity, maxQuantity) : 1);
+      }
     }
   };
 
@@ -317,7 +349,7 @@ const BuyProduct = () => {
               </div>
               <div className='quantity-section'>
                 <div className="quantity-input">
-                  <label htmlFor="quantity">
+                  <label htmlFor="quantity" style={{marginRight: '10px'}}>
                     {user?.role === 'StoreManager' ? 'Restock Quantity' : 'Purchase Quantity'}
                   </label>
                   <input
@@ -326,7 +358,9 @@ const BuyProduct = () => {
                     name="quantity"
                     value={quantity}
                     onChange={handleQuantityChange}
-                    min="1"
+                    onBlur={handleBlur}
+                    min="1" // Optional: Keep for browser validation, but logic handles it
+                    max={user?.role === 'StoreManager' ? undefined : (productAtStore ? stock : 1)} // Optional: Set max for non-StoreManagers
                   />
                 </div>
                 {user?.role === 'StoreManager' ? (
@@ -343,7 +377,7 @@ const BuyProduct = () => {
                     className={`add-to-cart ${buttonClass}`}
                     onClick={handleAddToCart}
                   >
-                    Add to Cart
+                    
                   </button>
                 )}
               </div>

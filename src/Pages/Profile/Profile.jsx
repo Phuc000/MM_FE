@@ -84,7 +84,7 @@ const Profile = () => {
     } else if (user.role === "Admin") {
       navigate("/Admin");
     } else if (user.role === "Shipper") {
-      navigate("/Shipper");
+      navigate("/shipper");
     }
   }, [user, navigate]);
 
@@ -214,10 +214,9 @@ const Profile = () => {
   };
 
   return (
-    <div className="profile">
+    <div style={{display: "flex", flexDirection: "column", minHeight: "100vh"}}>
       <Header />
-      <div className="profile-content">
-        {showUser && (
+      {showUser && (
           <div className="profile-content-wrapper">
             <UserMenu username={`${user.fName} ${user.lName}`} onMenuClick={handleMenuClick} mode="Customer" />
             <div className="component-container">
@@ -394,7 +393,6 @@ const Profile = () => {
             {snackbarMessage}
           </Alert>
         </Snackbar>
-      </div>
       <Footer />
     </div>
   );

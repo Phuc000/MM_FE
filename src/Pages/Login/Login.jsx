@@ -1,5 +1,5 @@
 // src/Login.jsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Header, Footer, SignInForm, SignUpForm } from "../../Components";
 import "./Login.css";
 
@@ -8,6 +8,10 @@ const Login = () => {
 
   const containerClass =
     "cred-box-container " + (type === "signUp" ? "right-panel-active" : "");
+
+  useEffect(() => {
+    console.log("Type changed to:", type);
+  }, [type]);
 
   const toggleSignState = (text) => {
     if (text !== type) {

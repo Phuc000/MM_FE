@@ -13,7 +13,7 @@ import {
 import { useAuth } from '../../hooks/useAuth'; // Adjust the import path as necessary
 
 const Shipper = () => {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(() => window.innerWidth >= 480);
   const { user } = useAuth(); // Destructure user from useAuth
 
   // Ensure the user is authenticated and has the "Shipper" role
@@ -23,7 +23,7 @@ const Shipper = () => {
 
   // Menu items for the shipper sidebar
   const shipperMenuItems = [
-    { text: 'Dashboard', icon: <LocalShippingIcon />, path: '/shipper/dashboard' },
+    { text: 'Dashboard', icon: <LocalShippingIcon />, path: '/shipper' },
     { text: 'Pending Deliveries', icon: <ListAltIcon />, path: '/shipper/pending-deliveries' },
     { text: 'Delivery History', icon: <AssignmentIcon />, path: '/shipper/delivery-history' },
   ];
@@ -43,7 +43,7 @@ const Shipper = () => {
       setOpen={setOpen}
     >
       <Routes>
-        <Route path="/dashboard" element={<ShipperDashboard />} />
+        <Route path="/" element={<ShipperDashboard />} />
         <Route path="/pending-deliveries" element={<PendingDeliveries />} />
         <Route path="/delivery-history" element={<DeliveryHistory />} />
       </Routes>

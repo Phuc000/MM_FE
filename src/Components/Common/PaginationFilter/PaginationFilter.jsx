@@ -206,7 +206,8 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
           </div>
         )}
       </div>
-
+      
+      <div style={{marginLeft: '15px'}}>
       {children(currentItems, filteredItems.length, (
         filteredItems.length > itemsPerPage && (
           <div className="pagination">
@@ -228,6 +229,8 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
           </div>
         )
       ))}
+      </div>
+      
     </div>
   );
 };

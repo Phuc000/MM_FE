@@ -226,6 +226,7 @@ const Header = () => {
           justifyContent={{ xs: "center", sm: "space-between" }}
           width="100%"
           flexWrap="wrap"
+          flexDirection={{ xs: "column", sm: "row" }}
           sx={{ padding: { xs: '10px', sm: '20px' }}}
         >
           <Box sx={{marginBottom: { xs: '5px', sm: 0} }} display="flex" alignItems="center" gap={3}>
