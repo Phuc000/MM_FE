@@ -81,10 +81,10 @@ const InfoForm = ({ title = "Billing Details", userData, setUserData }) => {
         {/* Continue for other fields */}
         <div className="form-row">
           <div className="form-group">
-            <select required>
-              <option>Country *</option>
-              {/* Options here */}
-            </select>
+          <select name="country" value={formValues.country || ''} onChange={handleInputChange} required>
+            <option value="">Country *</option>
+            <option value="vietnam">Vietnam</option>
+          </select>
           </div>
           <div className="form-group">
             <input type="text" placeholder="City / Town *" defaultValue={''} required />
@@ -92,7 +92,7 @@ const InfoForm = ({ title = "Billing Details", userData, setUserData }) => {
         </div>
         <div className="form-row">
           <div className="form-group">
-            <input type="text" placeholder="Postcode / ZIP *" defaultValue={''} required />
+            <input type="text" placeholder="Postcode / ZIP" defaultValue={''} required />
           </div>
           <div className="form-group">
             <input

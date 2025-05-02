@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Box, Card, Typography, Stack, Chip, Tooltip, Button } from '@mui/material';
+import { Box, Card, Typography, Stack, Chip, Tooltip, Button, Popover, List, ListItem } from '@mui/material';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 const ProductPromotionCard = ({ promo }) => {
   const [showAllProducts, setShowAllProducts] = useState(false);
@@ -9,6 +10,19 @@ const ProductPromotionCard = ({ promo }) => {
     ? promo.products
     : promo.products.slice(0, MAX_VISIBLE_PRODUCTS);
   const hiddenCount = promo.products.length - MAX_VISIBLE_PRODUCTS;
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleExploreClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'products-popover' : undefined;
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -20,8 +34,9 @@ const ProductPromotionCard = ({ promo }) => {
     sx={{
       position: 'relative',
       display: 'flex',
-      width: 'fit-content',
-      height: 250,
+      // width: 'fit-content',
+      width: 400,
+      height: 160,
       overflow: 'visible',
       borderRadius: 0,
       borderColor: '#bbb',
@@ -51,35 +66,88 @@ const ProductPromotionCard = ({ promo }) => {
       <Typography variant="body2" sx={{ color: '#555' }}>
         <strong>End Date:</strong> {formatDate(promo.endDay)}
       </Typography>
-      {/* Scrollable Products Frame */}
+
+      {/* Explore Button */}
       {promo.products && promo.products.length > 0 && (
-        <Box
+          <Button 
+            variant="outlined"
+            startIcon={<ArrowDropDownIcon />}
+            onClick={handleExploreClick}
+            sx={{ 
+              width: 'fit-content', 
+              marginTop: 'auto',
+              borderColor: '#fe3bd4',
+              color: '#fe3bd4',
+              '&:hover': {
+                borderColor: '#fe3bd4',
+                backgroundColor: 'rgba(254, 59, 212, 0.04)',
+              }
+            }}
+          >
+            Explore Products ({promo.products.length})
+          </Button>
+        )}
+        
+        {/* Popover for Products */}
+        <Popover
+          id={id}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
           sx={{
-            marginTop: 2,
-            maxHeight: 150, // Fixed height for the scrollable frame
-            overflowY: 'auto', // Enable vertical scrolling
-            '&::-webkit-scrollbar': {
-              width: '6px', // Thin scrollbar
-            },
-            '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#fe3bd4', // Scrollbar color
-              borderRadius: '6px',
-            },
+            '& .MuiPaper-root': {
+              maxHeight: 300,
+              width: 250,
+              overflowY: 'auto',
+              padding: 1,
+              borderRadius: 1,
+              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+              '&::-webkit-scrollbar': {
+                width: '6px',
+              },
+              '&::-webkit-scrollbar-thumb': {
+                backgroundColor: '#fe3bd4',
+                borderRadius: '6px',
+              },
+            }
           }}
         >
-        <Stack direction="column" spacing={1.5}>
+          <Typography 
+            variant="subtitle1" 
+            sx={{ 
+              fontWeight: 'bold', 
+              padding: '8px 16px',
+              borderBottom: '1px solid #eee',
+              color: '#fe3bd4'
+            }}
+          >
+            Promotional Products
+          </Typography>
+          <List sx={{ padding: 0 }}>
             {promo.products.map((product, index) => (
+              <ListItem key={`${product.id}-${index}`} sx={{ padding: '8px 16px' }}>
                 <Chip
-                label={product.name}
-                key={`${product.id}-${index}`} // Fixed key syntax
-                size="medium" // Medium size is fine, but you can use "small" for compactness
-                sx={{ width: 'fit-content' }}
+                  label={product.name}
+                  size="medium"
+                  sx={{ width: '100%', justifyContent: 'flex-start' }}
+                  onClick={() => {
+                    // Handle navigation to product detail if needed
+                    window.location.href = `/buy-product/${product.id}`;
+                  }}
                 />
+              </ListItem>
             ))}
-        </Stack>
-        </Box>
-      )}
-    </Box>
+          </List>
+        </Popover>
+      </Box>
     {/* Dashed Divider with Cutouts */}
     <Box
       sx={{

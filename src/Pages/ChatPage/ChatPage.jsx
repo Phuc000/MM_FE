@@ -11,8 +11,6 @@ import MicIcon from '@mui/icons-material/Mic';
 import ImageIcon from '@mui/icons-material/Image';
 import { Alert, Snackbar } from '@mui/material';
 
-import { Typography, Box } from '@mui/material';
-
 import { useAuth } from '../../hooks/useAuth';
 import { useWebSocket } from '../../hooks/useWebSocket';
 import RecipeCard from '../../Components/Common/RecipeCard/RecipeCard';
@@ -21,6 +19,23 @@ import ShopRecipeConfirmation from '../../Components/Common/ShowRecipeConfirmati
 
 import { useVoiceInput } from '../../hooks/useVoiceInput';
 import { useLocationContext } from '../../Context/LocationContext';
+import { 
+  Box, 
+  Tooltip, 
+  Badge, 
+  Typography, 
+  Fade,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Chip,
+  Stack
+} from '@mui/material';
+import CloudDoneIcon from '@mui/icons-material/CloudDone';
+import CloudOffIcon from '@mui/icons-material/CloudOff';
+import RestaurantIcon from '@mui/icons-material/Restaurant';
+import LocalDiningIcon from '@mui/icons-material/LocalDining';
 
 
 const mealTypes = ['Breakfast', 'Lunch', 'Dinner', 'Snack'];
@@ -204,85 +219,6 @@ const ChatUI = () => {
     wsRef.current.send(JSON.stringify(message));
   };
 
-  // const handleSend = async () => {
-  //   if (!userInput.trim()) return;
-
-  //   // Build the final message to send, including selected options
-  //   let finalUserInput = userInput;
-  //   if (selectedMealType) {
-  //     finalUserInput = `Meal Type: ${selectedMealType}\n${finalUserInput}`;
-  //   }
-  //   if (selectedDietaryPreference) {
-  //     finalUserInput = `Dietary Preference: ${selectedDietaryPreference}\n${finalUserInput}`;
-  //   }
-
-  //   const newMessage = { sender: 'user', text: userInput };
-  //   setMessages([...messages, newMessage]);
-  //   setUserInput('');
-
-  //   try {
-  //     const responseText = await runChat(finalUserInput);
-
-  //     let processedText = responseText;
-
-  //     // Find ingredients mentioned in the response
-  //     const ingredients = products.filter((product) =>
-  //       processedText.toLowerCase().includes(product.toLowerCase())
-  //     );
-
-  //     if (ingredients.length > 0) {
-  //       try {
-  //         // Fetch product details using the ingredients
-  //         const apiResponse = await axios.post(
-  //           `${import.meta.env.VITE_REACT_APP_API_URL}/products/chatbot`,
-  //           ingredients,
-  //           {
-  //             headers: {
-  //               'Content-Type': 'application/json',
-  //             },
-  //           }
-  //         );
-
-  //         const productsData = apiResponse.data; // Array of product details
-
-  //         // Map product names to product IDs
-  //         const productMap = {};
-  //         productsData.forEach((product) => {
-  //           productMap[product.name.toLowerCase()] = product.productID;
-  //         });
-
-  //         // Replace ingredient names with links in the response text
-  //         ingredients.forEach((ingredient) => {
-  //           const productId = productMap[ingredient.toLowerCase()];
-  //           if (productId) {
-  //             const linkText = `[${ingredient}](/buy-product/${productId}/null)`;
-
-  //             // Escape special regex characters
-  //             const escapedIngredient = escapeRegExp(ingredient);
-
-  //             // Replace all occurrences of the ingredient (case-insensitive)
-  //             const regex = new RegExp(`\\b${escapedIngredient}\\b`, 'gi');
-  //             processedText = processedText.replace(regex, linkText);
-  //           }
-  //         });
-  //       } catch (error) {
-  //         console.error('Error fetching product data:', error);
-  //         // Handle error appropriately
-  //       }
-  //     }
-
-  //     const responseMessage = { sender: 'bot', text: processedText };
-  //     setMessages((prevMessages) => [...prevMessages, responseMessage]);
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //     // Handle error appropriately
-  //   }
-  // };
-
-  // Function to escape special characters in a string for regex
-  const escapeRegExp = (string) => {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  };
 
   const [showRecipeModal, setShowRecipeModal] = useState(false);
 
@@ -290,44 +226,159 @@ const ChatUI = () => {
     <div>
       <Header />
       <div className="chat-container">
-        <h1>IUFC Chat</h1>
-        <div className="connection-status" style={{
-          color: wsStatus === 'connected' ? 'green' : 'red'
-        }}>
-          {wsStatus === 'connected' ? 'Connected' : 'Disconnected'}
+        <div className="chat-header">
+          <Box sx={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'space-between',
+            width: '100%',
+            mt: 1,
+            mb: 1,
+            gap: 2,
+          }}>
+            <Typography 
+              variant="h4" 
+              component="h1"
+              sx={{ 
+                fontWeight: 900,
+                fontFamily: 'Quicksand, sans-serif',
+              }}
+            >
+              IUFC Chat
+            </Typography>
+            
+            <Tooltip
+              title={
+                <Typography variant="body2">
+                  {wsStatus === 'connected' 
+                    ? 'Connected to chat server' 
+                    : 'Disconnected from chat server. Please refresh the page.'}
+                </Typography>
+              }
+              placement="bottom"
+              TransitionComponent={Fade}
+              TransitionProps={{ timeout: 600 }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Badge
+                  variant="dot"
+                  overlap="circular"
+                  sx={{
+                    '& .MuiBadge-badge': {
+                      backgroundColor: wsStatus === 'connected' ? '#4caf50' : '#f44336',
+                      width: 12,
+                      height: 12,
+                      borderRadius: '50%',
+                      boxShadow: wsStatus === 'connected' 
+                        ? '0 0 8px rgba(76, 175, 80, 0.8)' 
+                        : '0 0 8px rgba(244, 67, 54, 0.8)',
+                      animation: wsStatus === 'connected' 
+                        ? 'pulse 2s infinite' 
+                        : 'none',
+                    }
+                  }}
+                >
+                  <Box sx={{ display: 'flex' }}>
+                    {wsStatus === 'connected' ? 
+                      <CloudDoneIcon sx={{ color: '#4caf50' }} /> : 
+                      <CloudOffIcon sx={{ color: '#f44336' }} />
+                    }
+                  </Box>
+                </Badge>
+              </Box>
+            </Tooltip>
+          </Box>
         </div>
-        <div className="options-container">
-          <div className="meal-type-selector">
-            <label htmlFor="meal-type">Meal Type:</label>
-            <select
+        <Box 
+          sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', sm: 'row' },
+            gap: 4,
+            alignItems: 'center',
+            justifyContent: 'center',
+            px: 2,
+            py: 1,
+            borderRadius: 2,
+            backgroundColor: 'rgba(254, 59, 212, 0.03)',
+            border: '1px solid rgba(254, 59, 212, 0.1)',
+          }}
+        >
+          <FormControl 
+            variant="outlined" 
+            size="small"
+            fullWidth
+            sx={{ 
+              minWidth: 150,
+              '& .MuiOutlinedInput-root': {
+                '&.Mui-focused fieldset': {
+                  borderColor: '#fe3bd4',
+                },
+              },
+              '& .MuiInputLabel-root.Mui-focused': {
+                color: '#fe3bd4',
+              }
+            }}
+          >
+            <InputLabel id="meal-type-label">Meal Type</InputLabel>
+            <Select
+              labelId="meal-type-label"
               id="meal-type"
               value={selectedMealType}
               onChange={(e) => setSelectedMealType(e.target.value)}
+              label="Meal Type"
+              startAdornment={
+                <RestaurantIcon sx={{ mr: 1, color: selectedMealType ? '#fe3bd4' : 'inherit' }} />
+              }
             >
-              <option value="">Any</option>
+              <MenuItem value="">
+                <em>Any</em>
+              </MenuItem>
               {mealTypes.map((meal) => (
-                <option key={meal} value={meal}>
+                <MenuItem key={meal} value={meal}>
                   {meal}
-                </option>
+                </MenuItem>
               ))}
-            </select>
-          </div>
-          <div className="dietary-preference-selector">
-            <label htmlFor="dietary-preference">Dietary Preference:</label>
-            <select
+            </Select>
+          </FormControl>
+            
+          <FormControl 
+            variant="outlined" 
+            size="small"
+            fullWidth
+            sx={{ 
+              minWidth: 180,
+              '& .MuiOutlinedInput-root': {
+                '&.Mui-focused fieldset': {
+                  borderColor: '#fe3bd4',
+                },
+              },
+              '& .MuiInputLabel-root.Mui-focused': {
+                color: '#fe3bd4',
+              }
+            }}
+          >
+            <InputLabel id="dietary-preference-label">Dietary Preference</InputLabel>
+            <Select
+              labelId="dietary-preference-label"
               id="dietary-preference"
               value={selectedDietaryPreference}
               onChange={(e) => setSelectedDietaryPreference(e.target.value)}
+              label="Dietary Preference"
+              startAdornment={
+                <LocalDiningIcon sx={{ mr: 1, color: selectedDietaryPreference ? '#fe3bd4' : 'inherit' }} />
+              }
             >
-              <option value="">None</option>
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
               {dietaryPreferences.map((preference) => (
-                <option key={preference} value={preference}>
+                <MenuItem key={preference} value={preference}>
                   {preference}
-                </option>
+                </MenuItem>
               ))}
-            </select>
-          </div>
-        </div>
+            </Select>
+          </FormControl>
+        </Box>
         <div className="chat-box">
           {messages.length === 0 ? (
             <Box 

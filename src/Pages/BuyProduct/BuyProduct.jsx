@@ -340,7 +340,11 @@ const BuyProduct = () => {
                   ) : (
                     <p className="product-card-price">${product.price.toFixed(2)}</p>
                   )}
-                  <p className="product-description">Weight: {product.weight}g</p>
+                  <p className="product-description">Net: {product.amount} {
+                    !product.unit ? "unit" :
+                    product.unit.toLowerCase() === "milliliter" || product.unit.toLowerCase() === "mililiter" ? "ml" :
+                    product.unit
+                  }</p>
                   <div className='product-at-store'>
                     <p>Stock: </p>
                     <p className='aeon_pink'> {stock} Items In Stock</p>
