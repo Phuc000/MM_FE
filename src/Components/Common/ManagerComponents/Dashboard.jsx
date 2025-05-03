@@ -167,8 +167,8 @@ const Dashboard = () => {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", padding: "1rem" }}>
-    <h1 style={{ marginBottom: "0.5rem", fontSize: "1.8rem" }}>Dashboard</h1>
+    <div style={{ display: "flex", flexDirection: "column", padding: "0rem" }}>
+    <h1 style={{ marginBottom: "0.5rem", marginTop:0 }}>Dashboard</h1>
     <div className="dashboard-container">
       {/* Bar Chart */}
       {top10Products.length > 0 ? (

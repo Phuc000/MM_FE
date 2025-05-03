@@ -168,7 +168,7 @@ const OrderDetailsModal = ({ open, onClose, orderDetails }) => {
           </Grid>
         </Grid>
 
-        <Box sx={{ mt: 3, mb: 3 }}>
+        <Box sx={{ mt: 0, mb: 2 }}>
           <Typography variant="h6" sx={{ fontWeight: 700, mb: 1.5, color: '#333' }}>
             Products
           </Typography>

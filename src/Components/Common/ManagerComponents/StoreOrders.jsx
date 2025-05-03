@@ -21,6 +21,10 @@ import {
   Skeleton,
   Chip,
   Tooltip,
+  useMediaQuery,
+  Pagination,
+  Card,
+  CardContent 
 } from "@mui/material";
 import { useAuth } from "../../../hooks/useAuth";
 import OrderDetailsModal from "./OrderDetailsModal";
@@ -45,6 +49,10 @@ const StoreOrders = () => {
   const [selectedTransaction, setSelectedTransaction] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
   const user = useAuth().user;
+
+  const isMobile = useMediaQuery("(max-width:600px)");
+  const itemsPerPage = isMobile ? 5 : 10;
+  const [page, setPage] = useState(1);
 
   // Keep existing useEffects and functions as they are
   useEffect(() => {
@@ -212,14 +220,7 @@ const StoreOrders = () => {
   // Format date in a more readable way
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return (
-      <Box>
-        <Typography variant="body2">{date.toLocaleDateString()}</Typography>
-        <Typography variant="caption" color="text.secondary">
-          {date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </Typography>
-      </Box>
-    );
+    return `${date.toLocaleDateString()} - ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
   };
 
   const handleStatusChange = (event) => {
@@ -241,16 +242,21 @@ const StoreOrders = () => {
     return getStatusText(tx.deliveryStatus) === statusFilter;
   });
 
+  const paginatedData = filteredTransactions.slice(
+    (page - 1) * itemsPerPage,
+    page * itemsPerPage
+  );
+
+  const handleChangePage = (_, value) => {
+    setPage(value);
+  };
+
   return (
-    <Box>
+    <Box mr={2}>
       <Typography
         variant="h4"
         gutterBottom
-        sx={{
-          fontWeight: "900",
-          fontFamily: "Quicksand",
-          mb: 1
-        }}
+        sx={{ fontWeight: "900", fontFamily: "Quicksand", mb: 1 }}
       >
         Store Orders
       </Typography>
@@ -276,110 +282,60 @@ const StoreOrders = () => {
         </FormControl>
       </Box>
 
-      <TableContainer 
-        component={Paper} 
-        elevation={1}
-        sx={{ 
-          borderRadius: 2,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-          mb: 3,
-        }}
-      >
-        <Table aria-label="transactions table">
-          <TableHead>
-            <TableRow sx={{ backgroundColor: 'rgba(254, 59, 212, 0.05)' }}>
-              <TableCell sx={{ fontWeight: 700 }}>Order</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Customer</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Date & Time</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
-              <TableCell sx={{ fontWeight: 700 }}>Payment</TableCell>
-              <TableCell sx={{ fontWeight: 700 }} align="right">Total</TableCell>
-              <TableCell align="center" sx={{ fontWeight: 700 }}>Actions</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-          {loading ? (
-            // Display improved skeleton rows while loading
-            Array.from(new Array(5)).map((_, index) => (
-              <TableRow key={index}>
-                <TableCell><Skeleton variant="text" width={120} /></TableCell>
-                <TableCell><Skeleton variant="text" width={150} /></TableCell>
-                <TableCell><Skeleton variant="text" width={120} /></TableCell>
-                <TableCell><Skeleton variant="rounded" width={100} height={24} /></TableCell>
-                <TableCell><Skeleton variant="text" width={100} /></TableCell>
-                <TableCell align="right"><Skeleton variant="text" width={80} /></TableCell>
-                <TableCell align="center"><Skeleton variant="rectangular" width={120} height={36} /></TableCell>
-              </TableRow>
-            ))
-          ) : filteredTransactions.length > 0 ? (
-            // Improved display of actual transactions
-            filteredTransactions.map((tx) => (
-              <TableRow 
-                key={tx.transactionId}
-                sx={{ 
-                  '&:hover': { backgroundColor: 'rgba(0,0,0,0.03)' },
-                  cursor: 'pointer'
-                }}
-                onClick={() => handleOpenModal(tx)}
-              >
-                {/* Better Transaction ID display */}
-                <TableCell>
-                  <Tooltip title={tx.transactionId} placement="top">
-                    <Typography variant="body2" fontWeight={600} sx={{ color: '#333' }}>
-                      {formatTransactionId(tx.transactionId)}
-                    </Typography>
-                  </Tooltip>
-                </TableCell>
-                
-                {/* Better Customer ID display */}
-                <TableCell>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <PersonIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
-                    <Tooltip title={tx.customerID} placement="top">
-                      <Typography variant="body2">
-                        {tx.customerID && tx.customerID.length > 10 
-                          ? tx.customerID.substring(0, 6) + "..." 
-                          : tx.customerID || "N/A"}
-                      </Typography>
-                    </Tooltip>
-                  </Box>
-                </TableCell>
-                
-                {/* Better Date display */}
-                <TableCell>{formatDate(tx.dateAndTime)}</TableCell>
-                
-                {/* Status Chip */}
-                <TableCell>{getStatusChip(tx.deliveryStatus)}</TableCell>
-                
-                {/* Payment Method */}
-                <TableCell>
-                  <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <PaymentIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
-                    <Typography variant="body2">{tx.paymentMethod}</Typography>
-                  </Box>
-                </TableCell>
-                
-                {/* Better Price display */}
-                <TableCell align="right">
-                  <Typography variant="body2" fontWeight={700} sx={{ color: '#fe3bd4' }}>
-                    ${tx.totalPrice.toFixed(2)}
-                  </Typography>
-                </TableCell>
-                
-                {/* Actions with stopping propagation */}
-                <TableCell align="center">
+      {loading ? (
+        Array.from(new Array(itemsPerPage)).map((_, index) => (
+          isMobile ? (
+            <Card key={index} sx={{ mb: 2 }}>
+              <CardContent>
+                <Skeleton variant="text" width="80%" />
+                <Skeleton variant="text" width="60%" />
+                <Skeleton variant="text" width="90%" />
+              </CardContent>
+            </Card>
+          ) : (
+            <Skeleton key={index} variant="rectangular" height={60} sx={{ mb: 1 }} />
+          )
+        ))
+      ) : paginatedData.length > 0 ? (
+        isMobile ? (
+          paginatedData.map((tx) => (
+            <Card key={tx.transactionId} sx={{ mb: 2 }} onClick={() => handleOpenModal(tx)}>
+              <CardContent>
+                <Typography variant="h6" fontWeight={700} gutterBottom>
+                  Order: {formatTransactionId(tx.transactionId)}
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 0.5 }}>
+                  <strong>Customer:</strong> {tx.customerID}
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 0.5 }}>
+                  <strong>Date:</strong> {formatDate(tx.dateAndTime)}
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 0.5 }}>
+                  <strong>Status:</strong> {getStatusChip(tx.deliveryStatus)}
+                </Typography>
+                <Typography variant="body1" sx={{ mb: 0.5 }}>
+                  <strong>Payment:</strong> {tx.paymentMethod}
+                </Typography>
+                <Typography variant="body1" sx={{ fontWeight: 700, color: '#fe3bd4' }}>
+                  <strong>Total:</strong> ${tx.totalPrice.toFixed(2)}
+                </Typography>
+                <TableCell
+                  align="center"
+                  sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    borderBottom: "none", // <-- remove bottom border
+                    boxShadow: "none",     // <-- ensure no shadow
+                    paddingBottom: 0,           // <-- remove padding
+                  }}
+                >
                   {tx.deliveryStatus === 0 && (
                     <Button
                       variant="contained"
                       size="small"
-                      sx={{ 
-                        backgroundColor: "#fe3bd4", 
-                        color: "white",
-                        '&:hover': { backgroundColor: '#d81cb1' },
-                        mr: 1
-                      }}
+                      sx={{ backgroundColor: "#fe3bd4", color: "white", '&:hover': { backgroundColor: '#d81cb1' }, mr: 1 }}
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent row click
+                        e.stopPropagation();
                         handlePrepare(tx.transactionId);
                       }}
                     >
@@ -389,33 +345,118 @@ const StoreOrders = () => {
                   <Button
                     variant="outlined"
                     size="small"
-                    sx={{ 
-                      borderColor: 'rgba(0, 0, 0, 0.23)',
-                      color: 'rgba(0, 0, 0, 0.87)',
-                    }}
+                    sx={{ borderColor: 'rgba(0, 0, 0, 0.23)', color: 'rgba(0, 0, 0, 0.87)' }}
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevent row click
+                      e.stopPropagation();
                       handleOpenModal(tx);
                     }}
                   >
                     Details
                   </Button>
                 </TableCell>
-              </TableRow>
-            ))
-          ) : (
-            // Empty state message
-            <TableRow>
-              <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
-                <Typography variant="body1" color="text.secondary">
-                  No transactions found for the selected status.
-                </Typography>
-              </TableCell>
-            </TableRow>
-          )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              </CardContent>
+            </Card>
+          ))
+        ) : (
+          <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', mb: 3 }}>
+            <Table aria-label="transactions table">
+              <TableHead>
+                <TableRow sx={{ backgroundColor: 'rgba(254, 59, 212, 0.05)' }}>
+                  <TableCell sx={{ fontWeight: 700 }}>Order</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Customer</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Date & Time</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }}>Payment</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }} align="right">Total</TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 700 }}>Actions</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {paginatedData.map((tx) => (
+                  <TableRow
+                    key={tx.transactionId}
+                    sx={{ '&:hover': { backgroundColor: 'rgba(0,0,0,0.03)' }, cursor: 'pointer' }}
+                    onClick={() => handleOpenModal(tx)}
+                  >
+                    <TableCell>
+                      <Tooltip title={tx.transactionId} placement="top">
+                        <Typography variant="body2" fontWeight={600} sx={{ color: '#333' }}>
+                          {formatTransactionId(tx.transactionId)}
+                        </Typography>
+                      </Tooltip>
+                    </TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <PersonIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                        <Typography variant="body2">{tx.customerID}</Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell>{formatDate(tx.dateAndTime)}</TableCell>
+                    <TableCell>{getStatusChip(tx.deliveryStatus)}</TableCell>
+                    <TableCell>
+                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                        <PaymentIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                        <Typography variant="body2">{tx.paymentMethod}</Typography>
+                      </Box>
+                    </TableCell>
+                    <TableCell align="right">
+                      <Typography variant="body2" fontWeight={700} sx={{ color: '#fe3bd4' }}>
+                        ${tx.totalPrice.toFixed(2)}
+                      </Typography>
+                    </TableCell>
+                    <TableCell align="center">
+                      {tx.deliveryStatus === 0 && (
+                        <Button
+                          variant="contained"
+                          size="small"
+                          sx={{ backgroundColor: "#fe3bd4", color: "white", '&:hover': { backgroundColor: '#d81cb1' }, mr: 1 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handlePrepare(tx.transactionId);
+                          }}
+                        >
+                          Prepare
+                        </Button>
+                      )}
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        sx={{ borderColor: 'rgba(0, 0, 0, 0.23)', color: 'rgba(0, 0, 0, 0.87)' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenModal(tx);
+                        }}
+                      >
+                        Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )
+      ) : (
+        <Typography align="center" variant="body1" color="text.secondary" sx={{ py: 3 }}>
+          No transactions found for the selected status.
+        </Typography>
+      )}
+
+      {/* Pagination */}
+      <Box display="flex" justifyContent="center">
+        <Pagination
+          count={Math.ceil(filteredTransactions.length / itemsPerPage)}
+          page={page}
+          onChange={handleChangePage}
+          color="primary"
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            borderBottom: "none", // <-- remove bottom border
+            boxShadow: "none",     // <-- ensure no shadow
+          }}
+        />
+      </Box>
 
       {/* Snackbar for notifications */}
       <Snackbar

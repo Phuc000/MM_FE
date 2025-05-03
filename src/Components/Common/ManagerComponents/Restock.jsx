@@ -11,7 +11,9 @@ import {
   DialogContent,
   DialogActions,
   InputAdornment,
-  Skeleton
+  Skeleton,
+  useTheme, useMediaQuery,
+  Card
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import { DataGrid } from '@mui/x-data-grid';
@@ -30,6 +32,18 @@ const Restock = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const [isRestock, setIsRestock] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const itemsPerPage = 10;
+
+  const [mobilePage, setMobilePage] = useState(0);
+  const paginatedMobileProducts = filteredProducts.slice(
+    mobilePage * itemsPerPage,
+    (mobilePage + 1) * itemsPerPage
+  );
+
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   useEffect(() => {
     const fetchStoreID = async () => {
@@ -224,11 +238,59 @@ const Restock = () => {
       </Box>
 
       {loading ? (
-  <>
-    {[...Array(10)].map((_, i) => (
-      <Skeleton key={i} variant="rectangular" height={40} sx={{ mb: 1 }} />
-    ))}
-  </>
+  [...Array(10)].map((_, i) => (
+    <Skeleton key={i} variant="rectangular" height={40} sx={{ mb: 1 }} />
+  ))
+) : isMobile ? (
+  <Box pb={2}>
+  {paginatedMobileProducts.map((product) => (
+    <Card key={product.id} sx={{ mb: 2, p: 2 }}>
+      <Typography variant="subtitle1" fontWeight={700}>
+        {product.name}
+      </Typography>
+      <Typography variant="body1">Product ID: {product.id}</Typography>
+      <Typography variant="body1">Stock: {product.stock}</Typography>
+      <Box mt={1} display="flex" justifyContent="center">
+        <Button
+          size="small"
+          variant="contained"
+          color="primary"
+          onClick={() => handleStockChange(product, true)}
+          sx={{ mr: 1 }}
+        >
+          +
+        </Button>
+        <Button
+          size="small"
+          variant="contained"
+          color="error"
+          onClick={() => handleStockChange(product, false)}
+        >
+          -
+        </Button>
+      </Box>
+    </Card>
+  ))}
+
+  {/* Pagination Controls */}
+  <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
+    <Button 
+      onClick={() => setMobilePage((prev) => Math.max(prev - 1, 0))} 
+      disabled={mobilePage === 0}
+    >
+      Previous
+    </Button>
+    <Typography sx={{ mx: 2 }}>
+      Page {mobilePage + 1} of {totalPages}
+    </Typography>
+    <Button 
+      onClick={() => setMobilePage((prev) => Math.min(prev + 1, totalPages - 1))} 
+      disabled={mobilePage >= totalPages - 1}
+    >
+      Next
+    </Button>
+  </Box>
+</Box>
 ) : (
   <DataGrid
     rows={filteredProducts}
@@ -239,7 +301,7 @@ const Restock = () => {
     density="compact"
     sx={{
       '& .MuiDataGrid-row:hover': {
-        backgroundColor: 'rgba(0, 0, 0, 0.04)'
+        backgroundColor: 'rgba(0, 0, 0, 0.04)',
       }
     }}
   />
