@@ -140,15 +140,25 @@ const MealPlanner = () => {
                         {recipes.length > 0 ? (
                           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                             {recipes.map((recipe, index) => (
-                              <Typography
+                              <Box 
                                 key={index}
-                                className="recipe-name"
-                                variant="body2"
+                                className="recipe-card"
                                 onClick={() => handleRecipeClick(recipe)}
                                 sx={{ cursor: 'pointer' }}
                               >
-                                {recipe.title}
-                              </Typography>
+                                <img 
+                                  src={recipe.image || 'https://via.placeholder.com/80'} 
+                                  alt={recipe.title}
+                                  className="recipe-image"
+                                />
+                                <Typography
+                                  className="recipe-name"
+                                  variant="body2"
+                                  sx={{ textAlign: 'center' }}
+                                >
+                                  {recipe.title}
+                                </Typography>
+                              </Box>
                             ))}
                           </Box>
                         ) : (
