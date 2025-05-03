@@ -15,21 +15,11 @@ import {
   ListItemText,
   OutlinedInput,
   FormHelperText,
+  CircularProgress,
 } from '@mui/material';
 import axios from 'axios';
 
 const promotionTypes = ['ProductPromotion', 'BillPromotion', 'CustomerPromotion'];
-const categoryList = [
-  'Vegetable',
-  'Seafood',
-  'Spice',
-  'Grain',
-  'Sauce',
-  'Beef',
-  'Milk',
-  'Fruit',
-  'Pork',
-];
 
 const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
   const [promotion, setPromotion] = useState({
@@ -43,17 +33,41 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
     specificFields: {},
   });
   const [filteredProducts, setFilteredProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch categories when component mounts
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/products/category`
+        );
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     const fetchProductsByCategory = async () => {
       if (promotion.category) {
         try {
+          setLoading(true);
           const response = await axios.get(
             `${import.meta.env.VITE_REACT_APP_API_URL}/products/category/${promotion.category}`
           );
           setFilteredProducts(response.data);
         } catch (error) {
           console.error('Error fetching products by category:', error);
+        } finally {
+          setLoading(false);
         }
       } else {
         setFilteredProducts([]);
@@ -182,13 +196,24 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
               value={promotion.category}
               onChange={handleChange}
               label="Category"
+              disabled={loading || categories.length === 0}
             >
-              {categoryList.map((category) => (
-                <MenuItem value={category} key={category}>
-                  {category}
+              {loading ? (
+                <MenuItem disabled>
+                  <CircularProgress size={20} sx={{ mr: 1 }} />
+                  Loading categories...
                 </MenuItem>
-              ))}
+              ) : (
+                categories.map((category) => (
+                  <MenuItem value={category} key={category}>
+                    {category}
+                  </MenuItem>
+                ))
+              )}
             </Select>
+            {categories.length === 0 && !loading && (
+              <FormHelperText error>Failed to load categories</FormHelperText>
+            )}
           </FormControl>
         )}
 
@@ -210,18 +235,28 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
                   )
                   .join(', ')
               }
+              disabled={loading || filteredProducts.length === 0}
             >
-              {filteredProducts.map((product) => (
-                <MenuItem key={product.productID} value={product.productID}>
-                  <Checkbox
-                    checked={
-                      promotion.specificFields.productIds?.indexOf(product.productID) > -1 ||
-                      false
-                    }
-                  />
-                  <ListItemText primary={product.name} />
+              {loading ? (
+                <MenuItem disabled>
+                  <CircularProgress size={20} sx={{ mr: 1 }} />
+                  Loading products...
                 </MenuItem>
-              ))}
+              ) : filteredProducts.length > 0 ? (
+                filteredProducts.map((product) => (
+                  <MenuItem key={product.productID} value={product.productID}>
+                    <Checkbox
+                      checked={
+                        promotion.specificFields.productIds?.indexOf(product.productID) > -1 ||
+                        false
+                      }
+                    />
+                    <ListItemText primary={product.name} />
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>No products found in this category</MenuItem>
+              )}
             </Select>
             <FormHelperText>Select products for the promotion</FormHelperText>
           </FormControl>
@@ -260,12 +295,22 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
               value={promotion.specificFields.productId || ''}
               onChange={handleProductSelection}
               label="Product"
+              disabled={loading || filteredProducts.length === 0}
             >
-              {filteredProducts.map((product) => (
-                <MenuItem key={product.productID} value={product.productID}>
-                  {product.name}
+              {loading ? (
+                <MenuItem disabled>
+                  <CircularProgress size={20} sx={{ mr: 1 }} />
+                  Loading products...
                 </MenuItem>
-              ))}
+              ) : filteredProducts.length > 0 ? (
+                filteredProducts.map((product) => (
+                  <MenuItem key={product.productID} value={product.productID}>
+                    {product.name}
+                  </MenuItem>
+                ))
+              ) : (
+                <MenuItem disabled>No products found in this category</MenuItem>
+              )}
             </Select>
             <FormHelperText>Select a product for the promotion</FormHelperText>
           </FormControl>

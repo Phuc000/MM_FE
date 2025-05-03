@@ -16,11 +16,17 @@ import {
   Chip,
   Stack,
   Tooltip,
+  Popover,
+  List,
+  ListItem,
+  ListItemText,
+  Skeleton,
 } from '@mui/material';
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Add as AddIcon,
+  ExpandMore as ExpandMoreIcon,
 } from '@mui/icons-material';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -28,9 +34,13 @@ import axios from 'axios';
 const ManagePromotions = () => {
   const [promotions, setPromotions] = useState([]);
   const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [selectedProductList, setSelectedProductList] = useState([]);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     const fetchPromotions = async () => {
+      setLoading(true); // Set loading to true when fetch starts
       try {
         const [billPromotionsRes, customerPromotionsRes, productPromotionsRes] = await Promise.all([
           axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/promotions/bill`),
@@ -62,12 +72,28 @@ const ManagePromotions = () => {
         ]);
       } catch (error) {
         console.error('Error fetching promotions:', error);
+        toast.error('Failed to load promotions');
+      } finally {
+        setLoading(false); // Set loading to false when fetch completes
       }
     };
 
-
     fetchPromotions();
   }, []);
+
+  // Handler for opening product list dropdown
+  const handleProductListClick = (event, products) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedProductList(products);
+  };
+
+  // Handler for closing product list dropdown
+  const handleProductListClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const popoverId = open ? 'product-list-popover' : undefined;
 
   const handleAddPromotion = () => {
     setOpenAddDialog(true);
@@ -141,6 +167,97 @@ const ManagePromotions = () => {
     }
   };
 
+  // Render product list - decides whether to show chips or dropdown button
+  const renderProductList = (promotion) => {
+    if (!promotion.products) return null;
+    
+    const productCount = promotion.products.length;
+    const hasMoreProducts = productCount > 0;
+    
+    return (
+      <Box>
+        {hasMoreProducts && (
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={(e) => handleProductListClick(e, promotion.products)}
+            endIcon={<ExpandMoreIcon />}
+            sx={{ 
+              mt: 1, 
+              fontSize: '0.75rem',
+              textTransform: 'none',
+              borderColor: 'rgba(0, 0, 0, 0.23)',
+              color: 'rgba(0, 0, 0, 0.87)',
+              '&:hover': {
+                backgroundColor: 'rgba(0, 0, 0, 0.04)'
+              }
+            }}
+          >
+            View {productCount} product{productCount !== 1 ? 's' : ''}
+          </Button>
+        )}
+        
+        <Popover
+          id={popoverId}
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleProductListClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+          PaperProps={{
+            sx: {
+              maxHeight: 300,
+              width: 250,
+              boxShadow: '0px 5px 15px rgba(0, 0, 0, 0.1)',
+              borderRadius: '8px'
+            }
+          }}
+        >
+          <List dense>
+            {selectedProductList.map((product) => (
+              <ListItem key={product.productID || product.productId}>
+                <ListItemText 
+                  primary={product.name} 
+                  // secondary={product.description && product.description.length > 30 
+                  //   ? `${product.description.substring(0, 30)}...` 
+                  //   : product.description}
+                />
+              </ListItem>
+            ))}
+          </List>
+        </Popover>
+      </Box>
+    );
+  };
+
+  // Skeleton component for loading state
+  const PromotionSkeletons = () => {
+    return Array(5).fill(0).map((_, index) => (
+      <TableRow key={`skeleton-${index}`}>
+        <TableCell><Skeleton animation="wave" width={60} /></TableCell>
+        <TableCell><Skeleton animation="wave" width={120} /></TableCell>
+        <TableCell><Skeleton animation="wave" width={100} height={32} variant="rounded" /></TableCell>
+        <TableCell><Skeleton animation="wave" width={40} /></TableCell>
+        <TableCell><Skeleton animation="wave" width={150} height={40} /></TableCell>
+        <TableCell><Skeleton animation="wave" width={80} /></TableCell>
+        <TableCell><Skeleton animation="wave" width={80} /></TableCell>
+        <TableCell><Skeleton animation="wave" width={200} /></TableCell>
+        <TableCell align="right">
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <Skeleton animation="wave" width={32} height={32} sx={{ mr: 1 }} />
+            <Skeleton animation="wave" width={32} height={32} />
+          </Box>
+        </TableCell>
+      </TableRow>
+    ));
+  };
+
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
@@ -176,97 +293,87 @@ const ManagePromotions = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {promotions.map((promotion) => (
-              <TableRow
-                key={
-                  promotion.promotionId ||
-                  promotion.promotionID ||
-                  promotion.id
-                }
-              >
-                <TableCell>
-                  {promotion.promotionId ||
+            {loading ? (
+              <PromotionSkeletons />
+            ) : promotions.length > 0 ? (
+              promotions.map((promotion) => (
+                <TableRow
+                  key={
+                    promotion.promotionId ||
                     promotion.promotionID ||
-                    promotion.id}
-                </TableCell>
-                <TableCell>{promotion.name}</TableCell>
-                <TableCell>
-                  <Chip
-                    label={promotion.type}
-                    color="primary"
-                    variant="outlined"
-                  />
-                </TableCell>
-                <TableCell>{(promotion.discount * 100).toFixed(0)}%</TableCell>
-                <TableCell>
-                  {promotion.type === 'Bill Promotion' && (
-                    <Typography variant="body2">
-                      Apply Price: ${promotion.applyPrice.toFixed(2)}
-                      <br />
-                      Chance: {promotion.promotionChance}
-                    </Typography>
-                  )}
-                  {promotion.type === 'Customer Promotion' && promotion.product && (
-                    <Typography variant="body2">
-                      Product: {promotion.product.name}
-                    </Typography>
-                  )}
-                  {promotion.type === 'Product Promotion' && promotion.products && (
-                    <Stack
-                      direction="row"
-                      spacing={1}
-                      sx={{ flexWrap: 'wrap' }} // Enable wrapping
+                    promotion.id
+                  }
+                >
+                  <TableCell>
+                    {promotion.promotionId ||
+                      promotion.promotionID ||
+                      promotion.id}
+                  </TableCell>
+                  <TableCell>{promotion.name}</TableCell>
+                  <TableCell>
+                    <Chip
+                      label={promotion.type}
+                      color="primary"
+                      variant="outlined"
+                    />
+                  </TableCell>
+                  <TableCell>{(promotion.discount * 100).toFixed(0)}%</TableCell>
+                  <TableCell>
+                    {promotion.type === 'Bill Promotion' && (
+                      <Typography variant="body2">
+                        Apply Price: ${promotion.applyPrice.toFixed(2)}
+                        <br />
+                        Chance: {promotion.promotionChance}
+                      </Typography>
+                    )}
+                    {promotion.type === 'Customer Promotion' && promotion.product && (
+                      <Typography variant="body2">
+                        Product: {promotion.product.name}
+                      </Typography>
+                    )}
+                    {promotion.type === 'Product Promotion' && renderProductList(promotion)}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(promotion.startDay).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    {new Date(promotion.endDay).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>{promotion.description}</TableCell>
+                  <TableCell align="right">
+                    <IconButton
+                      color="primary"
+                      onClick={() =>
+                        handleEditPromotion(
+                          promotion.promotionId ||
+                            promotion.promotionID ||
+                            promotion.id
+                        )
+                      }
                     >
-                      {promotion.products.map((product) => (
-                        <Tooltip
-                          key={product.productID || product.productId}
-                          title={product.name}
-                        >
-                          <Chip label={product.name} />
-                        </Tooltip>
-                      ))}
-                    </Stack>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {new Date(promotion.startDay).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  {new Date(promotion.endDay).toLocaleDateString()}
-                </TableCell>
-                <TableCell>{promotion.description}</TableCell>
-                <TableCell align="right">
-                  <IconButton
-                    color="primary"
-                    onClick={() =>
-                      handleEditPromotion(
-                        promotion.promotionId ||
-                          promotion.promotionID ||
-                          promotion.id
-                      )
-                    }
-                  >
-                    <EditIcon />
-                  </IconButton>
-                  <IconButton
-                    color="error"
-                    onClick={() =>
-                      handleDeletePromotion(
-                        promotion.promotionId ||
-                          promotion.promotionID ||
-                          promotion.id
-                      )
-                    }
-                  >
-                    <DeleteIcon />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
-            {promotions.length === 0 && (
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      color="error"
+                      onClick={() =>
+                        handleDeletePromotion(
+                          promotion.promotionId ||
+                            promotion.promotionID ||
+                            promotion.id
+                        )
+                      }
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
               <TableRow>
                 <TableCell colSpan={9} align="center">
-                  No promotions found.
+                  <Typography variant="body1" color="text.secondary">
+                    No promotions found.
+                  </Typography>
                 </TableCell>
               </TableRow>
             )}
