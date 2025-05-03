@@ -1,97 +1,214 @@
-.delivery-stats-container {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .delivery-title {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
-  }
-  
-  .delivery-stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 1rem;
-  }
-  
-  .delivery-stat-box {
-    color: white;
-    padding: 1rem;
-    border-radius: 12px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 500;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: transform 0.2s ease;
-  }
-  
-  .delivery-stat-box:hover {
-    transform: scale(1.03);
-  }
-  
-  .delivery-stat-label {
-    font-size: 1rem;
-  }
-  
-  .delivery-stat-value {
-    font-size: 1.2rem;
-    font-weight: bold;
-  }
-  
+.dashboard-container {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 2rem;
+  width: 100%;
+}
 
-.products__container_2 {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+.chart-container {
+  flex: 6;
+  // overflow-x: auto; 
+}
+
+.sidebar-container {
+  flex: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.no-data-container {
+  height: 50vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  flex: 6;
+}
+
+.no-data-delivery {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  width: 100%;
+  padding: 1rem;
+}
+
+.no-data-text {
+  color: #888;
+  font-size: 1rem;
+}
+
+.delivery-stats-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.delivery-title {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.delivery-stats-grid {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  flex-wrap: wrap; /* Optional: wrap to next line on small screens */
+  justify-content: center;
+}
+
+.delivery-stat-box {
+  color: white;
+  padding: 0.5rem;
+  border-radius: 6px;
+  width: 150px;
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  align-items: center;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.delivery-stat-box:hover {
+  transform: scale(1.03);
+}
+
+.delivery-stat-label {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.delivery-stat-value {
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 .store__header {
-    display: flex;
-    justify-content: start;
-    align-items: center;
-    margin-bottom: 20px;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.products__container_2 {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-    width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  width: 100%;
 }
 
 .pagination__list {
-    display: flex;
-    list-style: none;
-    padding: 0;
+  display: flex;
+  list-style: none;
+  padding: 0;
 }
 
 .pagination__item {
-    margin: 0 5px;
+  margin: 0 5px;
 }
 
 .pagination__button {
-    padding: 8px 12px;
-    border: 1px solid #ccc;
-    background-color: #fff;
-    cursor: pointer;
-    border-radius: 4px;
-    font-size: 16px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 16px;
 
-    &.active {
-        background-color: #fe3bd4;
-        color: #fff;
-        border-color: #fe3bd4;
-    }
+  &.active {
+      background-color: #fe3bd4;
+      color: #fff;
+      border-color: #fe3bd4;
+  }
 
-    &:hover:not(.active) {
-        background-color: #f0f0f0;
-    }
+  &:hover:not(.active) {
+      background-color: #f0f0f0;
+  }
 
-    &:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
+  &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .chart-container {
+    flex: none;
+    width: 130%; /* Set parent container to 120% width */
+    margin-left: -20%; /* Center the overflow */
+  }
+
+  .chart-container-h2 {
+    width: 100%;
+    padding-left: 15%;
+    font-size: 1.5rem;
+  }
+
+  .sidebar-container {
+    flex: none;
+    width: 100%;
+  }
+
+  .no-data-container {
+    flex: none;
+    width: 100%;
+    height: 30vh;
+  }
+
+  .delivery-stats-grid {
+    gap: 0.5rem;
+  }
+
+  .delivery-stat-box {
+    min-width: 90px;
+    padding: 0.4rem;
+  }
+
+  .delivery-stat-label {
+    font-size: 1rem;
+  }
+
+  .delivery-stat-value {
+    font-size: 0.9rem;
+  }
+
+  .delivery-title {
+    font-size: 1.1rem;
+  }
+
+  h1 {
+    font-size: 1.5rem !important;
+  }
+
+  h2 {
+    font-size: 1rem !important;
+  }
+
+  .no-data-text {
+    font-size: 0.9rem;
+  }
+
+  .store__header {
+    margin-left: -11%
+  }
 }

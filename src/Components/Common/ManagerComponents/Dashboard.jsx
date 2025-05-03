@@ -167,78 +167,66 @@ const Dashboard = () => {
   };
 
   return (
-    <div style={{display: "flex", flexDirection: "column"}}>
-      <h1 style={{marginBottom:0}}>Dashboard</h1>
-      <div style={{ display: "flex", alignItems: "flex-start", gap: "2rem", width: "100%" }}>
-        {/* Left: Bar Chart (60%) */}
-        {top10Products.length > 0 ? (
-          <div style={{ flex: 6 }}>
-            <h2>Top 5 Products by Revenue</h2>
-            <ResponsiveContainer width="100%" height={450}>
+    <div style={{ display: "flex", flexDirection: "column", padding: "1rem" }}>
+    <h1 style={{ marginBottom: "0.5rem", fontSize: "1.8rem" }}>Dashboard</h1>
+    <div className="dashboard-container">
+      {/* Bar Chart */}
+      {top10Products.length > 0 ? (
+        <div className="chart-container">
+          <h2 className="chart-container-h2">Top 5 Products by Revenue</h2>
+          <ResponsiveContainer
+              height={450}
+            >
               <BarChart data={top10Products}>
-                <XAxis dataKey="name" tick={renderCustomXAxisTick} interval={0} height={70} />
+                <XAxis dataKey="name" tick={renderCustomXAxisTick} interval={0} height={100} />
                 <YAxis />
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="revenue" fill="#8884d8" name="Revenue ($)" />
               </BarChart>
             </ResponsiveContainer>
-          </div>
-        ) : (
-          <div style={{ height: "70vh", display: "flex", flex: 6, alignItems: "center", justifyContent: "center", backgroundColor: "#f5f5f5", borderRadius: "8px" }}>
-            <p style={{ color: "#888", fontSize: "1.2rem" }}>No data available for top products.</p>
-          </div>
-        )
-      }
+        </div>
+      ) : (
+        <div className="no-data-container">
+          <p className="no-data-text">No data available for top products.</p>
+        </div>
+      )}
 
-        {/* Right: StoreCard + Delivery Stats (40%) */}
-        <div style={{ flex: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
-          {store && (
-            <div className="store__header">
-              <StoreCard store={store} />
-            </div>
-          )}
+      {/* StoreCard + Delivery Stats */}
+      <div className="sidebar-container">
+        {store && (
+          <div className="store__header">
+            <StoreCard store={store} />
+          </div>
+        )}
 
-            <div className="delivery-stats-container">
-              <h2 className="delivery-title">Order Delivery Status</h2>
-              <div style={{ display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "1rem", gap: "1rem", width: "100%" }}>
-              {deliveryStats.totalBills > 0 ? 
+        <div className="delivery-stats-container">
+          <h2 className="delivery-title">Order Delivery Status</h2>
+          <div className="delivery-stats-grid">
+            {deliveryStats.totalBills > 0 ? 
               getPieData(deliveryStats).map((stat) => (
                 <div
                   key={stat.name}
                   className="delivery-stat-box"
                   style={{
                     backgroundColor: deliveryColors[stat.name] || "#ccc",
-                    padding: "0.5rem 1rem",
-                    borderRadius: "6px",
-                    minWidth: "100px",
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
                   }}
                 >
-                  <span className="delivery-stat-label" style={{ fontWeight: "bold" }}>{stat.name}</span>
+                  <span className="delivery-stat-label">{stat.name}</span>
                   <span className="delivery-stat-value">
                     {((stat.value / getTotal(deliveryStats)) * 100).toFixed(0)}%
                   </span>
                 </div>
               )) : 
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", height: "20vh", alignItems: "center", justifyContent: "center", backgroundColor: "#f5f5f5", borderRadius: "8px", width: "90%" }}>
-                <p style={{ color: "#888", fontSize: "1.2rem" }}>No data available for order delivery.</p>
+              <div className="no-data-delivery">
+                <p className="no-data-text">No data available for order delivery.</p>
               </div>
-              }
-              </div>
-              
-            </div>
+            }
+          </div>
         </div>
       </div>
-
-      
-      
-
-      
-      
     </div>
+  </div>
   );
 };
 
