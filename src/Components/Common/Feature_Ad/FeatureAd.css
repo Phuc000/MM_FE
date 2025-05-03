@@ -18,9 +18,15 @@
     justify-content: start;
     width: 18%;
     transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    will-change: opacity, transform;
   }
   
-
+  .feature-card.animated {
+    opacity: 1;
+    transform: translateY(0);
+  }
   
   .feature-icon img {
     max-width: 60px; /* Adjust image size */
@@ -50,6 +56,17 @@
   /* Hover effect */
 .feature-card:hover .feature-icon img {
     transform: translateY(-5px); /* Lifts the image up slightly */
+  }
+
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   /* Media query for small screens */

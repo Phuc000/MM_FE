@@ -2,8 +2,9 @@
 import React from 'react';
 import './PaginationFilter.css';
 
-const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, children }) => {
+const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showOnSaleFilter = false, children }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
+  const [itemsPerPage, setItemsPerPage] = React.useState(defaultItemsPerPage);
   const [filters, setFilters] = React.useState({
     aisle: 'All',
     priceRange: { min: '', max: '' },
@@ -35,6 +36,11 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
   const currentItems = filteredItems.slice(indexOfFirstItem, indexOfLastItem);
   const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
+  // Reset to first page when items per page changes
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [itemsPerPage]);
+
   // Pagination handlers
   const goToNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -62,6 +68,11 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
     setCurrentPage(1); // Reset to first page when filters change
   };
 
+  // Handle items per page change
+  const handleItemsPerPageChange = (e) => {
+    setItemsPerPage(Number(e.target.value));
+  };
+
   // Render pagination buttons
   const renderPaginationButtons = () => {
     if (totalPages <= 5) {
@@ -79,7 +90,7 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
 
     const buttons = [];
     const maxButtons = 5; // Show up to 5 numbers (including first and last)
-    const sideWindow = 2; // Show 2 pages Oprahbefore and after current page when possible
+    const sideWindow = 2; // Show 2 pages before and after current page when possible
 
     // Always show first page
     buttons.push(
@@ -205,6 +216,22 @@ const PaginationFilter = ({ items, itemsPerPage = 50, showOnSaleFilter = false, 
             </label>
           </div>
         )}
+        
+        {/* Items per page selection - positioned on the right */}
+        <div className="filter-group items-per-page">
+          <label htmlFor="items-per-page">Items per page: </label>
+          <select
+            id="items-per-page"
+            value={itemsPerPage}
+            onChange={handleItemsPerPageChange}
+            className="filter-dropdown"
+          >
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+        </div>
       </div>
       
       <div style={{marginLeft: '15px'}}>
