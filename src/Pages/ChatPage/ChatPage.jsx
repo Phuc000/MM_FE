@@ -1,5 +1,5 @@
 // src/Pages/ChatPage/ChatPage.jsx
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Header, Footer } from '../../Components';
 import ReactMarkdown from 'react-markdown';
 import runChat from '../../config/gemini';
@@ -128,61 +128,6 @@ const ChatUI = () => {
       reader.readAsDataURL(file);
     }
   };
-
-  // // Connect WebSocket on mount
-  // useEffect(() => {
-  //   console.log('User:', user);
-  //   if (!user?.id) return;
-
-  //   // Add a cleanup flag
-  //   let isSubscribed = true;
-
-  //   const connectWebSocket = () => {
-  //     // Only create new connection if not already connected
-  //     if (wsRef.current?.readyState === WebSocket.OPEN) return;
-  //     const ws = new WebSocket(`ws://localhost:6969/ws/chat/${user.id}`);
-      
-  //     ws.onopen = () => {
-  //       if (!isSubscribed) return;
-  //       console.log('WebSocket Connected');
-  //       setWsStatus('connected');
-  //     };
-
-  //     ws.onmessage = (event) => {
-  //       const data = JSON.parse(event.data);
-  //       if (data.error) {
-  //         console.error('WebSocket error:', data.error);
-  //         return;
-  //       }
-  //       setMessages(prev => [...prev, { sender: 'bot', text: data.message }]);
-  //     };
-
-  //     ws.onclose = () => {
-  //       console.log('WebSocket Disconnected');
-  //       setWsStatus('disconnected');
-  //       // Attempt to reconnect after 3 seconds
-  //       setTimeout(connectWebSocket, 3000);
-  //     };
-
-  //     ws.onerror = (error) => {
-  //       console.error('WebSocket Error:', error);
-  //       setWsStatus('error');
-  //     };
-
-  //     wsRef.current = ws;
-  //   };
-
-  //   connectWebSocket();
-
-  //   // Cleanup on unmount
-  //   return () => {
-  //     isSubscribed = false;
-  //     if (wsRef.current) {
-  //       wsRef.current.close();
-  //       wsRef.current = null;
-  //     }
-  //   };
-  // }, [user?.id]);
 
   // Update handleSend function
   const handleSend = async () => {
