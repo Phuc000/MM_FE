@@ -11,10 +11,9 @@ export const useWebSocket = (userId, locationContext) => {
   const [botTyping, setBotTyping] = useState(false);
   const wsRef = useRef(null);
   const location = useLocation();
-  const isOnChatPage = location.pathname === '/Chat';
+  const isOnChatPage = location.pathname === '/Chat' || location.pathname === '/RecipesArticles';
 
   const [recipe, setRecipe] = useState(null);
-  const [shopRecipeData, setShopRecipeData] = useState(null);
 
   const handleViewRecipe = async (recipeId) => {
     try {
@@ -93,6 +92,7 @@ export const useWebSocket = (userId, locationContext) => {
 
     const connectWebSocket = () => {
       // Only connect on Chat page
+      console.log('Checking WebSocket connection...');
       if (!isOnChatPage || !userId) {
         console.log('Not connecting WebSocket - not on chat page or no user');
         return;
