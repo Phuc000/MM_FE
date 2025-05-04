@@ -37,7 +37,7 @@ const ManageProducts = () => {
     const fetchCategories = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_API_URL}/products/categories`
+          `${import.meta.env.VITE_REACT_APP_API_URL}/products/category`
         );
         // console.log('Fetched categories:', response.data);
         setCategoryList(response.data);
@@ -142,8 +142,8 @@ const ManageProducts = () => {
           onChange={(e) => setSelectedCategory(e.target.value)}
         >
           {categoryList.map((category) => (
-            <MenuItem key={category.name} value={category.name}>
-              {category.name}
+            <MenuItem key={category} value={category}>
+              {category}
             </MenuItem>
           ))}
         </Select>

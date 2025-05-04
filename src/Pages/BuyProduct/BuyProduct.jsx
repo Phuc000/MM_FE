@@ -1,7 +1,7 @@
 // src/Pages/BuyProduct/BuyProduct.jsx
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { Header, Footer } from "../../Components";
+import { Header, Footer, FeatureAd } from "../../Components";
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from "axios";
@@ -321,8 +321,8 @@ const BuyProduct = () => {
               </div>
             </div>
             <div className='product-info-section'>
-              <Link to={`/Category/${product.category}`}>
-                <p className='product-category'>{product.category}</p>
+              <Link to={`/Category/${product.aisle}`}>
+                <p className='product-category'>{product.aisle}</p>
               </Link>
               <h2 className="product-name">{product.name}</h2>
               <div className='info'>
@@ -391,6 +391,7 @@ const BuyProduct = () => {
           <p>Loading...</p>
         )}
       </div>
+      <FeatureAd />
       <Footer />
     </div>
   );

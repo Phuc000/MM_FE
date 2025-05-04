@@ -1,10 +1,40 @@
-import React from 'react';
-import './FeatureAd.css'; // Import your CSS for styling
+import React, { useEffect, useRef, useState } from 'react';
+import './FeatureAd.css';
 
 const FeatureAd = () => {
+  const [isVisible, setIsVisible] = useState(false);
+  const containerRef = useRef(null);
+
+  // Set up Intersection Observer to detect when component is in viewport
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+          // Once we've seen it, no need to keep observing
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.15, // Trigger when 15% of the component is visible
+        rootMargin: '0px 0px -50px 0px' // Adjust trigger point slightly
+      }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        observer.unobserve(containerRef.current);
+      }
+    };
+  }, []);
+
   const features = [
     {
-      icon: 'ad1.png', // Path to the image in your Images folder
+      icon: 'ad1.png', 
       title: 'Best prices & offers',
       description: 'Orders now'
     },
@@ -31,11 +61,22 @@ const FeatureAd = () => {
   ];
 
   return (
-    <div className="feature-ad-container">
+    <div 
+      ref={containerRef} 
+      className="feature-ad-container"
+    >
       {features.map((feature, index) => (
-        <div key={index} className="feature-card">
+        <div 
+          key={index} 
+          className="feature-card"
+          style={{
+            animation: isVisible 
+              ? `fadeInUp 0.6s ease forwards ${index * 0.15}s` 
+              : 'none',
+            opacity: 0, // Start invisible
+          }}
+        >
           <div className="feature-icon">
-            {/* Replace the icon with an image */}
             <img src={`/Images/ad/${feature.icon}`} alt={feature.title} />
           </div>
           <div className="feature-info">

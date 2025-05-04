@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Header, Footer, ShowProduct, StoreCard } from "../../Components";
 import FeatureAd from '../../Components/Common/Feature_Ad/FeatureAd';
 import ProductList from '../../Components/Common/ProductList/ProductList';
@@ -13,7 +12,7 @@ const Home = () => {
   const [promoProducts, setPromoProducts] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
   const [currentTopProductIndex, setCurrentTopProductIndex] = useState(0);
-  const [storesIsVisible, setStoresIsVisible] = useState(false);
+  const [storesIsVisible, setStoresIsVisible] = useState(true);
 
   const [filteredPromoCount, setFilteredPromoCount] = useState(0);
 
