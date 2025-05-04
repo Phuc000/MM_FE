@@ -119,7 +119,7 @@ const RecipesArticles = () => {
             <h2>List recipes ({filteredRecipes.length})</h2>
             {currentRecipes.length > 0 ? (
               currentRecipes.map((recipe) => (
-                <div key={recipe.id} className="recipe-item">
+                <div key={recipe.id} className="recipe-item" onClick={() => handleRecipeClick(recipe)}>
                   <img
                     src={recipe.image || '/Images/placeholder.png'}
                     alt={recipe.title}
@@ -128,7 +128,7 @@ const RecipesArticles = () => {
                   <div className="recipe-content">
                     <div className="recipe-title-meta">
                       <div className="recipe-text">
-                        <h3 onClick={() => handleRecipeClick(recipe)}>{recipe.title}</h3>
+                        <h3>{recipe.title}</h3>
                         <p className="recipe-ingredients">
                           {recipe.ingredients && recipe.ingredients.length > 0
                             ? recipe.ingredients

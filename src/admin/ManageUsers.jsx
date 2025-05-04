@@ -13,21 +13,33 @@ import {
   TableContainer,
   Paper,
   IconButton,
+  Card,
+  CardContent,
+  CardActions,
+  Skeleton,
+  useMediaQuery,
 } from '@mui/material';
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   PersonAdd as PersonAddIcon,
+  Block as BlockIcon,
+  
 } from '@mui/icons-material';
 import axios from 'axios';
+import { useTheme } from '@mui/material/styles';
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
 
+  const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   useEffect(() => {
-    // Fetch users from the backend API using axios
     const fetchUsers = async () => {
       try {
+        setLoading(true);
         // Fetch customers
         const customersResponse = await axios.get(
           `${import.meta.env.VITE_REACT_APP_API_URL}/customers`,
@@ -78,6 +90,8 @@ const ManageUsers = () => {
         setUsers(allUsers);
       } catch (error) {
         console.error('Error fetching users:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -142,6 +156,94 @@ const ManageUsers = () => {
     }
   };
 
+  // Skeleton component for loading state
+  const UserSkeletons = () => {
+    return Array(5)
+      .fill(0)
+      .map((_, index) => (
+        isMobile ? (
+          <Box key={`skeleton-${index}`} sx={{ mb: 3, mx: { xs: 1, sm: 0 } }}>
+            <Skeleton
+              animation="wave"
+              variant="rectangular"
+              height={150}
+              sx={{ borderRadius: '4px' }}
+            />
+            <Skeleton
+              animation="wave"
+              width="60%"
+              height={20}
+              sx={{ mt: 1, mx: 'auto' }}
+            />
+          </Box>
+        ) : (
+          <TableRow key={`skeleton-${index}`}>
+            <TableCell>
+              <Skeleton animation="wave" width={60} />
+            </TableCell>
+            <TableCell>
+              <Skeleton animation="wave" width={120} />
+            </TableCell>
+            <TableCell>
+              <Skeleton animation="wave" width={150} />
+            </TableCell>
+            <TableCell>
+              <Skeleton animation="wave" width={80} />
+            </TableCell>
+            <TableCell>
+              <Skeleton animation="wave" width={200} />
+            </TableCell>
+            <TableCell align="right">
+              <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Skeleton animation="wave" width={32} height={32} sx={{ mr: 1 }} />
+                <Skeleton animation="wave" width={32} height={32} />
+              </Box>
+            </TableCell>
+          </TableRow>
+        )
+      ));
+  };
+
+  // Card component for mobile view
+  const UserCard = ({ user }) => {
+    let additionalInfo = '';
+    if (user.role === 'Customer') {
+      additionalInfo = `Fortune Chances: ${user.fortuneChance} | Total Money Spent: ${user.totalMoneySpent}`;
+    } else if (user.role === 'Employee') {
+      additionalInfo = `Salary: ${user.salary} | Store ID: ${user.storeID}`;
+    } else if (user.role === 'Shipper') {
+      additionalInfo = `Vehicle Capacity: ${user.vehicleCapacity}`;
+    }
+
+    return (
+      <Card sx={{ mb: 3, mx: { xs: 1, sm: 0 } }}>
+        <CardContent sx={{pb:0}}>
+          <Typography variant="subtitle2" color="text.secondary">
+            ID: {user.id}
+          </Typography>
+          <Typography variant="h6">{`${user.fName} ${user.lName}`}</Typography>
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            Email: {user.email}
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            Role: {user.role}
+          </Typography>
+          <Typography variant="body2" sx={{ mt: 1 }}>
+            {additionalInfo}
+          </Typography>
+        </CardContent>
+        <CardActions sx={{ justifyContent: 'flex-end' }}>
+          <IconButton color="primary" onClick={() => handleEditUser(user)}>
+            <EditIcon />
+          </IconButton>
+          <IconButton color="error" onClick={() => handleDeleteUser(user)}>
+            <BlockIcon />
+          </IconButton>
+        </CardActions>
+      </Card>
+    );
+  };
+
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
@@ -163,7 +265,7 @@ const ManageUsers = () => {
       />
       <TableContainer component={Paper}>
         <Table aria-label="users table">
-          <TableHead>
+          <TableHead sx={{ display: { xs: 'none', sm: 'table-header-group' } }}>
             <TableRow>
               <TableCell>User ID</TableCell>
               <TableCell>Name</TableCell>
@@ -174,46 +276,57 @@ const ManageUsers = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user) => {
-              let additionalInfo = '';
-              if (user.role === 'Customer') {
-                additionalInfo = `Fortune Chances: ${user.fortuneChance} | Total Money Spent: ${user.totalMoneySpent}`;
-              } else if (user.role === 'Employee') {
-                additionalInfo = `Salary: ${user.salary} | Store ID: ${user.storeID}`;
-              } else if (user.role === 'Shipper') {
-                additionalInfo = `Vehicle Capacity: ${user.vehicleCapacity}`;
-              }
-
-              return (
-                <TableRow key={user.id}>
-                  <TableCell>{user.id}</TableCell>
-                  <TableCell>{`${user.fName} ${user.lName}`}</TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{user.role}</TableCell>
-                  <TableCell>{additionalInfo}</TableCell>
-                  <TableCell align="right">
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleEditUser(user)}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      color="error"
-                      onClick={() => handleDeleteUser(user)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-            {users.length === 0 && (
+            {loading ? (
+              <UserSkeletons />
+            ) : users.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} align="center">
-                  No users found.
+                  <Typography variant="body1" color="text.secondary">
+                    No users found.
+                  </Typography>
                 </TableCell>
               </TableRow>
+            ) : isMobile ? (
+              // Mobile: Card view
+              users.map((user) => (
+                <UserCard key={user.id} user={user} />
+              ))
+            ) : (
+              // Desktop: Table view
+              users.map((user) => {
+                let additionalInfo = '';
+                if (user.role === 'Customer') {
+                  additionalInfo = `Fortune Chances: ${user.fortuneChance} | Total Money Spent: ${user.totalMoneySpent}`;
+                } else if (user.role === 'Employee') {
+                  additionalInfo = `Salary: ${user.salary} | Store ID: ${user.storeID}`;
+                } else if (user.role === 'Shipper') {
+                  additionalInfo = `Vehicle Capacity: ${user.vehicleCapacity}`;
+                }
+
+                return (
+                  <TableRow key={user.id}>
+                    <TableCell>{user.id}</TableCell>
+                    <TableCell>{`${user.fName} ${user.lName}`}</TableCell>
+                    <TableCell>{user.email}</TableCell>
+                    <TableCell>{user.role}</TableCell>
+                    <TableCell>{additionalInfo}</TableCell>
+                    <TableCell align="right">
+                      <IconButton
+                        color="primary"
+                        onClick={() => handleEditUser(user)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton
+                        color="error"
+                        onClick={() => handleDeleteUser(user)}
+                      >
+                        <BlockIcon />
+                      </IconButton>
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

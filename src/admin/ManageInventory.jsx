@@ -18,7 +18,10 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  useMediaQuery, Skeleton, Card, CardContent,
+  CardActions, TablePagination
 } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
@@ -34,6 +37,12 @@ const ManageInventory = () => {
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [openAddDialog, setOpenAddDialog] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
   useEffect(() => {
     // Fetch stores
     axios
@@ -43,20 +52,17 @@ const ManageInventory = () => {
   }, []);
 
   useEffect(() => {
-    if (selectedStore) {
-      // Fetch inventory data for selected store
-      axios
-        .get(
-          `${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/product/lessdata/${selectedStore}`
-        )
-        .then((response) => setInventoryData(response.data))
-        .catch((error) =>
-          console.error('Error fetching inventory data:', error)
-        );
-    } else {
-      setInventoryData([]);
-    }
-  }, [selectedStore]);
+  if (selectedStore) {
+    setLoading(true);
+    axios
+      .get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/product/lessdata/${selectedStore}`)
+      .then((response) => setInventoryData(response.data))
+      .catch((error) => console.error('Error fetching inventory data:', error))
+      .finally(() => setLoading(false));
+  } else {
+    setInventoryData([]);
+  }
+}, [selectedStore]);
 
   const handleStoreChange = (event) => {
     setSelectedStore(event.target.value);
@@ -160,6 +166,17 @@ const ManageInventory = () => {
       .catch((error) => console.error('Error adding inventory record:', error));
   };
 
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(parseInt(event.target.value, 10));
+    setPage(0);
+  };
+  
+  const paginatedData = inventoryData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
@@ -181,19 +198,19 @@ const ManageInventory = () => {
           ))}
         </Select>
       </FormControl>
-
       {selectedStore && (
-        <>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<AddIcon />}
-            onClick={handleAddInventory}
-            sx={{ mb: 2 }}
-          >
-            Add New Inventory Record
-          </Button>
-          <AddInventoryDialog
+      <>
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleAddInventory}
+          sx={{ mb: 2 }}
+        >
+          Add New Inventory Record
+        </Button>
+    
+        <AddInventoryDialog
             open={openAddDialog}
             handleClose={() => setOpenAddDialog(false)}
             handleSave={handleSaveNewInventory}
@@ -206,68 +223,118 @@ const ManageInventory = () => {
             handleSave={handleSaveInventory}
             record={selectedRecord}
           />
-          <TableContainer component={Paper}>
-            <Table aria-label="inventory table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>Product ID</TableCell>
-                  <TableCell>Product Name</TableCell>
-                  <TableCell>Quantity</TableCell>
-                  <TableCell>Price</TableCell>
-                  <TableCell align="right">Actions</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {inventoryData.map((record) => (
-                  <TableRow key={`${record.productID}-${record.storeID}`}>
-                    <TableCell>{record.productID}</TableCell>
-                    <TableCell>{record.productName}</TableCell>
-                    <TableCell>{record.numberAtStore}</TableCell>
-                    <TableCell>${record.price.toFixed(2)}</TableCell>
-                    <TableCell align="right">
-                      <IconButton
-                        color="primary"
-                        onClick={() =>
-                          handleEditInventory(
-                            record.productID,
-                            record.storeID
-                          )
-                        }
-                      >
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton
-                        color="error"
-                        onClick={() =>
-                          handleDeleteInventory(
-                            record.productID,
-                            record.storeID
-                          )
-                        }
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {inventoryData.length === 0 && (
+    
+        {loading ? (
+          isMobile ? (
+            [...Array(3)].map((_, i) => (
+              <Card key={i} sx={{ my: 2 }}>
+                <CardContent>
+                  <Skeleton variant="text" width="60%" />
+                  <Skeleton variant="text" width="40%" />
+                  <Skeleton variant="rectangular" height={80} />
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
                   <TableRow>
-                    <TableCell colSpan={5} align="center">
-                      No inventory data found.
-                    </TableCell>
+                    {[...Array(5)].map((_, i) => (
+                      <TableCell key={i}><Skeleton /></TableCell>
+                    ))}
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
-      )}
-      {!selectedStore && (
-        <Typography variant="h6" gutterBottom>
-          Please select a store to view its inventory.
-        </Typography>
-      )}
+                </TableHead>
+                <TableBody>
+                  {[...Array(5)].map((_, i) => (
+                    <TableRow key={i}>
+                      {[...Array(5)].map((_, j) => (
+                        <TableCell key={j}><Skeleton /></TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )
+        ) : inventoryData.length === 0 ? (
+          <Typography variant="body1">No inventory data found.</Typography>
+        ) : isMobile ? (
+          <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          {paginatedData.map((record) => (
+            <Card key={`${record.productID}-${record.storeID}`} sx={{ my: 2 }}>
+              <CardContent sx={{ pb: 1 }}>
+                <Typography variant="h6">{record.productName}</Typography>
+                <Typography variant="body1">ID: {record.productID}</Typography>
+                <Typography variant="body1">Qty: {record.numberAtStore}</Typography>
+                <Typography variant="body1">Price: ${record.price.toFixed(2)}</Typography>
+              </CardContent>
+              <CardActions sx={{ pt: 0, display: 'flex', justifyContent: 'center' }}>
+                <IconButton color="primary" onClick={() => handleEditInventory(record.productID, record.storeID)}>
+                  <EditIcon />
+                </IconButton>
+                <IconButton color="error" onClick={() => handleDeleteInventory(record.productID, record.storeID)}>
+                  <DeleteIcon />
+                </IconButton>
+              </CardActions>
+            </Card>
+          ))}
+          <TablePagination
+              component="div"
+              count={inventoryData.length}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+            </Box>
+        ) : (
+          <>
+            <TableContainer component={Paper}>
+              <Table aria-label="inventory table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell>Product ID</TableCell>
+                    <TableCell>Product Name</TableCell>
+                    <TableCell>Quantity</TableCell>
+                    <TableCell>Price</TableCell>
+                    <TableCell align="right">Actions</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {paginatedData.map((record) => (
+                    <TableRow key={`${record.productID}-${record.storeID}`}>
+                      <TableCell>{record.productID}</TableCell>
+                      <TableCell>{record.productName}</TableCell>
+                      <TableCell>{record.numberAtStore}</TableCell>
+                      <TableCell>${record.price.toFixed(2)}</TableCell>
+                      <TableCell align="right">
+                        <IconButton color="primary" onClick={() => handleEditInventory(record.productID, record.storeID)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton color="error" onClick={() => handleDeleteInventory(record.productID, record.storeID)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              component="div"
+              count={inventoryData.length}
+              page={page}
+              onPageChange={handleChangePage}
+              rowsPerPage={rowsPerPage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </>
+        )}
+      </>
+    )}
     </Box>
+    
   );
 };
 

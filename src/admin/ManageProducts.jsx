@@ -18,6 +18,12 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  useTheme,
+  useMediaQuery,
+  Skeleton,
+  Card,
+  CardContent,
+  CardActions,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -31,6 +37,10 @@ const ManageProducts = () => {
   const [products, setProducts] = useState([]);
   const [categoryList, setCategoryList] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('Alcoholic Beverages');
+
+  const [loading, setLoading] = useState(true);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(() => {
     // Fetch categroies using axios
@@ -49,19 +59,20 @@ const ManageProducts = () => {
   }, []);
 
   useEffect(() => {
-    // Fetch products by selected category using axios
     const fetchProductsByCategory = async () => {
+      setLoading(true); // start loading
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_REACT_APP_API_URL}/products/category/${selectedCategory}`
         );
-        // console.log('Fetched products:', response.data);
         setProducts(response.data);
       } catch (error) {
         console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false); // stop loading
       }
     };
-
+  
     fetchProductsByCategory();
   }, [selectedCategory]);
 
@@ -91,6 +102,7 @@ const ManageProducts = () => {
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   const handleEditProduct = (productId) => {
+    console.log('Editing product with ID:', productId);
     const product = products.find((p) => p.productID === productId);
     setSelectedProduct(product);
     setOpenEditDialog(true);
@@ -127,6 +139,7 @@ const ManageProducts = () => {
     }
   };
 
+  
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
@@ -162,77 +175,121 @@ const ManageProducts = () => {
         handleClose={() => setOpenAddDialog(false)}
         handleSave={handleSaveProduct}
       />
-      <TableContainer component={Paper}>
-        <Table aria-label="products table">
-        <TableHead>
-          <TableRow>
-            <TableCell>Product ID</TableCell>
-            <TableCell>Product Name</TableCell>
-            {/* <TableCell>Category</TableCell> */}
-            <TableCell align="right">Price</TableCell>
-            <TableCell align="right">Unit</TableCell>
-            <TableCell align="right">Amount</TableCell>
-            <TableCell align="right">Consistency</TableCell>
-            <TableCell sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              Image URL
-            </TableCell>
-            <TableCell align="right" sx={{ minWidth: 120 }}>
-              Actions
-            </TableCell>
-          </TableRow>
-        </TableHead>
-          <TableBody>
-            {products && products.length > 0 ? (
-              products.map((product) => (
-                <TableRow key={product.productID}>
-                  <TableCell>{product.productID}</TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  {/* <TableCell>{product.category}</TableCell> */}
-                  <TableCell align="right">${product.price}</TableCell>
-                  <TableCell align="right">
-                    {product.unit === "milliliter" || product.unit === "milliliters"
-                      ? 'ml'
-                      : product.unit === "gram" || product.unit === "grams"
-                      ? 'g'
-                      : product.unit}
-                  </TableCell>
-                  <TableCell align="right">{product.amount}</TableCell>
-                  <TableCell align="right">{product.consistency}</TableCell>
-                  <TableCell sx={{ maxWidth: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {product.image}
-                  </TableCell>
-                  <TableCell align="right" sx={{ minWidth: 120 }}>
-                    <IconButton
-                      color="primary"
-                      onClick={() => handleEditProduct(product.productID)}
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      color="error"
-                      onClick={() => handleDeleteProduct(product.productID)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </TableCell>
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={7} align="center">
-                  No products found in this category.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-        <EditProductDialog
+      {isMobile ? (
+  // Card view for mobile
+  loading ? (
+    [...Array(3)].map((_, i) => (
+      <Card key={i} sx={{ my: 2 }}>
+        <CardContent>
+          <Skeleton variant="text" width="60%" />
+          <Skeleton variant="text" width="40%" />
+          <Skeleton variant="rectangular" height={100} />
+        </CardContent>
+      </Card>
+    ))
+  ) : (
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+    {products.map((product) => (
+      <Card key={product.productID} sx={{ my: 2}}>
+        <CardContent sx={{ pb: 1 }}>
+          <Typography variant="h6">{product.name}</Typography>
+          <Typography variant="body1">Price: ${product.price}</Typography>
+          <Typography variant="body1">Amount: {product.amount} {product.unit}</Typography>
+          <Typography variant="body1">Consistency: {product.consistency}</Typography>
+          <Typography variant="body1" noWrap>Image: {product.image}</Typography>
+        </CardContent>
+        <CardActions sx={{pt: 0, display: 'flex', justifyContent: 'center'}}>
+          <IconButton color="primary" onClick={() => handleEditProduct(product.productID)} >
+            <EditIcon />
+          </IconButton>
+          <IconButton color="error" onClick={() => handleDeleteProduct(product.productID)}>
+            <DeleteIcon />
+          </IconButton>
+        </CardActions>
+      </Card>
+    ))}
+    <EditProductDialog
           open={openEditDialog}
           handleClose={() => setOpenEditDialog(false)}
           handleSave={handleUpdateProduct}
           product={selectedProduct}
         />
-      </TableContainer>
+    </Box>
+  )
+) : (
+  // Table view for desktop
+  <TableContainer component={Paper}>
+    <Table aria-label="products table">
+      <TableHead>
+        <TableRow>
+          <TableCell>Product ID</TableCell>
+          <TableCell>Product Name</TableCell>
+          <TableCell align="right">Price</TableCell>
+          <TableCell align="right">Unit</TableCell>
+          <TableCell align="right">Amount</TableCell>
+          <TableCell align="right">Consistency</TableCell>
+          <TableCell sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            Image URL
+          </TableCell>
+          <TableCell align="right" sx={{ minWidth: 120 }}>
+            Actions
+          </TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {loading ? (
+          [...Array(5)].map((_, i) => (
+            <TableRow key={i}>
+              {Array.from({ length: 8 }).map((_, j) => (
+                <TableCell key={j}><Skeleton /></TableCell>
+              ))}
+            </TableRow>
+          ))
+        ) : products.length > 0 ? (
+          products.map((product) => (
+            <TableRow key={product.productID}>
+              <TableCell>{product.productID}</TableCell>
+              <TableCell>{product.name}</TableCell>
+              <TableCell align="right">${product.price}</TableCell>
+              <TableCell align="right">
+                {["milliliter", "milliliters"].includes(product.unit) ? 'ml' :
+                 ["gram", "grams"].includes(product.unit) ? 'g' : product.unit}
+              </TableCell>
+              <TableCell align="right">{product.amount}</TableCell>
+              <TableCell align="right">{product.consistency}</TableCell>
+              <TableCell sx={{ maxWidth: 500, overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {product.image}
+              </TableCell>
+              <TableCell align="right" sx={{ minWidth: 120 }}>
+                <IconButton color="primary" onClick={() => handleEditProduct(product.productID)}>
+                  <EditIcon />
+                </IconButton>
+                <IconButton color="error" onClick={() => handleDeleteProduct(product.productID)}>
+                  <DeleteIcon />
+                </IconButton>
+              </TableCell>
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={8} align="center">
+              No products found in this category.
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+    <EditProductDialog
+          open={openEditDialog}
+          handleClose={() => setOpenEditDialog(false)}
+          handleSave={handleUpdateProduct}
+          product={selectedProduct}
+        />
+  </TableContainer>
+)}
+
+
+      
     </Box>
   );
 };

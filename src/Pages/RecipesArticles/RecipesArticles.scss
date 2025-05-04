@@ -70,6 +70,8 @@
         margin-bottom: 15px;
         padding: 10px;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
+        
+        cursor: pointer;
       
         &:hover {
           transform: scale(1.02);
@@ -104,12 +106,12 @@
                 color: #333333;
                 font-size: 1.2em;
                 margin: 0;
-                cursor: pointer;
+                // cursor: pointer;
                 line-height: 2; // Increased for better spacing
       
-                &:hover {
-                  text-decoration: underline;
-                }
+                // &:hover {
+                //   text-decoration: underline;
+                // }
               }
       
               .recipe-ingredients {
@@ -301,12 +303,18 @@
         .recipe-item {
           flex-direction: column;
           align-items: flex-start;
+          width: 95%;
 
           .recipe-image {
             width: 100%;
             height: 150px;
             margin-right: 0;
             margin-bottom: 10px;
+          }
+
+          .recipe-content {
+            width: 100%;
+            padding: 10px;
           }
         }
       }

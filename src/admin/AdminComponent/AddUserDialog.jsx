@@ -102,7 +102,6 @@ const AddUserDialog = ({ open, handleClose, handleSave }) => {
             onChange={handleChange}
             label="Role"
           >
-            <MenuItem value="Customer">Customer</MenuItem>
             <MenuItem value="Shipper">Shipper</MenuItem>
             <MenuItem value="StoreManager">Store Manager</MenuItem>
           </Select>
