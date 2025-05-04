@@ -158,7 +158,7 @@ const Header = () => {
                 value={query}
                 onChange={handleInputChange}
               />
-              <button className="search-button">
+              <button className="search-button" aria-label="Search">
                 <SearchIcon />
               </button>
               {suggestions.length > 0 && (
@@ -178,45 +178,55 @@ const Header = () => {
           </div>
         </div>
         <ul className={`nav__navigation ${isMenuOpen ? "nav__navigation_visible" : ""}`}>
-  <Link
-    to="/MealPlanner"
-    className={`a__navbar btn btn--primary ${getNavItemClass("/MealPlanner")}`}
-  >
-    MEAL PLANNER
-  </Link>
-
-  <Link
-    to="/Chat"
-    className={`a__navbar btn btn--primary ${getNavItemClass("/Chat")}`}
-  >
-    CHATBOT
-  </Link>
-
-  <Link
-    to="/Cart"
-    className={`a__navbar btn btn--primary ${getNavItemClass("/Cart")}`}
-  >
-    MY CART
-  </Link>
-
-  {!user && (
-    <Link
-      to="/Login"
-      className={`a__navbar btn btn--primary ${getNavItemClass("/Login")}`}
-    >
-      LOGIN
-    </Link>
-  )}
-
-  {user && (
-    <Link
-      to="/Profile"
-      className={`a__navbar btn btn--primary ${getNavItemClass("/Profile")}`}
-    >
-      PROFILE
-    </Link>
-  )}
-</ul>
+          <li>
+            <Link
+              to="/MealPlanner"
+              className={`a__navbar btn btn--primary ${getNavItemClass("/MealPlanner")}`}
+            >
+              MEAL PLANNER
+            </Link>
+          </li>
+                
+          <li>
+            <Link
+              to="/Chat"
+              className={`a__navbar btn btn--primary ${getNavItemClass("/Chat")}`}
+            >
+              CHATBOT
+            </Link>
+          </li>
+                
+          <li>
+            <Link
+              to="/Cart"
+              className={`a__navbar btn btn--primary ${getNavItemClass("/Cart")}`}
+            >
+              MY CART
+            </Link>
+          </li>
+                
+          {!user && (
+            <li>
+              <Link
+                to="/Login"
+                className={`a__navbar btn btn--primary ${getNavItemClass("/Login")}`}
+              >
+                LOGIN
+              </Link>
+            </li>
+          )}
+        
+          {user && (
+            <li>
+              <Link
+                to="/Profile"
+                className={`a__navbar btn btn--primary ${getNavItemClass("/Profile")}`}
+              >
+                PROFILE
+              </Link>
+            </li>
+          )}
+        </ul>
         <i className="fa fa-bars wrap-menu" onClick={toggleMenu} aria-label="Open menu"></i>
       </nav>
       <div className="secondary-header">
