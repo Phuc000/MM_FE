@@ -17,14 +17,19 @@ export const useWebSocket = (userId, locationContext) => {
 
   const handleViewRecipe = async (recipeId) => {
     try {
-      const response = await fetch('/assets/processed_recipes.json');
-      const data = await response.json();
-      const selectedRecipe = data.find((recipe) => recipe.id == recipeId);
+      // Use the API endpoint instead of local JSON file
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/recipes/${recipeId}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch recipe: ${response.status} ${response.statusText}`);
+      }
+      
+      const selectedRecipe = await response.json();
       console.log('Selected Recipe:', selectedRecipe);
       setRecipe(selectedRecipe);
       return selectedRecipe;
     } catch (error) {
-      console.error('Error fetching recipes:', error);
+      console.error('Error fetching recipe:', error);
       return null;
     }
   };
