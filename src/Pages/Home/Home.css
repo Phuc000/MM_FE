@@ -305,7 +305,7 @@ html {
 .category--cat {
   font-size: var(--fz_lg);
   text-transform: uppercase;
-  margin-left: 5vw;
+  margin-left: 4vw;
   display: flex;
   align-items: center;
   cursor: pointer;

@@ -16,7 +16,6 @@ import axios from "axios";
 import { Modal, IconButton, Box, Typography, Button, Badge, Snackbar, Alert, CircularProgress } from '@mui/material';
 import { keyframes } from '@mui/system';
 import CasinoIcon from '@mui/icons-material/Casino';
-// import { Wheel } from 'react-custom-roulette';
 import { useAuth } from "../../hooks/useAuth";
 
 // Lazy load components

@@ -6,7 +6,6 @@ import { useAuth } from '../../hooks/useAuth';
 
 // Import icons for menu items
 import DashboardIcon from '@mui/icons-material/Dashboard';
-import AddBoxIcon from '@mui/icons-material/AddBox';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import InventoryIcon from '@mui/icons-material/Inventory';
 

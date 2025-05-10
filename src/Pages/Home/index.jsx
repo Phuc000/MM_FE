@@ -198,6 +198,7 @@ const Home = () => {
           <PaginationFilter 
             items={promoProducts}
             onFilteredItemsChange={(filteredItems) => setFilteredPromoCount(filteredItems.length)}
+            itemsPerPage={25}
           >
             {(currentItems, filteredCount, paginationControls) => (
               <>
