@@ -231,9 +231,9 @@ const RecipesArticles = () => {
           />
         )}
 
-        <FeatureAd />
-        <Footer />
       </div>
+      <FeatureAd />
+      <Footer />
     </div>
   );
 };

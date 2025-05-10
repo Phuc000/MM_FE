@@ -11,21 +11,25 @@ export const useWebSocket = (userId, locationContext) => {
   const [botTyping, setBotTyping] = useState(false);
   const wsRef = useRef(null);
   const location = useLocation();
-  const isOnChatPage = location.pathname === '/Chat';
+  const isOnChatPage = location.pathname === '/Chat' || location.pathname === '/RecipesArticles';
 
   const [recipe, setRecipe] = useState(null);
-  const [shopRecipeData, setShopRecipeData] = useState(null);
 
   const handleViewRecipe = async (recipeId) => {
     try {
-      const response = await fetch('/assets/processed_recipes.json');
-      const data = await response.json();
-      const selectedRecipe = data.find((recipe) => recipe.id == recipeId);
+      // Use the API endpoint instead of local JSON file
+      const response = await fetch(`${import.meta.env.VITE_REACT_APP_API_URL}/recipes/${recipeId}`);
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch recipe: ${response.status} ${response.statusText}`);
+      }
+      
+      const selectedRecipe = await response.json();
       console.log('Selected Recipe:', selectedRecipe);
       setRecipe(selectedRecipe);
       return selectedRecipe;
     } catch (error) {
-      console.error('Error fetching recipes:', error);
+      console.error('Error fetching recipe:', error);
       return null;
     }
   };
@@ -93,6 +97,7 @@ export const useWebSocket = (userId, locationContext) => {
 
     const connectWebSocket = () => {
       // Only connect on Chat page
+      console.log('Checking WebSocket connection...');
       if (!isOnChatPage || !userId) {
         console.log('Not connecting WebSocket - not on chat page or no user');
         return;
