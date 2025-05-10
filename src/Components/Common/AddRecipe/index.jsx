@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './AddRecipe.scss';
 import Modal from '@mui/material/Modal';
-import { Button, Chip, IconButton, Typography } from '@mui/material';
+import { Button, Chip, IconButton, Typography, Rating, Box, Tooltip } from '@mui/material';
 import AddToMealPlanDialog from '../AddMealPlanDialog';
 import CloseIcon from '@mui/icons-material/Close';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 const ModalRecipe = ({ open, handleClose, recipe }) => {
   const [mealPlannerOpen, setMealPlannerOpen] = useState(false);
+  const [userRating, setUserRating] = useState(null); // State for user rating
 
   const maxTagsToShow = 5;
   const extraTagsCount = recipe.tags.length - maxTagsToShow;
@@ -21,6 +22,16 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
   const midPoint = Math.ceil(recipe.ingredients.length / 2);
   const firstColumnIngredients = recipe.ingredients.slice(0, midPoint);
   const secondColumnIngredients = recipe.ingredients.slice(midPoint, maxIngredientsToShow);
+
+  // Handle rating change
+  const handleRatingChange = (event, newValue) => {
+    setUserRating(newValue);
+    toast.success(`Rated ${newValue} stars!`, {
+      position: 'bottom-left',
+      autoClose: 3000,
+      theme: 'colored',
+    });
+  };
 
   return (
     <>
@@ -44,10 +55,22 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
             </IconButton>
           </div>
 
-          {/* Recipe Title and Meta */}
-          <Typography variant="h4" id="recipe-modal-title" className="recipe-title">
-            {recipe.title}
-          </Typography>
+          {/* Recipe Title, Rating, and Meta */}
+          <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+            <Typography variant="h4" id="recipe-modal-title" className="recipe-title">
+              {recipe.title}
+            </Typography>
+            <Tooltip title="Rate this recipe">
+              <Rating
+                name="recipe-rating"
+                value={userRating}
+                onChange={handleRatingChange}
+                precision={0.5} // Allow half-star ratings
+                size="medium"
+                sx={{ color: '#f5c518' }} // Gold color for stars
+              />
+            </Tooltip>
+          </Box>
           <div className="recipe-meta">
             <Typography variant="body2" className="meta-info">
               <span>🕒 {recipe.readyInMinutes} min</span> •{' '}
