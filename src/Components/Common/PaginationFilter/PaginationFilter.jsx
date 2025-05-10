@@ -191,19 +191,6 @@ const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showO
             step="0.01"
           />
         </div>
-        {/* <div className="filter-group">
-          <label htmlFor="consistency-filter">Consistency: </label>
-          <select
-            id="consistency-filter"
-            value={filters.consistency}
-            onChange={(e) => handleFilterChange('consistency', e.target.value)}
-            className="filter-dropdown"
-          >
-            {uniqueConsistencies.map((consistency) => (
-              <option key={consistency} value={consistency}>{consistency}</option>
-            ))}
-          </select>
-        </div> */}
         {showOnSaleFilter && (
           <div className="filter-group">
             <label>

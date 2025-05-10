@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './AddRecipe.scss';
 import Modal from '@mui/material/Modal';
-import { Button, Chip, IconButton, Typography } from '@mui/material';
+import { Button, Chip, IconButton, Typography, Rating, Box, Tooltip } from '@mui/material';
 import AddToMealPlanDialog from '../AddMealPlanDialog';
 import AddToCartConfirmation from './AddToCartConfirmation';
 import ShopRecipeConfirmation from '../ShowRecipeConfirmation';
@@ -31,6 +31,7 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
     cartActionInProgress,
     handleShopRecipeConfirm
   } = useWebSocket(user?.id, locationContext);
+  const [userRating, setUserRating] = useState(null); // State for user rating
 
   const maxTagsToShow = 5;
   const extraTagsCount = recipe.tags.length - maxTagsToShow;
@@ -118,6 +119,16 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
     }
   };
 
+  // Handle rating change
+  const handleRatingChange = (event, newValue) => {
+    setUserRating(newValue);
+    toast.success(`Rated ${newValue} stars!`, {
+      position: 'bottom-left',
+      autoClose: 3000,
+      theme: 'colored',
+    });
+  };
+
   return (
     <>
       <Modal
@@ -140,10 +151,22 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
             </IconButton>
           </div>
 
-          {/* Recipe Title and Meta */}
-          <Typography variant="h4" id="recipe-modal-title" className="recipe-title">
-            {recipe.title}
-          </Typography>
+          {/* Recipe Title, Rating, and Meta */}
+          <Box display="flex" alignItems="center" justifyContent="space-between" mb={1}>
+            <Typography variant="h4" id="recipe-modal-title" className="recipe-title">
+              {recipe.title}
+            </Typography>
+            <Tooltip title="Rate this recipe">
+              <Rating
+                name="recipe-rating"
+                value={userRating}
+                onChange={handleRatingChange}
+                precision={0.5} // Allow half-star ratings
+                size="medium"
+                sx={{ color: '#f5c518' }} // Gold color for stars
+              />
+            </Tooltip>
+          </Box>
           <div className="recipe-meta">
             <Typography variant="body2" className="meta-info">
               <span>🕒 {recipe.readyInMinutes} min</span> •{' '}

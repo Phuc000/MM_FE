@@ -1,0 +1,32 @@
+.pagination-container {
+    margin-bottom: 15px;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .pagination .btn {
+    padding: 5px 10px;
+    font-size: 14px;
+  }
+  
+  .pagination .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .pagination .btn.active {
+    background-color: #000;
+    color: #fff;
+    border-color: #000;
+  }
+  
+  .pagination-ellipsis {
+    padding: 0.5rem 1rem;
+    display: flex;
+    align-items: center;
+  }
