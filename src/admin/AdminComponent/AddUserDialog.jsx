@@ -1,5 +1,5 @@
 // src/admin/AddUserDialog.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -12,6 +12,9 @@ import {
   Select,
   MenuItem,
 } from '@mui/material';
+import PasswordGenerator from './PasswordGenerator'; // Assuming you have this component
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const AddUserDialog = ({ open, handleClose, handleSave }) => {
   const [user, setUser] = useState({
@@ -26,6 +29,8 @@ const AddUserDialog = ({ open, handleClose, handleSave }) => {
     storeID: '',
   });
 
+  const [stores, setStores] = useState([]);
+
   const handleChange = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
@@ -34,6 +39,17 @@ const AddUserDialog = ({ open, handleClose, handleSave }) => {
     handleSave(user);
     handleClose();
   };
+
+  useEffect(() => {
+    // Fetch stores
+    axios
+      .get(`${import.meta.env.VITE_REACT_APP_API_URL}/stores`)
+      .then((response) => setStores(response.data))
+      .catch((error) => {
+        console.error('Error fetching stores:', error);
+        toast.error('Failed to load stores');
+      });
+  }, []);
 
   return (
     <Dialog open={open} onClose={handleClose}>
@@ -84,15 +100,9 @@ const AddUserDialog = ({ open, handleClose, handleSave }) => {
           fullWidth
           required
         />
-        <TextField
-          margin="dense"
-          label="Password"
-          name="password"
-          type="password"
-          value={user.password}
-          onChange={handleChange}
-          fullWidth
-          required
+        <PasswordGenerator
+          password={user.password}
+          setPassword={(pw) => setUser({ ...user, password: pw })}
         />
         <FormControl fullWidth margin="dense" required>
           <InputLabel>Role</InputLabel>
@@ -119,14 +129,21 @@ const AddUserDialog = ({ open, handleClose, handleSave }) => {
               required
             />
             <TextField
+              select
               margin="dense"
-              label="Store ID"
+              label="Store"
               name="storeID"
               value={user.storeID}
               onChange={handleChange}
               fullWidth
               required
-            />
+            >
+              {stores.map((store) => (
+                <MenuItem key={store.storeID} value={store.storeID}>
+                  {store.name} {/* or any readable name */}
+                </MenuItem>
+              ))}
+            </TextField>
           </>
         )}
       </DialogContent>

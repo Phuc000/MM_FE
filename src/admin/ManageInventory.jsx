@@ -18,16 +18,24 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  useMediaQuery, Skeleton, Card, CardContent,
-  CardActions, TablePagination
+  TextField,
+  InputAdornment,
+  useMediaQuery, 
+  Skeleton, 
+  Card, 
+  CardContent,
+  CardActions, 
+  TablePagination
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {
   Edit as EditIcon,
   Delete as DeleteIcon,
   Add as AddIcon,
+  Search as SearchIcon
 } from '@mui/icons-material';
 import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const ManageInventory = () => {
   const [stores, setStores] = useState([]);
@@ -36,36 +44,72 @@ const ManageInventory = () => {
   const [openEditDialog, setOpenEditDialog] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
   const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const [availableProducts, setAvailableProducts] = useState([]);
+  const [filteredInventoryData, setFilteredInventoryData] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  // Filter inventory data based on search term
+  useEffect(() => {
+    const filteredInventoryData = searchTerm.trim() === '' 
+    ? inventoryData 
+    : inventoryData.filter(item => {
+      // console.log("Item:", item);
+      return item.productName.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+    setFilteredInventoryData(filteredInventoryData);
+  }, [searchTerm, inventoryData]);
+
+
+  // useEffect(() => {
+  //   console.log('Inventory Data:', inventoryData);
+  // }, [inventoryData]);
+
+  // Fetch stores on component mount
 
   useEffect(() => {
     // Fetch stores
     axios
       .get(`${import.meta.env.VITE_REACT_APP_API_URL}/stores`)
       .then((response) => setStores(response.data))
-      .catch((error) => console.error('Error fetching stores:', error));
+      .catch((error) => {
+        console.error('Error fetching stores:', error);
+        toast.error('Failed to load stores');
+      });
   }, []);
 
   useEffect(() => {
-  if (selectedStore) {
-    setLoading(true);
-    axios
-      .get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/product/lessdata/${selectedStore}`)
-      .then((response) => setInventoryData(response.data))
-      .catch((error) => console.error('Error fetching inventory data:', error))
-      .finally(() => setLoading(false));
-  } else {
-    setInventoryData([]);
-  }
-}, [selectedStore]);
+    if (selectedStore) {
+      setLoading(true);
+      setSearchTerm(''); // Reset search when store changes
+      setPage(0); // Reset to first page
+
+      axios
+        .get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/product/lessdata/${selectedStore}`)
+        .then((response) => setInventoryData(response.data))
+        .catch((error) => {
+          console.error('Error fetching inventory data:', error);
+          toast.error('Failed to load inventory data');
+        })
+        .finally(() => setLoading(false));
+    } else {
+      setInventoryData([]);
+    }
+  }, [selectedStore]);
 
   const handleStoreChange = (event) => {
     setSelectedStore(event.target.value);
+  };
+
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    setPage(0); // Reset to first page when search changes
   };
 
   const handleEditInventory = (productID, storeID) => {
@@ -94,26 +138,42 @@ const ManageInventory = () => {
           )
         );
         setOpenEditDialog(false);
+        toast.success('Inventory updated successfully');
       })
-      .catch((error) => console.error('Error updating inventory:', error));
+      .catch((error) => {
+        console.error('Error updating inventory:', error);
+        toast.error('Failed to update inventory');
+      });
   };
 
   const handleDeleteInventory = (productID, storeID) => {
-    // Send DELETE request to delete the inventory record
-    axios
-      .delete(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/products/${productID}/${storeID}`
-      )
-      .then(() => {
-        // Update the inventoryData state
-        setInventoryData((prevData) =>
-          prevData.filter(
-            (item) =>
-              !(item.productID === productID && item.storeID === storeID)
-          )
-        );
-      })
-      .catch((error) => console.error('Error deleting inventory:', error));
+    // Find product name for confirmation message
+    const productToDelete = inventoryData.find(
+      item => item.productID === productID && item.storeID === storeID
+    );
+    const productName = productToDelete ? productToDelete.productName : 'this product';
+    
+    if (window.confirm(`Are you sure you want to remove ${productName} from inventory?`)) {
+      // Send DELETE request to delete the inventory record
+      axios
+        .delete(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/products/${productID}/${storeID}`
+        )
+        .then(() => {
+          // Update the inventoryData state
+          setInventoryData((prevData) =>
+            prevData.filter(
+              (item) =>
+                !(item.productID === productID && item.storeID === storeID)
+            )
+          );
+          toast.success(`${productName} removed from inventory`);
+        })
+        .catch((error) => {
+          console.error('Error deleting inventory:', error);
+          toast.error('Failed to remove product from inventory');
+        });
+    }
   };
 
   const handleAddInventory = () => {
@@ -148,22 +208,30 @@ const ManageInventory = () => {
                 : item
             )
           );
+          toast.success('Inventory quantity updated');
         } else {
           // Add new record to inventoryData
           const productDetails = availableProducts.find(
             (product) => product.productID === newRecord.productID
           );
+
+          // console.log("Product Details:", productDetails);
           const newInventoryItem = {
             productID: newRecord.productID,
             storeID: newRecord.storeID,
             numberAtStore: newRecord.numberAtStore,
-            product: productDetails,
+            productName: productDetails.name,
+            price: productDetails.price,
           };
           setInventoryData((prevData) => [...prevData, newInventoryItem]);
+          toast.success('New product added to inventory');
         }
         setOpenAddDialog(false);
       })
-      .catch((error) => console.error('Error adding inventory record:', error));
+      .catch((error) => {
+        console.error('Error adding inventory record:', error);
+        toast.error('Failed to add inventory record');
+      });
   };
 
   const handleChangePage = (event, newPage) => {
@@ -175,7 +243,11 @@ const ManageInventory = () => {
     setPage(0);
   };
   
-  const paginatedData = inventoryData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  // Use filtered data for pagination
+  const paginatedData = filteredInventoryData.slice(
+    page * rowsPerPage, 
+    page * rowsPerPage + rowsPerPage
+  );
 
   return (
     <Box>
@@ -198,31 +270,61 @@ const ManageInventory = () => {
           ))}
         </Select>
       </FormControl>
+      
       {selectedStore && (
       <>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<AddIcon />}
-          onClick={handleAddInventory}
-          sx={{ mb: 2 }}
-        >
-          Add New Inventory Record
-        </Button>
+        {/* Search bar - appears after store selection */}
+        <Box sx={{ mb: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
+          <TextField
+            variant="outlined"
+            placeholder="Search products by name..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+            sx={{ 
+              flexGrow: 1,
+              maxWidth: 'calc(100% - 180px)' // Reserve space for button + gap
+            }}
+          />
+          
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            sx={{ 
+              width: '150px', 
+              py: 1, 
+              fontSize: '16px', 
+              fontWeight: 'bold',
+              flexShrink: 0 // Prevent button from shrinking
+            }}
+            onClick={handleAddInventory}
+          >
+            Add New
+          </Button>
+        </Box>
     
-        <AddInventoryDialog
+          <AddInventoryDialog
             open={openAddDialog}
             handleClose={() => setOpenAddDialog(false)}
             handleSave={handleSaveNewInventory}
             selectedStore={selectedStore}
             existingProducts={inventoryData.map((item) => item.productID)}
+            availableProducts={availableProducts}
+            setAvailableProducts={setAvailableProducts}
           />
-          <EditInventoryDialog
+          {/* <EditInventoryDialog
             open={openEditDialog}
             handleClose={() => setOpenEditDialog(false)}
             handleSave={handleSaveInventory}
             record={selectedRecord}
-          />
+          /> */}
     
         {loading ? (
           isMobile ? (
@@ -257,8 +359,12 @@ const ManageInventory = () => {
               </Table>
             </TableContainer>
           )
-        ) : inventoryData.length === 0 ? (
-          <Typography variant="body1">No inventory data found.</Typography>
+        ) : filteredInventoryData.length === 0 ? (
+          <Paper sx={{ p: 3, textAlign: 'center' }}>
+            <Typography variant="body1">
+              {searchTerm ? 'No products match your search.' : 'No inventory data found.'}
+            </Typography>
+          </Paper>
         ) : isMobile ? (
           <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           {paginatedData.map((record) => (
@@ -270,9 +376,9 @@ const ManageInventory = () => {
                 <Typography variant="body1">Price: ${record.price.toFixed(2)}</Typography>
               </CardContent>
               <CardActions sx={{ pt: 0, display: 'flex', justifyContent: 'center' }}>
-                <IconButton color="primary" onClick={() => handleEditInventory(record.productID, record.storeID)}>
+                {/* <IconButton color="primary" onClick={() => handleEditInventory(record.productID, record.storeID)}>
                   <EditIcon />
-                </IconButton>
+                </IconButton> */}
                 <IconButton color="error" onClick={() => handleDeleteInventory(record.productID, record.storeID)}>
                   <DeleteIcon />
                 </IconButton>
@@ -281,7 +387,7 @@ const ManageInventory = () => {
           ))}
           <TablePagination
               component="div"
-              count={inventoryData.length}
+              count={filteredInventoryData.length}
               page={page}
               onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
@@ -309,9 +415,9 @@ const ManageInventory = () => {
                       <TableCell>{record.numberAtStore}</TableCell>
                       <TableCell>${record.price.toFixed(2)}</TableCell>
                       <TableCell align="right">
-                        <IconButton color="primary" onClick={() => handleEditInventory(record.productID, record.storeID)}>
+                        {/* <IconButton color="primary" onClick={() => handleEditInventory(record.productID, record.storeID)}>
                           <EditIcon />
-                        </IconButton>
+                        </IconButton> */}
                         <IconButton color="error" onClick={() => handleDeleteInventory(record.productID, record.storeID)}>
                           <DeleteIcon />
                         </IconButton>
@@ -323,7 +429,7 @@ const ManageInventory = () => {
             </TableContainer>
             <TablePagination
               component="div"
-              count={inventoryData.length}
+              count={filteredInventoryData.length}
               page={page}
               onPageChange={handleChangePage}
               rowsPerPage={rowsPerPage}
@@ -334,7 +440,6 @@ const ManageInventory = () => {
       </>
     )}
     </Box>
-    
   );
 };
 

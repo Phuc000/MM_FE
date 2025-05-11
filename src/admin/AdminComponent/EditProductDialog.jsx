@@ -22,6 +22,7 @@ const EditProductDialog = ({ open, handleClose, handleSave, product }) => {
 
   const onSave = () => {
     // Validate updated product data
+    console.log('Updated product data:', updatedProduct);
     handleSave(updatedProduct);
     handleClose();
   };
@@ -45,16 +46,17 @@ const EditProductDialog = ({ open, handleClose, handleSave, product }) => {
           margin="dense"
           label="Category"
           name="category"
-          value={updatedProduct.category}
+          value={updatedProduct.aisle}
           onChange={handleChange}
           fullWidth
           required
+          disabled
         />
         <TextField
           margin="dense"
           label="Description"
           name="description"
-          value={updatedProduct.Description}
+          value={updatedProduct.description}
           onChange={handleChange}
           fullWidth
         />
@@ -70,13 +72,23 @@ const EditProductDialog = ({ open, handleClose, handleSave, product }) => {
         />
         <TextField
           margin="dense"
-          label="Weight"
-          name="weight"
+          label="Amount"
+          name="amount"
           type="number"
-          value={updatedProduct.weight}
+          value={updatedProduct.amount}
           onChange={handleChange}
           fullWidth
           required
+        />
+        <TextField
+          margin="dense"
+          label="Unit"
+          name="unit"
+          value={updatedProduct.unit}
+          onChange={handleChange}
+          fullWidth
+          required
+          disabled
         />
         <TextField
           margin="dense"
