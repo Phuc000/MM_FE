@@ -14,24 +14,14 @@ import {
 } from '@mui/material';
 import axios from 'axios';
 
-const categoryList = [
-  'Vegetable',
-  'Seafood',
-  'Spice',
-  'Grain',
-  'Sauce',
-  'Beef',
-  'Milk',
-  'Fruit',
-  'Pork',
-];
-
 const AddInventoryDialog = ({
   open,
   handleClose,
   handleSave,
   selectedStore,
   existingProducts,
+  availableProducts,
+  setAvailableProducts
 }) => {
   const [inventoryRecord, setInventoryRecord] = useState({
     productID: '',
@@ -39,7 +29,22 @@ const AddInventoryDialog = ({
     numberAtStore: '',
   });
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [availableProducts, setAvailableProducts] = useState([]);
+  const [categoryList, setCategories] = useState([]);
+
+  useEffect(() => {
+      const fetchCategories = async () => {
+        try {
+          const response = await axios.get(
+            `${import.meta.env.VITE_REACT_APP_API_URL}/products/category`
+          );
+          setCategories(response.data);
+        } catch (error) {
+          console.error('Error fetching categories:', error);
+        } 
+      };
+  
+      fetchCategories();
+    }, []);
 
   useEffect(() => {
     if (selectedCategory) {
@@ -83,7 +88,7 @@ const AddInventoryDialog = ({
   };
 
   return (
-    <Dialog open={open} onClose={handleClose}>
+    <Dialog open={open} onClose={handleClose} sx={{ width: '100%' }} maxWidth="sm">
       <DialogTitle>Add Inventory Record</DialogTitle>
       <DialogContent>
         <FormControl fullWidth margin="dense" required>
@@ -109,6 +114,7 @@ const AddInventoryDialog = ({
               value={inventoryRecord.productID}
               onChange={handleChange}
               label="Product"
+              sx={{ width: '100%' }}
             >
               {availableProducts.length === 0 && (
                 <MenuItem disabled>No products available</MenuItem>

@@ -46,46 +46,46 @@ const ManagePromotions = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
+  const fetchPromotions = async () => {
+    setLoading(true); // Set loading to true when fetch starts
+    try {
+      const [billPromotionsRes, customerPromotionsRes, productPromotionsRes] = await Promise.all([
+        axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/promotions/bill`),
+        axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/promotions/customer`),
+        axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/promotions/product`),
+      ]);
+
+      const billPromotions = billPromotionsRes.data;
+      const customerPromotions = customerPromotionsRes.data;
+      const productPromotions = productPromotionsRes.data;
+
+      const formattedBillPromotions = billPromotions.map((promo) => ({
+        ...promo,
+        type: 'Bill Promotion',
+      }));
+      const formattedCustomerPromotions = customerPromotions.map((promo) => ({
+        ...promo,
+        type: 'Customer Promotion',
+      }));
+      const formattedProductPromotions = productPromotions.map((promo) => ({
+        ...promo,
+        type: 'Product Promotion',
+      }));
+
+      setPromotions([
+        ...formattedBillPromotions,
+        ...formattedCustomerPromotions,
+        ...formattedProductPromotions,
+      ]);
+    } catch (error) {
+      console.error('Error fetching promotions:', error);
+      toast.error('Failed to load promotions');
+    } finally {
+      setLoading(false); // Set loading to false when fetch completes
+    }
+  };
+
   useEffect(() => {
-    const fetchPromotions = async () => {
-      setLoading(true); // Set loading to true when fetch starts
-      try {
-        const [billPromotionsRes, customerPromotionsRes, productPromotionsRes] = await Promise.all([
-          axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/promotions/bill`),
-          axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/promotions/customer`),
-          axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/promotions/product`),
-        ]);
-
-        const billPromotions = billPromotionsRes.data;
-        const customerPromotions = customerPromotionsRes.data;
-        const productPromotions = productPromotionsRes.data;
-
-        const formattedBillPromotions = billPromotions.map((promo) => ({
-          ...promo,
-          type: 'Bill Promotion',
-        }));
-        const formattedCustomerPromotions = customerPromotions.map((promo) => ({
-          ...promo,
-          type: 'Customer Promotion',
-        }));
-        const formattedProductPromotions = productPromotions.map((promo) => ({
-          ...promo,
-          type: 'Product Promotion',
-        }));
-
-        setPromotions([
-          ...formattedBillPromotions,
-          ...formattedCustomerPromotions,
-          ...formattedProductPromotions,
-        ]);
-      } catch (error) {
-        console.error('Error fetching promotions:', error);
-        toast.error('Failed to load promotions');
-      } finally {
-        setLoading(false); // Set loading to false when fetch completes
-      }
-    };
-
     fetchPromotions();
   }, []);
 
@@ -138,14 +138,18 @@ const ManagePromotions = () => {
     
 
       console.log('Saving promotion:', requestBody);
-      await axios.post(endpoint, requestBody, {
+      const response = await axios.post(endpoint, requestBody, {
         headers: {
           'Content-Type': 'application/json',
         },
         withCredentials: true,
       });
 
-      setPromotions((prev) => [...prev, newPromotion]);
+      console.log("PRev promotions", promotions)
+      console.log("Response data", response.data)
+      response.data.type = newPromotion.type === 'BillPromotion' ? 'Bill Promotion' : newPromotion.type === 'CustomerPromotion' ? 'Customer Promotion' : 'Product Promotion';
+
+      setPromotions((prev) => [...prev, response.data]);
       toast.success('Promotion added successfully');
     } catch (error) {
       console.error('Error saving promotion:', error);
@@ -186,15 +190,7 @@ const ManagePromotions = () => {
       });
   
       // Fetch updated promotions
-      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/promotions`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        withCredentials: true,
-      });
-  
-      // Update the state with the new promotions list
-      setPromotions(response.data);
+      fetchPromotions();
   
       toast.success('Promotion deleted successfully');
     } catch (error) {
