@@ -381,9 +381,10 @@ const ManageUsers = () => {
                         <EditIcon />
                       </IconButton>
                       {user.role === 'Customer' ? (
-                        <IconButton color="error" onClick={() => handleBan(user)}>
-                          <BlockIcon />
-                        </IconButton>
+                        // <IconButton color="error" onClick={() => handleBan(user)}>
+                        //   <BlockIcon />
+                        // </IconButton>
+                        <></>
                       ) : (
                         <IconButton color="error" onClick={() => handleDeleteUser(user)}>
                           <DeleteIcon />
