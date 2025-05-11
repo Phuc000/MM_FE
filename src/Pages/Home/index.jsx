@@ -162,6 +162,14 @@ const Home = () => {
     return name;
   };
 
+  // Helper function to generate category image paths
+  const getCategoryImagePath = (category) => {
+    // Replace slashes with spaces, keep all other characters (including spaces, commas, etc.)
+    const normalizedName = category.replace(/\//g, ' ');
+    // Return the image path with .webp extension
+    return `/Images/category/${normalizedName}.png`;
+  };
+
   const [isHeroVisible, setIsHeroVisible] = useState(false);
   const heroRef = useRef(null);
 
@@ -294,8 +302,9 @@ const Home = () => {
                     >
                       <div className="category-card__image">
                         <img
-                          src={`/Images/categories/beef-crop.webp`}
+                          src={getCategoryImagePath(category)}
                           alt={category}
+                          loading="lazy"
                           onError={(e) => (e.target.src = '/Images/categories/default.png')}
                         />
                       </div>
