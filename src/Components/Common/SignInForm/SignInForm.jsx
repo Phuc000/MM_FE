@@ -29,7 +29,7 @@ function SignInForm({ toggleSignState }) {
 
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/login/${email}/${password}`,
+        `${import.meta.env.VITE_REACT_APP_API_URL}/users/login/${email}/${password}`,
         {
           withCredentials: true,
           headers: {

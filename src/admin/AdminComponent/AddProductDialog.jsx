@@ -7,16 +7,21 @@ import {
   DialogActions,
   TextField,
   Button,
+  FormControl, InputLabel, Select, MenuItem
 } from '@mui/material';
 
-const AddProductDialog = ({ open, handleClose, handleSave }) => {
+const AddProductDialog = ({ open, handleClose, handleSave, availableCategories }) => {
   const [product, setProduct] = useState({
-    name: '',
-    category: '',
-    description: '',
-    price: '',
-    weight: '',
     image: '',
+    consistency: '',
+    name: '',
+    nameClean: '',
+    originalName: '',
+    amount: '',
+    unit: '',
+    price: '',
+    aisle: '',
+    description: '',   
   });
 
   const handleChange = (e) => {
@@ -44,13 +49,51 @@ const AddProductDialog = ({ open, handleClose, handleSave }) => {
         />
         <TextField
           margin="dense"
-          label="Category"
-          name="category"
-          value={product.category}
+          label="Name Clean"
+          name="nameClean"
+          value={product.nameClean}
           onChange={handleChange}
           fullWidth
           required
         />
+        <TextField
+          margin="dense"
+          label="Original Name"
+          name="originalName"
+          value={product.originalName}
+          onChange={handleChange}
+          fullWidth
+          required
+        />
+        <FormControl margin="dense" fullWidth required>
+          <InputLabel id="consistency-label">Consistency</InputLabel>
+          <Select
+            labelId="consistency-label"
+            name="consistency"
+            value={product.consistency}
+            onChange={handleChange}
+            label="Consistency"
+          >
+            <MenuItem value="SOLID">SOLID</MenuItem>
+            <MenuItem value="LIQUID">LIQUID</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl margin="dense" fullWidth required>
+          <InputLabel id="category-label">Aisle</InputLabel>
+          <Select
+            labelId="category-label"
+            name="aisle"
+            value={product.aisle}
+            onChange={handleChange}
+            label="Aisle"
+          >
+            {availableCategories.map((cat) => (
+              <MenuItem key={cat} value={cat}>
+                {cat}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
         <TextField
           margin="dense"
           label="Description"
@@ -71,10 +114,19 @@ const AddProductDialog = ({ open, handleClose, handleSave }) => {
         />
         <TextField
           margin="dense"
-          label="Weight"
-          name="weight"
+          label="Amount"
+          name="amount"
           type="number"
-          value={product.weight}
+          value={product.amount}
+          onChange={handleChange}
+          fullWidth
+          required
+        />
+        <TextField
+          margin="dense"
+          label="Unit"
+          name="unit"
+          value={product.unit}
           onChange={handleChange}
           fullWidth
           required

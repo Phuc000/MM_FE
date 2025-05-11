@@ -18,6 +18,11 @@ import {
   CardActions,
   Skeleton,
   useMediaQuery,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
 } from '@mui/material';
 import {
   Edit as EditIcon,
@@ -28,11 +33,15 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import { useTheme } from '@mui/material/styles';
+import EditUserDialog from '../Components/Common/ManagerComponents/EditUserDialog';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
 
   const [loading, setLoading] = useState(true);
+
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
 
@@ -67,7 +76,7 @@ const ManageUsers = () => {
         );
         const employees = employeesResponse.data.map((employee) => ({
           ...employee,
-          role: 'Employee',
+          role: 'StoreManager',
         }));
 
         // Fetch shippers
@@ -90,6 +99,7 @@ const ManageUsers = () => {
         setUsers(allUsers);
       } catch (error) {
         console.error('Error fetching users:', error);
+        toast.error('Failed to load users');
       } finally {
         setLoading(false);
       }
@@ -99,6 +109,9 @@ const ManageUsers = () => {
   }, []);
 
   const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+
 
   const handleAddUser = () => {
     setOpenAddDialog(true);
@@ -108,12 +121,20 @@ const ManageUsers = () => {
     // Depending on role, select the correct endpoint
     let endpoint = '';
     if (newUser.role === 'Customer') {
-      endpoint = `${import.meta.env.VITE_REACT_APP_API_URL}/register/customer`;
-    } else if (newUser.role === 'Employee') {
-      endpoint = `${import.meta.env.VITE_REACT_APP_API_URL}/register/employee`;
+      endpoint = `${import.meta.env.VITE_REACT_APP_API_URL}/users/register/customer`;
+    } else if (newUser.role === 'StoreManager') {
+      endpoint = `${import.meta.env.VITE_REACT_APP_API_URL}/users/register/storemanager`;
+      newUser.ePhone = newUser.phoneNumber; // Map phoneNumber to ePhone for employees
+      delete newUser.phoneNumber; // Remove phoneNumber from newUser
     } else if (newUser.role === 'Shipper') {
-      endpoint = `${import.meta.env.VITE_REACT_APP_API_URL}/register/shipper`;
+      endpoint = `${import.meta.env.VITE_REACT_APP_API_URL}/users/register/shipper`;
+      newUser.sPhoneNo = newUser.phoneNumber; // Map phoneNumber to sPhoneNumber for shippers
+      delete newUser.phoneNumber; // Remove phoneNumber from newUser
+      newUser.sEmail = newUser.email; // Map email to sEmail for shippers
+      delete newUser.email; // Remove email from newUser
     }
+
+    console.log('New User:', newUser);
 
     // Send POST request to add user
     axios.post(endpoint, newUser, {
@@ -123,13 +144,26 @@ const ManageUsers = () => {
       .then((response) => {
         // Update the users list
         setUsers([...users, { ...response.data, role: newUser.role }]);
+        toast.success(`${newUser.role} ${newUser.fName} ${newUser.lName} added successfully`);
       })
-      .catch((error) => console.error('Error adding user:', error));
+      .catch((error) => {
+        console.error('Error adding user:', error);
+        toast.error(error.response?.data?.message || `Failed to add ${newUser.role.toLowerCase()}`);
+      })
   };
 
   const handleEditUser = (user) => {
-    // Handle editing user
-    console.log('Edit user:', user);
+    setSelectedUser(user);
+    setOpenEditDialog(true);
+    toast.info('Edit functionality coming soon');
+  };
+
+  // Add new handleUpdateUser function
+  const handleUpdateUser = (updatedUser) => {
+    // Update the users state with the updated user
+    setUsers(users.map(user => 
+      user.id === updatedUser.id ? updatedUser : user
+    ));
   };
 
   const handleDeleteUser = (user) => {
@@ -138,7 +172,7 @@ const ManageUsers = () => {
       let endpoint = '';
       if (user.role === 'Customer') {
         endpoint = `${import.meta.env.VITE_REACT_APP_API_URL}/customers/${user.id}`;
-      } else if (user.role === 'Employee') {
+      } else if (user.role === 'StoreManager') {
         endpoint = `${import.meta.env.VITE_REACT_APP_API_URL}/employees/${user.id}`;
       } else if (user.role === 'Shipper') {
         endpoint = `${import.meta.env.VITE_REACT_APP_API_URL}/shippers/${user.id}`;
@@ -151,10 +185,26 @@ const ManageUsers = () => {
         .then(() => {
           // Remove the deleted user from the state
           setUsers(users.filter((u) => u.id !== user.id));
+          toast.success(`${user.role} ${user.fName} ${user.lName} deleted successfully`);
         })
-        .catch((error) => console.error('Error deleting user:', error));
+        .catch((error) => {
+          console.error('Error deleting user:', error);
+          toast.error(`Failed to delete ${user.role.toLowerCase()}`);
+        } );
     }
   };
+
+  const handleBan = (user) => {
+    console.log('Ban user:', user);
+    // This is just a placeholder - implement actual ban API call here
+    // For now, just show a success toast for demonstration
+    try {
+      // Simulate API call: await axios.post(`/api/customers/${user.id}/ban`);
+      toast.success(`Customer ${user.fName} ${user.lName} banned successfully`);
+    } catch (error) {
+      toast.error('Failed to ban customer');
+    }
+  }
 
   // Skeleton component for loading state
   const UserSkeletons = () => {
@@ -208,11 +258,11 @@ const ManageUsers = () => {
   const UserCard = ({ user }) => {
     let additionalInfo = '';
     if (user.role === 'Customer') {
-      additionalInfo = `Fortune Chances: ${user.fortuneChance} | Total Money Spent: ${user.totalMoneySpent}`;
-    } else if (user.role === 'Employee') {
+      additionalInfo = `Fortune Chances: ${user.fortuneChance} | Total Money Spent: $${user.totalMoneySpent.toFixed(2)}`;
+    } else if (user.role === 'StoreManager') {
       additionalInfo = `Salary: ${user.salary} | Store ID: ${user.storeID}`;
     } else if (user.role === 'Shipper') {
-      additionalInfo = `Vehicle Capacity: ${user.vehicleCapacity}`;
+      additionalInfo =  "";
     }
 
     return (
@@ -236,9 +286,15 @@ const ManageUsers = () => {
           <IconButton color="primary" onClick={() => handleEditUser(user)}>
             <EditIcon />
           </IconButton>
-          <IconButton color="error" onClick={() => handleDeleteUser(user)}>
-            <BlockIcon />
-          </IconButton>
+          {user.role === 'Customer' ? (
+            <IconButton color="error" onClick={() => handleBan(user)}>
+              <BlockIcon />
+            </IconButton>
+          ) : (
+            <IconButton color="error" onClick={() => handleDeleteUser(user)}>
+              <DeleteIcon />
+            </IconButton>
+          )}
         </CardActions>
       </Card>
     );
@@ -262,6 +318,13 @@ const ManageUsers = () => {
         open={openAddDialog}
         handleClose={() => setOpenAddDialog(false)}
         handleSave={handleSaveUser}
+      />
+      {/* Add this before the closing Box tag */}
+      <EditUserDialog
+        open={openEditDialog}
+        handleClose={() => setOpenEditDialog(false)}
+        handleSave={handleUpdateUser}
+        user={selectedUser}
       />
       <TableContainer component={Paper}>
         <Table aria-label="users table">
@@ -296,11 +359,11 @@ const ManageUsers = () => {
               users.map((user) => {
                 let additionalInfo = '';
                 if (user.role === 'Customer') {
-                  additionalInfo = `Fortune Chances: ${user.fortuneChance} | Total Money Spent: ${user.totalMoneySpent}`;
-                } else if (user.role === 'Employee') {
+                  additionalInfo = `Fortune Chances: ${user.fortuneChance} | Total Money Spent: $${user.totalMoneySpent.toFixed(2)}`;
+                } else if (user.role === 'StoreManager') {
                   additionalInfo = `Salary: ${user.salary} | Store ID: ${user.storeID}`;
                 } else if (user.role === 'Shipper') {
-                  additionalInfo = `Vehicle Capacity: ${user.vehicleCapacity}`;
+                  additionalInfo = "";
                 }
 
                 return (
@@ -317,12 +380,15 @@ const ManageUsers = () => {
                       >
                         <EditIcon />
                       </IconButton>
-                      <IconButton
-                        color="error"
-                        onClick={() => handleDeleteUser(user)}
-                      >
-                        <BlockIcon />
-                      </IconButton>
+                      {user.role === 'Customer' ? (
+                        <IconButton color="error" onClick={() => handleBan(user)}>
+                          <BlockIcon />
+                        </IconButton>
+                      ) : (
+                        <IconButton color="error" onClick={() => handleDeleteUser(user)}>
+                          <DeleteIcon />
+                        </IconButton>
+                      )}
                     </TableCell>
                   </TableRow>
                 );
