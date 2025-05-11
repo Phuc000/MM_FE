@@ -50,7 +50,7 @@ function SignUpForm({ toggleSignState }) {
     try {
       // Making a POST request using axios
       const response = await axios.post(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/register/customer`,
+        `${import.meta.env.VITE_REACT_APP_API_URL}/users/register/customer`,
         state,
         {
           headers: {
