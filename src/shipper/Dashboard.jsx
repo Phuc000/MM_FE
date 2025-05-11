@@ -15,8 +15,12 @@ import {
   Snackbar,
   Alert,
   LinearProgress,
-  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle
+  Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle,
+  Collapse, // <-- Add Collapse
+  IconButton // <-- Add IconButton
 } from '@mui/material';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'; // Icon for closed state
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import { useAuth } from '../hooks/useAuth';
 import OrderDetailsDialog from './Components/OrderDetailsDialog';
 import "./Dashboard.css"; // Import your CSS file for styling
@@ -366,7 +370,31 @@ const Dashboard = () => {
   };
   
   const RouteTable = ({ routingData }) => {
-    if (!routingData) return null;
+    const [openRoutes, setOpenRoutes] = useState({}); // State to manage open/closed routes
+
+    // Initialize openRoutes when routingData changes, defaulting all to closed
+    useEffect(() => {
+      if (routingData) {
+        const initialOpenState = {};
+        routingData.forEach(route => {
+          // Keep existing state if available, otherwise default to false (closed)
+          initialOpenState[route.storeId] = openRoutes[route.storeId] || false;
+        });
+        setOpenRoutes(initialOpenState);
+      }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [routingData]); // Rerun when routingData prop changes
+
+    const handleToggleRoute = (storeId) => {
+      setOpenRoutes(prev => ({
+        ...prev,
+        [storeId]: !prev[storeId]
+      }));
+    };
+
+    if (!routingData || routingData.length === 0) return (
+      <></>
+    );
 
     const getOrderByAddress = (storeRoute, address) => {
       return storeRoute.orders?.find(order => order.shippingAddress === address);
@@ -380,60 +408,82 @@ const Dashboard = () => {
 
     return (
       <Box sx={{ mt: 4 }}>
-        <Typography variant="h6" gutterBottom>
+        <Typography variant="h5" gutterBottom>
           Delivery Routes
         </Typography>
         {routingData.map((storeRoute) => (
-          <Box key={storeRoute.storeId} sx={{ mb: 4 }}>
-            <Typography variant="subtitle1" gutterBottom>
-              {storeRoute.storeName} - Total Distance: {(storeRoute.distance / 1000).toFixed(2)} km
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Step</TableCell>
-                    <TableCell>From</TableCell>
-                    <TableCell>To</TableCell>
-                    <TableCell align="center">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {storeRoute.route.map((address, index) => (
-                    index < storeRoute.route.length - 1 && (
-                      <TableRow key={index}>
-                        <TableCell>{index + 1}</TableCell>
-                        <TableCell>{address}</TableCell>
-                        <TableCell>{storeRoute.route[index + 1]}</TableCell>
-                        <TableCell align="center">
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            href={createGoogleMapsLink(address, storeRoute.route[index + 1])}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            sx={{ marginRight: '8px' }}
-                          >
-                            View on Maps
-                          </Button>
-                          {getOrderByAddress(storeRoute, storeRoute.route[index + 1]) && (
+          <Box key={storeRoute.storeId} sx={{ mb: 2, border: '1px solid #e0e0e0', borderRadius: '4px' }}>
+            <Box 
+              sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'space-between', 
+                p: 2, 
+                cursor: 'pointer',
+                backgroundColor: openRoutes[storeRoute.storeId] ? 'action.hover' : 'transparent',
+                '&:hover': {
+                  backgroundColor: 'action.hover'
+                }
+              }} 
+              onClick={() => handleToggleRoute(storeRoute.storeId)}
+            >
+              <Typography variant="subtitle1" gutterBottom sx={{ mb: 0, fontWeight: 'medium' }}>
+                {storeRoute.storeName} - Total Distance: {(storeRoute.distance / 1000).toFixed(2)} km
+              </Typography>
+              <IconButton size="small">
+                {openRoutes[storeRoute.storeId] ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+              </IconButton>
+            </Box>
+            <Collapse in={openRoutes[storeRoute.storeId]} timeout="auto" unmountOnExit>
+              <TableContainer component={Paper} sx={{ borderTop: '1px solid #e0e0e0', borderRadius: '0 0 4px 4px' }}>
+                <Table size="small">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell sx={{fontWeight: 'bold'}}>Step</TableCell>
+                      <TableCell sx={{fontWeight: 'bold'}}>From</TableCell>
+                      <TableCell sx={{fontWeight: 'bold'}}>To</TableCell>
+                      <TableCell align="center" sx={{fontWeight: 'bold'}}>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {storeRoute.route.map((address, index) => (
+                      index < storeRoute.route.length - 1 && (
+                        <TableRow key={index} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                          <TableCell>{index + 1}</TableCell>
+                          <TableCell>{address}</TableCell>
+                          <TableCell>{storeRoute.route[index + 1]}</TableCell>
+                          <TableCell align="center">
                             <Button
-                              variant="contained"
-                              color="secondary"
-                              onClick={() => handleOpenDetails(
-                                getOrderByAddress(storeRoute, storeRoute.route[index + 1]).transactionId
-                              )}
+                              variant="outlined" // Changed to outlined for less emphasis
+                              size="small"
+                              color="primary"
+                              href={createGoogleMapsLink(address, storeRoute.route[index + 1])}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              sx={{ mr: 1, mb: {xs: 1, sm: 0} }} // Added margin bottom for small screens
                             >
-                              View Order
+                              Maps
                             </Button>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    )
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                            {getOrderByAddress(storeRoute, storeRoute.route[index + 1]) && (
+                              <Button
+                                variant="outlined" // Changed to outlined
+                                size="small"
+                                color="secondary"
+                                onClick={() => handleOpenDetails(
+                                  getOrderByAddress(storeRoute, storeRoute.route[index + 1]).transactionId
+                                )}
+                              >
+                                Order
+                              </Button>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      )
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Collapse>
           </Box>
         ))}
       </Box>

@@ -81,7 +81,7 @@ const InfoForm = ({ title = "Billing Details", userData, setUserData }) => {
         {/* Continue for other fields */}
         <div className="form-row">
           <div className="form-group">
-          <select name="country" value={formValues.country || ''} onChange={handleInputChange} required>
+          <select name="country" value={formValues.country || 'vietnam'} onChange={handleInputChange} required>
             <option value="">Country *</option>
             <option value="vietnam">Vietnam</option>
           </select>

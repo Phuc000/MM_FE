@@ -17,6 +17,7 @@
   .chat-box {
     display: flex;
     flex-direction: column;
+    width: 100%;
     max-width: 800px;
     gap: 12px;
     padding: 24px;

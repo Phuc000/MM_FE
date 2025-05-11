@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Header, Footer, ShowProduct, StoreCard } from "../../Components";
 import FeatureAd from '../../Components/Common/Feature_Ad/FeatureAd';
 import ProductList from '../../Components/Common/ProductList/ProductList';
@@ -162,17 +162,75 @@ const Home = () => {
     return name;
   };
 
+  const [isHeroVisible, setIsHeroVisible] = useState(false);
+  const heroRef = useRef(null);
+
+  // Set up Intersection Observer for hero section
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsHeroVisible(true);
+          // Once we've seen it, no need to keep observing
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.15, // Trigger when 15% of the component is visible
+        rootMargin: '0px 0px -50px 0px' // Adjust trigger point slightly
+      }
+    );
+
+    if (heroRef.current) {
+      observer.observe(heroRef.current);
+    }
+
+    return () => {
+      if (heroRef.current) {
+        observer.unobserve(heroRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className="home">
       <Header />
       <div className="content-section">
-        <section className="hero">
+        <section className="hero" ref={heroRef}>
           <div className="hero__content">
-            <img src="/Images/logo.png" alt="Shop house logo" className="hero__logo" />
-            <p className="hero__text">
+            <img 
+              src="/Images/logo.png" 
+              alt="Shop house logo" 
+              className="hero__logo"
+              style={{
+                animation: isHeroVisible 
+                  ? `fadeInDown 0.8s ease forwards` 
+                  : 'none',
+                opacity: 0,
+              }}
+            />
+            <p 
+              className="hero__text"
+              style={{
+                animation: isHeroVisible 
+                  ? `fadeInUp 0.8s ease forwards 0.2s` 
+                  : 'none',
+                opacity: 0,
+              }}
+            >
               Over 30 years of experience giving our customers the products at the best price.
             </p>
-            <button className="btn btn--black btn--hero">Explore Our Products</button>
+            <button 
+              className="btn btn--black btn--hero"
+              style={{
+                animation: isHeroVisible 
+                  ? `fadeInUp 0.8s ease forwards 0.4s` 
+                  : 'none',
+                opacity: 0,
+              }}
+            >
+              Explore Our Products
+            </button>
           </div>
         </section>
         <br />
