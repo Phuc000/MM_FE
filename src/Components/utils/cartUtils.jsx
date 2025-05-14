@@ -20,10 +20,22 @@ export const addToCart = async (userId, productId, quantity, locationContext) =>
       }
     );
 
-    // Get ranked stores that have the product
-    const storesWithProduct = locationContext.getRankedStoresForProduct(
+    // Get stores with this product
+  let storesWithProduct = [];
+    
+  // Check if location context has rankings
+  if (locationContext && locationContext.storeRankings && locationContext.storeRankings.length > 0) {
+    // User has location set - get ranked stores by distance
+    storesWithProduct = locationContext.getRankedStoresForProduct(
       storeResponse.data.map(store => store.storeID)
     );
+  } else {
+    // No location context or rankings - use default store list
+    storesWithProduct = storeResponse.data.map(store => ({
+      storeID: store.storeID,
+      // Include other properties needed from store
+    }));
+  }
 
     if (!storesWithProduct.length) {
       throw new Error('No stores available with this product');
