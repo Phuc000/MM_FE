@@ -84,6 +84,7 @@ const ShowProduct = ({ product, storeId }) => {
               )}
             </div>
             <p className="product-card__name">{product.name}</p>
+            {/* <p className="product-card__aisle">{product.aisle}</p> */}
             {promotions && promotions.length > 0 ? (
               <div className="product-price-container">
                 <p className="promo-product-discount">${totalDiscount.toFixed(2)}</p>

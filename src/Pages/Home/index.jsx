@@ -102,7 +102,7 @@ const Home = () => {
 
   // Fetch categories
   useEffect(() => {
-    axios.get('https://localhost:7288/products/category', {
+    axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/category`, {
       headers: { 'Accept': '*/*' },
     })
       .then((response) => {

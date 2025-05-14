@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Header, Footer, Title, CartSummary } from '../../Components';
 import { useAuth } from '../../hooks/useAuth'; // Import useAuth
 import PromotionTicket from '../../Components/Common/PromotionTicket/PromotionTicket';
+import { Button } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 import { Typography } from '@mui/material';
 import { toast } from 'react-toastify';
@@ -256,9 +258,31 @@ const Cart = () => {
                   <p className="cart-item-count">
                     You have <span className="item-count-number">{cart.length}</span> item(s) in your cart.
                   </p>
-                  <button className="clear-cart-button button-89" onClick={handleClearCart} role="button">
-                    Clear Cart
-                  </button>
+                  <Button
+                  className='clear-cart-button'
+                  variant="contained"
+                  color="error"
+                  startIcon={<DeleteIcon />}
+                  onClick={handleClearCart}
+                  sx={{
+                    fontWeight: 'bold',
+                    borderRadius: '8px',
+                    padding: '8px 16px',
+                    textTransform: 'none',
+                    backgroundColor: '#d93e2d',
+                    transition: 'all 0.2s ease-in-out',
+                    '&:hover': {
+                      backgroundColor: '#e01e35',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
+                    },
+                    '&:active': {
+                      transform: 'translateY(0px)',
+                    }
+                  }}
+                >
+                  Clear Cart
+                </Button>
                 </div>
                 {cart.map((item, index) => (
                   <div key={index} className="cart-item">
