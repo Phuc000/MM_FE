@@ -13,7 +13,10 @@ import {
   Typography,
   Box,
   Chip,
+  Button,
+  Tooltip
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
@@ -21,6 +24,8 @@ import BreakfastDiningIcon from '@mui/icons-material/BreakfastDining';
 import LunchDiningIcon from '@mui/icons-material/LunchDining';
 import DinnerDiningIcon from '@mui/icons-material/DinnerDining';
 import IcecreamIcon from '@mui/icons-material/Icecream';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import ModalRecipe from '../../Components/Common/AddRecipe';
 import './MealPlanner.scss';
 
@@ -32,10 +37,12 @@ const mealTypes = [
 ];
 
 const MealPlanner = () => {
-  const { mealPlan } = useMealPlanner();
+  const { mealPlan, removeRecipeFromMealPlan } = useMealPlanner();
   const [currentWeek, setCurrentWeek] = useState(new Date());
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false); // New state for edit mode
+  const navigate = useNavigate();
 
   const getWeekDates = (date) => {
     const week = [];
@@ -64,13 +71,24 @@ const MealPlanner = () => {
   };
 
   const handleRecipeClick = (recipe) => {
-    setSelectedRecipe(recipe);
-    setModalOpen(true);
+    if (!editMode) {
+      setSelectedRecipe(recipe);
+      setModalOpen(true);
+    }
   };
 
   const handleModalClose = () => {
     setModalOpen(false);
     setSelectedRecipe(null);
+  };
+
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
+  };
+
+  const handleDeleteRecipe = (dateKey, mealType, recipeIndex, e) => {
+    e.stopPropagation(); // Prevent triggering the parent onClick
+    removeRecipeFromMealPlan(dateKey, mealType.toLowerCase(), recipeIndex);
   };
 
   const weekDates = getWeekDates(currentWeek);
@@ -88,20 +106,36 @@ const MealPlanner = () => {
               <ArrowBackIosIcon />
             </IconButton>
             <Typography variant="subtitle1" className="week-range">
-              {weekDates[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} - 
+              {weekDates[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              {' - '}
               {weekDates[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
             </Typography>
             <IconButton onClick={handleNextWeek} aria-label="next week">
               <ArrowForwardIosIcon />
             </IconButton>
           </Box>
-          <Chip 
-            icon={<RestaurantMenuIcon />}
-            label="Plan Your Meals"
-            color="primary"
-            variant="outlined"
-            className="plan-chip"
-          />
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Chip 
+              icon={<RestaurantMenuIcon />}
+              label={editMode ? "Exit Edit Mode" : "Plan Your Meals"}
+              color="primary"
+              variant={editMode ? "filled" : "outlined"}
+              className="plan-chip"
+              onClick={toggleEditMode}
+              sx={{ cursor: 'pointer' }}
+            />
+            
+            {/* Edit Mode Toggle Button */}
+            {/* <Chip
+              icon={<EditIcon />}
+              className="plan-chip"
+              label={editMode ? "Exit Edit Mode" : "Edit Plan"}
+              color={editMode ? "primary" : "primary"}
+              variant={editMode ? "filled" : "outlined"}
+              onClick={toggleEditMode}
+              sx={{ cursor: 'pointer' }}
+            /> */}
+          </Box>
         </Box>
         <TableContainer component={Paper} elevation={3} className="table-container">
           <Table stickyHeader>
@@ -142,14 +176,21 @@ const MealPlanner = () => {
                             {recipes.map((recipe, index) => (
                               <Box 
                                 key={index}
-                                className="recipe-card"
+                                className={`recipe-card ${editMode ? 'edit-mode' : ''}`}
                                 onClick={() => handleRecipeClick(recipe)}
-                                sx={{ cursor: 'pointer' }}
+                                sx={{ 
+                                  cursor: editMode ? 'default' : 'pointer',
+                                  position: 'relative',
+                                  '&:hover .delete-icon': {
+                                    opacity: 1
+                                  }
+                                }}
                               >
                                 <img 
                                   src={recipe.image || 'https://via.placeholder.com/80'} 
                                   alt={recipe.title}
                                   className="recipe-image"
+                                  style={{ opacity: editMode ? 0.7 : 1 }}
                                 />
                                 <Typography
                                   className="recipe-name"
@@ -158,6 +199,30 @@ const MealPlanner = () => {
                                 >
                                   {recipe.title}
                                 </Typography>
+
+                                {/* Delete button that shows in edit mode */}
+                                {editMode && (
+                                  <Tooltip title="Remove recipe">
+                                    <IconButton
+                                      size="small"
+                                      color="error"
+                                      className="delete-icon"
+                                      onClick={(e) => handleDeleteRecipe(dateKey, mealType.name, index, e)}
+                                      sx={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: '50%',
+                                        transform: 'translate(-50%, -50%)',
+                                        backgroundColor: 'rgba(255,255,255,0.8)',
+                                        '&:hover': {
+                                          backgroundColor: 'rgba(255,255,255,0.9)',
+                                        }
+                                      }}
+                                    >
+                                      <DeleteIcon />
+                                    </IconButton>
+                                  </Tooltip>
+                                )}
                               </Box>
                             ))}
                           </Box>
