@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../../hooks/useAuth";
-import { Card, Typography, Box, Stack, Chip, Tooltip } from '@mui/material';
+import { Card, Typography, Box } from '@mui/material';
 import "./Promotions.scss";
 import ProductPromotionCard from "./ProductPromotionCard";
 import CustomerPromotionCard from "./CustomerPromotionCard";

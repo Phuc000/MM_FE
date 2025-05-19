@@ -109,7 +109,7 @@ export const useWebSocket = (userId, locationContext) => {
       }
       
       console.log('Connecting WebSocket...');
-      const ws = new WebSocket(`ws://localhost:6969/ws/chat/${userId}`);
+      const ws = new WebSocket(`wss://${import.meta.env.VITE_CHATBOT_API_URL}/ws/chat/${userId}`);
       
       ws.onopen = () => {
         if (!isSubscribed) return;
