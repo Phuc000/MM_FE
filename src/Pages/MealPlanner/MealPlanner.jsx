@@ -43,18 +43,6 @@ const MealPlanner = () => {
   const [editMode, setEditMode] = useState(false); // New state for edit mode
   const navigate = useNavigate();
 
-  const getWeekDates = (date) => {
-    const week = [];
-    const start = new Date(date);
-    start.setDate(start.getDate() - start.getDay());
-    for (let i = 0; i < 7; i++) {
-      const day = new Date(start);
-      day.setDate(start.getDate() + i);
-      week.push(day);
-    }
-    return week;
-  };
-
   const formatDate = (date) => date.toISOString().split('T')[0];
 
   const handlePreviousWeek = () => {
@@ -90,7 +78,17 @@ const MealPlanner = () => {
     removeRecipeFromMealPlan(dateKey, mealType.toLowerCase(), recipeIndex);
   };
 
-  const weekDates = getWeekDates(currentWeek);
+  const weekDates = useMemo(() => {
+    const week = [];
+    const start = new Date(currentWeek);
+    start.setDate(start.getDate() - start.getDay());
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(start);
+      day.setDate(start.getDate() + i);
+      week.push(day);
+    }
+    return week;
+  }, [currentWeek]);
 
   return (
     <div>
@@ -190,6 +188,7 @@ const MealPlanner = () => {
                                   alt={recipe.title}
                                   className="recipe-image"
                                   style={{ opacity: editMode ? 0.7 : 1 }}
+                                  loading="lazy"
                                 />
                                 <Typography
                                   className="recipe-name"
