@@ -6,7 +6,7 @@
 $color: #d93e2d;
 $color-dark: #b93426;
 $speed: "0.25s";
-$transition: all #{$speed} cubic-bezier(0.310, -0.105, 0.430, 1.400);
+$transition: all #{$speed} cubic-bezier(0.31, -0.105, 0.43, 1.4);
 
 /* Main Styles */
 .x_button {
@@ -48,7 +48,7 @@ $transition: all #{$speed} cubic-bezier(0.310, -0.105, 0.430, 1.400);
     transition: $transition;
 
     &:after {
-      content: '';
+      content: "";
       background-color: $color-dark;
       width: 2px;
       height: 70%;
@@ -66,7 +66,9 @@ $transition: all #{$speed} cubic-bezier(0.310, -0.105, 0.430, 1.400);
     .fa {
       font-size: 15px;
       vertical-align: middle;
-      transition: $transition, height #{$speed} ease;
+      transition:
+        $transition,
+        height #{$speed} ease;
     }
 
     .fa-remove {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { useAuth } from "../../../hooks/useAuth";
 import {
   Typography,
@@ -12,12 +12,13 @@ import {
   DialogActions,
   InputAdornment,
   Skeleton,
-  useTheme, useMediaQuery,
-  Card
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import { DataGrid } from '@mui/x-data-grid';
-import 'react-toastify/dist/ReactToastify.css';
+  useTheme,
+  useMediaQuery,
+  Card,
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import { DataGrid } from "@mui/x-data-grid";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
 const Restock = () => {
@@ -26,7 +27,7 @@ const Restock = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [amount, setAmount] = useState("");
   const [openDialog, setOpenDialog] = useState(false);
@@ -34,13 +35,13 @@ const Restock = () => {
   const [loading, setLoading] = useState(false);
 
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const itemsPerPage = 10;
 
   const [mobilePage, setMobilePage] = useState(0);
   const paginatedMobileProducts = filteredProducts.slice(
     mobilePage * itemsPerPage,
-    (mobilePage + 1) * itemsPerPage
+    (mobilePage + 1) * itemsPerPage,
   );
 
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
@@ -48,7 +49,9 @@ const Restock = () => {
   useEffect(() => {
     const fetchStoreID = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/employees/${user.id}`);
+        const response = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/employees/${user.id}`,
+        );
         setStoreID(response.data.storeID);
       } catch (error) {
         console.error("Error fetching store ID:", error);
@@ -64,23 +67,25 @@ const Restock = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/product/lessdata/${storeID}`);
-        const formattedProducts = response.data.map(item => ({
+        const response = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/product/lessdata/${storeID}`,
+        );
+        const formattedProducts = response.data.map((item) => ({
           id: item.productID,
           name: item.productName,
           stock: item.numberAtStore,
-          ...item
+          ...item,
         }));
         setProducts(formattedProducts);
         setFilteredProducts(formattedProducts);
       } catch (error) {
         console.error("Error fetching products:", error);
-        toast.error('Error fetching products');
+        toast.error("Error fetching products");
       } finally {
         setLoading(false);
       }
     };
-  
+
     if (storeID) {
       fetchProducts();
     }
@@ -97,14 +102,13 @@ const Restock = () => {
     };
   }, [searchTerm]);
 
-
   // Filter products when debounced term changes
   useEffect(() => {
-    if (debouncedSearchTerm.trim() === '') {
+    if (debouncedSearchTerm.trim() === "") {
       setFilteredProducts(products);
     } else {
-      const filtered = products.filter(product =>
-        product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
+      const filtered = products.filter((product) =>
+        product.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
       );
       setFilteredProducts(filtered);
     }
@@ -132,50 +136,51 @@ const Restock = () => {
         {},
         {
           headers: { "Content-Type": "application/json" },
-        }
+        },
       );
 
       // Update both products and filtered products
-      const updateProductList = (prevList) => prevList.map(prod => {
-        if (prod.id === selectedProduct.id) {
-          return {
-            ...prod,
-            stock: prod.stock + finalAmount
-          };
-        }
-        return prod;
-      });
-      
+      const updateProductList = (prevList) =>
+        prevList.map((prod) => {
+          if (prod.id === selectedProduct.id) {
+            return {
+              ...prod,
+              stock: prod.stock + finalAmount,
+            };
+          }
+          return prod;
+        });
+
       setProducts(updateProductList);
       setFilteredProducts(updateProductList);
 
-      toast.success(`Successfully ${isRestock ? 'restocked' : 'removed'} products`);
+      toast.success(`Successfully ${isRestock ? "restocked" : "removed"} products`);
       setOpenDialog(false);
     } catch (error) {
       console.error("Error updating stock:", error);
-      toast.error(`Error ${isRestock ? 'restocking' : 'removing'} products`);
+      toast.error(`Error ${isRestock ? "restocking" : "removing"} products`);
     }
   };
 
   const columns = [
-    { 
-      field: 'id', 
-      headerName: 'Product ID', 
+    {
+      field: "id",
+      headerName: "Product ID",
       width: 100,
     },
-    { 
-      field: 'name', 
-      headerName: 'Product Name', 
-      flex: 1 
-    },
-    { 
-      field: 'stock', 
-      headerName: 'Current Stock', 
-      width: 150 
+    {
+      field: "name",
+      headerName: "Product Name",
+      flex: 1,
     },
     {
-      field: 'actions',
-      headerName: 'Actions',
+      field: "stock",
+      headerName: "Current Stock",
+      width: 150,
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
       width: 200,
       renderCell: (params) => (
         <Box>
@@ -202,7 +207,7 @@ const Restock = () => {
   ];
 
   return (
-    <Box sx={{ height: 600, width: '100%' }}>
+    <Box sx={{ height: 600, width: "100%" }}>
       <Typography
         variant="h4"
         gutterBottom
@@ -213,7 +218,7 @@ const Restock = () => {
       >
         Restock
       </Typography>
-      
+
       {/* Search field */}
       <Box sx={{ mb: 2 }}>
         <TextField
@@ -230,86 +235,86 @@ const Restock = () => {
             ),
           }}
           sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '8px',
-            }
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "8px",
+            },
           }}
         />
       </Box>
 
       {loading ? (
-  [...Array(10)].map((_, i) => (
-    <Skeleton key={i} variant="rectangular" height={40} sx={{ mb: 1 }} />
-  ))
-) : isMobile ? (
-  <Box pb={2}>
-  {paginatedMobileProducts.map((product) => (
-    <Card key={product.id} sx={{ mb: 2, p: 2 }}>
-      <Typography variant="subtitle1" fontWeight={700}>
-        {product.name}
-      </Typography>
-      <Typography variant="body1">Product ID: {product.id}</Typography>
-      <Typography variant="body1">Stock: {product.stock}</Typography>
-      <Box mt={1} display="flex" justifyContent="center">
-        <Button
-          size="small"
-          variant="contained"
-          color="primary"
-          onClick={() => handleStockChange(product, true)}
-          sx={{ mr: 1 }}
-        >
-          +
-        </Button>
-        <Button
-          size="small"
-          variant="contained"
-          color="error"
-          onClick={() => handleStockChange(product, false)}
-        >
-          -
-        </Button>
-      </Box>
-    </Card>
-  ))}
+        [...Array(10)].map((_, i) => (
+          <Skeleton key={i} variant="rectangular" height={40} sx={{ mb: 1 }} />
+        ))
+      ) : isMobile ? (
+        <Box pb={2}>
+          {paginatedMobileProducts.map((product) => (
+            <Card key={product.id} sx={{ mb: 2, p: 2 }}>
+              <Typography variant="subtitle1" fontWeight={700}>
+                {product.name}
+              </Typography>
+              <Typography variant="body1">Product ID: {product.id}</Typography>
+              <Typography variant="body1">Stock: {product.stock}</Typography>
+              <Box mt={1} display="flex" justifyContent="center">
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="primary"
+                  onClick={() => handleStockChange(product, true)}
+                  sx={{ mr: 1 }}
+                >
+                  +
+                </Button>
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="error"
+                  onClick={() => handleStockChange(product, false)}
+                >
+                  -
+                </Button>
+              </Box>
+            </Card>
+          ))}
 
-  {/* Pagination Controls */}
-  <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
-    <Button 
-      onClick={() => setMobilePage((prev) => Math.max(prev - 1, 0))} 
-      disabled={mobilePage === 0}
-    >
-      Previous
-    </Button>
-    <Typography sx={{ mx: 2 }}>
-      Page {mobilePage + 1} of {totalPages}
-    </Typography>
-    <Button 
-      onClick={() => setMobilePage((prev) => Math.min(prev + 1, totalPages - 1))} 
-      disabled={mobilePage >= totalPages - 1}
-    >
-      Next
-    </Button>
-  </Box>
-</Box>
-) : (
-  <DataGrid
-    rows={filteredProducts}
-    columns={columns}
-    pageSize={10}
-    rowsPerPageOptions={[10, 25, 50]}
-    disableSelectionOnClick
-    density="compact"
-    sx={{
-      '& .MuiDataGrid-row:hover': {
-        backgroundColor: 'rgba(0, 0, 0, 0.04)',
-      }
-    }}
-  />
-)}
+          {/* Pagination Controls */}
+          <Box display="flex" justifyContent="center" alignItems="center" mt={2}>
+            <Button
+              onClick={() => setMobilePage((prev) => Math.max(prev - 1, 0))}
+              disabled={mobilePage === 0}
+            >
+              Previous
+            </Button>
+            <Typography sx={{ mx: 2 }}>
+              Page {mobilePage + 1} of {totalPages}
+            </Typography>
+            <Button
+              onClick={() => setMobilePage((prev) => Math.min(prev + 1, totalPages - 1))}
+              disabled={mobilePage >= totalPages - 1}
+            >
+              Next
+            </Button>
+          </Box>
+        </Box>
+      ) : (
+        <DataGrid
+          rows={filteredProducts}
+          columns={columns}
+          pageSize={10}
+          rowsPerPageOptions={[10, 25, 50]}
+          disableSelectionOnClick
+          density="compact"
+          sx={{
+            "& .MuiDataGrid-row:hover": {
+              backgroundColor: "rgba(0, 0, 0, 0.04)",
+            },
+          }}
+        />
+      )}
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>
-          {isRestock ? 'Restock' : 'Remove'} {selectedProduct?.name}
+          {isRestock ? "Restock" : "Remove"} {selectedProduct?.name}
         </DialogTitle>
         <DialogContent>
           <TextField
@@ -320,22 +325,20 @@ const Restock = () => {
             fullWidth
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            inputProps={{ 
+            inputProps={{
               min: "1",
-              max: isRestock ? undefined : selectedProduct?.stock 
+              max: isRestock ? undefined : selectedProduct?.stock,
             }}
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>
-            Cancel
-          </Button>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
           <Button
             onClick={handleSubmit}
             color={isRestock ? "primary" : "error"}
             disabled={!amount || (!isRestock && Number(amount) > (selectedProduct?.stock || 0))}
           >
-            {isRestock ? 'Restock' : 'Remove'}
+            {isRestock ? "Restock" : "Remove"}
           </Button>
         </DialogActions>
       </Dialog>

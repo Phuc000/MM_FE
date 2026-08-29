@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { useState } from "react";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import "./SignUpForm.css";
 
 function SignUpForm({ toggleSignState }) {
@@ -29,7 +29,7 @@ function SignUpForm({ toggleSignState }) {
 
     const { fName, lName, cPhone, cEmail, password } = state;
     alert(
-      `You are signing up with First Name: ${fName}, Last Name: ${lName}, Phone Number: ${cPhone}, Email: ${cEmail}`
+      `You are signing up with First Name: ${fName}, Last Name: ${lName}, Phone Number: ${cPhone}, Email: ${cEmail}`,
     );
 
     setState({
@@ -56,13 +56,13 @@ function SignUpForm({ toggleSignState }) {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       // Updating the state with the response data
       setResponse(response.data);
       setError(null);
-      toast.success('Account created successfully!', {
+      toast.success("Account created successfully!", {
         position: "bottom-left",
         autoClose: 5000,
         hideProgressBar: false,
@@ -84,7 +84,7 @@ function SignUpForm({ toggleSignState }) {
       // Handling errors
       setResponse(null);
       setError("Error posting data");
-      toast.error('Error creating account. Please try again.', {
+      toast.error("Error creating account. Please try again.", {
         position: "bottom-left",
         autoClose: 5000,
         hideProgressBar: false,

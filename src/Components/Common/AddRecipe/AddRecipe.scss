@@ -61,7 +61,7 @@
   text-align: center;
   color: #ff1493; /* Deep pink */
   font-weight: 700;
-  font-family: 'Quicksand', sans-serif;
+  font-family: "Quicksand", sans-serif;
   margin: 0 0 15px;
   font-size: 2.2em;
 }
@@ -73,7 +73,7 @@
   .meta-info {
     color: #ff85a2; /* Softer pink */
     font-size: 1em;
-    font-family: 'Quicksand', sans-serif;
+    font-family: "Quicksand", sans-serif;
 
     span {
       margin: 0 10px;
@@ -116,13 +116,13 @@
 .section-title {
   color: #ff1493; /* Deep pink */
   font-weight: 600;
-  font-family: 'Quicksand', sans-serif;
+  font-family: "Quicksand", sans-serif;
   margin: 30px 0 15px;
   font-size: 1.5em;
   position: relative;
 
   &:after {
-    content: '';
+    content: "";
     width: 50px;
     height: 3px;
     background: #ff69b4; /* Hot pink underline */
@@ -157,7 +157,7 @@
     color: #444;
     display: flex;
     align-items: center;
-    font-family: 'Quicksand', sans-serif;
+    font-family: "Quicksand", sans-serif;
 
     .ingredient-amount {
       font-weight: 600;
@@ -166,7 +166,7 @@
     }
 
     &:before {
-      content: '✔';
+      content: "✔";
       color: #ff85a2; /* Softer pink */
       margin-right: 10px;
       font-size: 1.1em;
@@ -179,7 +179,7 @@
     font-size: 0.95em;
 
     &:before {
-      content: '…';
+      content: "…";
     }
   }
 }
@@ -189,7 +189,7 @@
   color: #444;
   line-height: 1.7;
   font-size: 1em;
-  font-family: 'Quicksand', sans-serif;
+  font-family: "Quicksand", sans-serif;
   margin-bottom: 30px;
   padding: 15px;
   background: #fff0f5; /* Very light pink */
@@ -211,7 +211,7 @@
     padding: 12px;
     border-radius: 10px;
     text-transform: none;
-    font-family: 'Quicksand', sans-serif;
+    font-family: "Quicksand", sans-serif;
     font-weight: 600;
     font-size: 1em;
     transition: all 0.3s ease;

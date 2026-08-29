@@ -1,7 +1,7 @@
 // src/components/SignInForm.jsx
 import { useState } from "react";
 import axios from "axios";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../hooks/useAuth";
 // import { useTimer } from "../../../Context/TimerContext";
@@ -35,7 +35,7 @@ function SignInForm({ toggleSignState }) {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       const { role, user } = response.data;
@@ -50,24 +50,23 @@ function SignInForm({ toggleSignState }) {
 
       // Redirect based on role
       const roleRedirectMap = {
-        "Customer": "/",
-        "StoreManager": "/Profile",
-        "Shipper": "/shipper",
-        "Admin": "/Admin"
+        Customer: "/",
+        StoreManager: "/Profile",
+        Shipper: "/shipper",
+        Admin: "/Admin",
       };
 
       const redirectPath = roleRedirectMap[role] || "/";
       navigate(redirectPath);
 
-      toast.success('Login successful', {
+      toast.success("Login successful", {
         position: "bottom-left",
         autoClose: 5000,
         theme: "colored",
       });
-
     } catch (error) {
       console.error("Error logging in:", error);
-      toast.error('Invalid email or password', {
+      toast.error("Invalid email or password", {
         position: "bottom-left",
         autoClose: 5000,
         theme: "colored",

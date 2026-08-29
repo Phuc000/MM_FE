@@ -1,5 +1,5 @@
 // src/admin/AddUserDialog.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -11,22 +11,22 @@ import {
   InputLabel,
   Select,
   MenuItem,
-} from '@mui/material';
-import PasswordGenerator from './PasswordGenerator'; // Assuming you have this component
-import axios from 'axios';
-import { toast } from 'react-toastify';
+} from "@mui/material";
+import PasswordGenerator from "./PasswordGenerator"; // Assuming you have this component
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const AddUserDialog = ({ open, handleClose, handleSave }) => {
   const [user, setUser] = useState({
-    fName: '',
-    lName: '',
-    address: '',
-    email: '',
-    phoneNumber: '',
-    password: '',
-    role: '',
-    salary: '',
-    storeID: '',
+    fName: "",
+    lName: "",
+    address: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+    role: "",
+    salary: "",
+    storeID: "",
   });
 
   const [stores, setStores] = useState([]);
@@ -46,8 +46,8 @@ const AddUserDialog = ({ open, handleClose, handleSave }) => {
       .get(`${import.meta.env.VITE_REACT_APP_API_URL}/stores`)
       .then((response) => setStores(response.data))
       .catch((error) => {
-        console.error('Error fetching stores:', error);
-        toast.error('Failed to load stores');
+        console.error("Error fetching stores:", error);
+        toast.error("Failed to load stores");
       });
   }, []);
 
@@ -106,17 +106,12 @@ const AddUserDialog = ({ open, handleClose, handleSave }) => {
         />
         <FormControl fullWidth margin="dense" required>
           <InputLabel>Role</InputLabel>
-          <Select
-            name="role"
-            value={user.role}
-            onChange={handleChange}
-            label="Role"
-          >
+          <Select name="role" value={user.role} onChange={handleChange} label="Role">
             <MenuItem value="Shipper">Shipper</MenuItem>
             <MenuItem value="StoreManager">Store Manager</MenuItem>
           </Select>
         </FormControl>
-        {user.role === 'StoreManager' && (
+        {user.role === "StoreManager" && (
           <>
             <TextField
               margin="dense"

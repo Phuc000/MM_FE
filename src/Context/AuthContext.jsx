@@ -1,6 +1,6 @@
 // src/contexts/AuthContext.js
-import React, { createContext, useState, useEffect, useContext } from 'react';
-import { useLocationContext } from './LocationContext';
+import React, { createContext, useState, useEffect } from "react";
+import { useLocationContext } from "./LocationContext";
 
 export const AuthContext = createContext(null);
 
@@ -9,16 +9,16 @@ export const AuthProvider = ({ children }) => {
 
   // Initialize user state from localStorage if available
   const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem('user');
+    const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
   });
 
   // Update localStorage whenever user state changes
   useEffect(() => {
     if (user) {
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(user));
     } else {
-      localStorage.removeItem('user');
+      localStorage.removeItem("user");
     }
   }, [user]);
 
@@ -34,17 +34,13 @@ export const AuthProvider = ({ children }) => {
     try {
       setUser(null);
       if (setLocation) setLocation(null);
-      localStorage.removeItem('user');
-      localStorage.removeItem('userLocation');
-      localStorage.removeItem('storeRankings');
+      localStorage.removeItem("user");
+      localStorage.removeItem("userLocation");
+      localStorage.removeItem("storeRankings");
     } catch (error) {
-      console.error('Error during logout:', error);
+      console.error("Error during logout:", error);
     }
   };
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
 };

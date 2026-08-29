@@ -1,78 +1,77 @@
 // CreateProduct.scss
 .create-product {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+  background-color: #fff;
+
+  h1 {
+    color: rgb(17, 29, 37);
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .product-form {
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 20px;
-    background-color: #fff;
-  
-    h1 {
-      color: rgb(17, 29, 37);
-      font-size: 2rem;
-      margin-bottom: 20px;
-    }
-  
-    .product-form {
+    width: 100%;
+    flex-direction: row;
+    padding: 0;
+
+    .left-section,
+    .right-section {
+      flex: 1;
       display: flex;
-      width: 100%;
-      flex-direction: row;
-      padding: 0;
-  
-      .left-section,
-      .right-section {
-        flex: 1;
+      flex-direction: column;
+      gap: 15px;
+      padding: 20px;
+
+      label {
+        font-weight: bold;
+        color: #333;
+      }
+
+      input,
+      textarea {
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      textarea {
+        resize: vertical;
+      }
+    }
+
+    .right-section {
+      align-items: flex-start;
+
+      .image-preview {
         display: flex;
-        flex-direction: column;
-        gap: 15px;
-        padding: 20px;
-  
-        label {
-          font-weight: bold;
-          color: #333;
-        }
-  
-        input,
-        textarea {
-          padding: 12px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-        }
-  
-        textarea {
-          resize: vertical;
+        gap: 10px;
+        flex-wrap: wrap;
+
+        img {
+          width: 200px;
+          height: 200px;
+          border-radius: 8px;
+          border: 1px solid #fe3bd4;
+          object-fit: cover;
         }
       }
-  
-      .right-section {
-        align-items: flex-start;
-  
-        .image-preview {
-          display: flex;
-          gap: 10px;
-          flex-wrap: wrap;
-  
-          img {
-            width: 200px;
-            height: 200px;
-            border-radius: 8px;
-            border: 1px solid #fe3bd4;
-            object-fit: cover;
-          }
-        }
-  
-        .submit-button {
-          padding: 10px 20px;
-          border: none;
-          background-color: #fe3bd4;
-          color: #fff;
-          border-radius: 4px;
-          cursor: pointer;
-  
-          &:hover {
-            background-color: #e02db3;
-          }
+
+      .submit-button {
+        padding: 10px 20px;
+        border: none;
+        background-color: #fe3bd4;
+        color: #fff;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &:hover {
+          background-color: #e02db3;
         }
       }
     }
   }
-  
+}

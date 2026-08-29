@@ -1,5 +1,5 @@
-import axios from 'axios';
-import { toast } from 'react-toastify';
+import axios from "axios";
+import { toast } from "react-toastify";
 
 export const addToCart = async (userId, productId, quantity, locationContext) => {
   try {
@@ -7,8 +7,8 @@ export const addToCart = async (userId, productId, quantity, locationContext) =>
     const productResponse = await axios.get(
       `${import.meta.env.VITE_REACT_APP_API_URL}/products/product/${productId}`,
       {
-        headers: { 'Content-Type': 'application/json' },
-      }
+        headers: { "Content-Type": "application/json" },
+      },
     );
     const product = productResponse.data;
 
@@ -16,47 +16,51 @@ export const addToCart = async (userId, productId, quantity, locationContext) =>
     const storeResponse = await axios.get(
       `${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/${productId}`,
       {
-        headers: { 'Content-Type': 'application/json' },
-      }
+        headers: { "Content-Type": "application/json" },
+      },
     );
 
     // Get stores with this product
-  let storesWithProduct = [];
-    
-  // Check if location context has rankings
-  if (locationContext && locationContext.storeRankings && locationContext.storeRankings.length > 0) {
-    // User has location set - get ranked stores by distance
-    storesWithProduct = locationContext.getRankedStoresForProduct(
-      storeResponse.data.map(store => store.storeID)
-    );
-  } else {
-    // No location context or rankings - use default store list
-    storesWithProduct = storeResponse.data.map(store => ({
-      storeID: store.storeID,
-      // Include other properties needed from store
-    }));
-  }
+    let storesWithProduct = [];
+
+    // Check if location context has rankings
+    if (
+      locationContext &&
+      locationContext.storeRankings &&
+      locationContext.storeRankings.length > 0
+    ) {
+      // User has location set - get ranked stores by distance
+      storesWithProduct = locationContext.getRankedStoresForProduct(
+        storeResponse.data.map((store) => store.storeID),
+      );
+    } else {
+      // No location context or rankings - use default store list
+      storesWithProduct = storeResponse.data.map((store) => ({
+        storeID: store.storeID,
+        // Include other properties needed from store
+      }));
+    }
 
     if (!storesWithProduct.length) {
-      throw new Error('No stores available with this product');
+      throw new Error("No stores available with this product");
     }
 
     // Use first (closest) store from ranked list that has stock
     const closestStore = storesWithProduct[0];
     const selectedStoreInfo = storeResponse.data.find(
-      (storeInfo) => storeInfo.storeID === closestStore.storeID
+      (storeInfo) => storeInfo.storeID === closestStore.storeID,
     );
 
     if (!selectedStoreInfo || selectedStoreInfo.numberAtStore <= 0) {
-      throw new Error('Product not available at nearest store');
+      throw new Error("Product not available at nearest store");
     }
 
     // Fetch store details
     const storeDetailsResponse = await axios.get(
       `${import.meta.env.VITE_REACT_APP_API_URL}/stores/${selectedStoreInfo.storeID}`,
       {
-        headers: { 'Content-Type': 'application/json' },
-      }
+        headers: { "Content-Type": "application/json" },
+      },
     );
     const store = storeDetailsResponse.data;
 
@@ -64,35 +68,32 @@ export const addToCart = async (userId, productId, quantity, locationContext) =>
       cartItemId: product.productID,
       productID: product.productID,
       pName: product.name,
-      quantity, 
+      quantity,
       price: product.price,
       storeID: selectedStoreInfo.storeID,
       hasStock: true,
       storeName: store.name,
       discount: product.discount || 0,
-      unit: product.unit || '',
+      unit: product.unit || "",
       discountedPrice: product.discountedPrice || product.price,
       // weight: product.weight || 0,
-      imageURL: product.image || '/Images/no-image.jpg',
+      imageURL: product.image || "/Images/no-image.jpg",
     };
 
     // Add to cart
-    await axios.post(
-      `${import.meta.env.VITE_REACT_APP_API_URL}/cart/add/${userId}`,
-      purchaseInfo
-    );
+    await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/cart/add/${userId}`, purchaseInfo);
 
     toast.success(`Added ${quantity} ${product.name} to the cart.`, {
-        position: "bottom-left",
-        autoClose: 5000,
-        hideProgressBar: false,
-        theme: "colored",
-      });
+      position: "bottom-left",
+      autoClose: 5000,
+      hideProgressBar: false,
+      theme: "colored",
+    });
 
     return true;
   } catch (error) {
-    console.error('Error adding to cart:', error);
-    toast.error(error.message || 'Failed to add item to the cart.', {
+    console.error("Error adding to cart:", error);
+    toast.error(error.message || "Failed to add item to the cart.", {
       position: "bottom-left",
       autoClose: 5000,
       hideProgressBar: false,

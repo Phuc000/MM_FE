@@ -1,97 +1,96 @@
 /* FeatureAd.css */
 
 .feature-ad-container {
-    display: flex;
-    justify-content: space-between;
-    padding: 20px 30px;
-    background-color: white; /* Adjust as needed */
-    border-radius: 10px;
-    flex-wrap: wrap; /* Allow items to wrap to the next line */
-  }
-  
-  .feature-card {
-    background-color: rgb(244, 246, 250);
-    border-radius: 8px;
-    padding: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    width: 18%;
-    transition: all 0.3s ease;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 30px;
+  background-color: white; /* Adjust as needed */
+  border-radius: 10px;
+  flex-wrap: wrap; /* Allow items to wrap to the next line */
+}
+
+.feature-card {
+  background-color: rgb(244, 246, 250);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: start;
+  width: 18%;
+  transition: all 0.3s ease;
+  opacity: 0;
+  transform: translateY(20px);
+  will-change: opacity, transform;
+}
+
+.feature-card.animated {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.feature-icon img {
+  max-width: 60px; /* Adjust image size */
+  max-height: 60px;
+  margin-right: 10px;
+  transition: transform 0.3s ease; /* Add transition for smooth hover effect */
+}
+
+.feature-info {
+  margin-left: 10px;
+  text-align: left;
+  width: 100%;
+}
+
+.feature-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #333;
+  margin: 12px 0;
+}
+
+.feature-description {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+/* Hover effect */
+.feature-card:hover .feature-icon img {
+  transform: translateY(-5px); /* Lifts the image up slightly */
+}
+
+@keyframes fadeInUp {
+  0% {
     opacity: 0;
     transform: translateY(20px);
-    will-change: opacity, transform;
   }
-  
-  .feature-card.animated {
+  100% {
     opacity: 1;
     transform: translateY(0);
   }
-  
-  .feature-icon img {
-    max-width: 60px; /* Adjust image size */
-    max-height: 60px;
-    margin-right: 10px;
-    transition: transform 0.3s ease; /* Add transition for smooth hover effect */
-  }
-  
-  .feature-info {
-    margin-left: 10px;
-    text-align: left;
-    width: 100%;
-  }
-  
-  .feature-title {
-    font-size: 1rem;
-    font-weight: 600;
-    color: #333;
-    margin: 12px 0;
-  }
-  
-  .feature-description {
-    font-size: 0.8rem;
-    color: #888;
-  }
+}
 
-  /* Hover effect */
-.feature-card:hover .feature-icon img {
-    transform: translateY(-5px); /* Lifts the image up slightly */
-  }
-
-  @keyframes fadeInUp {
-    0% {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Media query for small screens */
+/* Media query for small screens */
 @media (max-width: 768px) {
-    .feature-ad-container {
-      flex-direction: column; /* Stack the feature cards vertically */
-      align-items: center; /* Center them horizontally */
-    }
-  
-    .feature-card {
-      width: 90%; /* Make the cards full-width with some margin */
-      margin-bottom: 20px; /* Add some space between stacked cards */
-    }
-  
-    .feature-icon img {
-      max-width: 60px; /* Slightly reduce the icon size for smaller screens */
-      max-height: 60px;
-    }
-  
-    .feature-title {
-      font-size: 1.2rem;
-    }
-  
-    .feature-description {
-      font-size: 0.9rem;
-    }
+  .feature-ad-container {
+    flex-direction: column; /* Stack the feature cards vertically */
+    align-items: center; /* Center them horizontally */
   }
-  
+
+  .feature-card {
+    width: 90%; /* Make the cards full-width with some margin */
+    margin-bottom: 20px; /* Add some space between stacked cards */
+  }
+
+  .feature-icon img {
+    max-width: 60px; /* Slightly reduce the icon size for smaller screens */
+    max-height: 60px;
+  }
+
+  .feature-title {
+    font-size: 1.2rem;
+  }
+
+  .feature-description {
+    font-size: 0.9rem;
+  }
+}

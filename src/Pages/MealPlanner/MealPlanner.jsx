@@ -1,38 +1,37 @@
-import React, { useState } from 'react';
-import { Header, Footer, FeatureAd } from '../../Components';
-import { useMealPlanner } from '../../Context/MealPlannerContext';
-import { 
-  Paper, 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableContainer, 
-  TableHead, 
+import React, { useState } from "react";
+import { Header, Footer, FeatureAd } from "../../Components";
+import { useMealPlanner } from "../../Context/MealPlannerContext";
+import {
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
   TableRow,
   IconButton,
   Typography,
   Box,
   Chip,
-  Button,
-  Tooltip
-} from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import RestaurantMenuIcon from '@mui/icons-material/RestaurantMenu';
-import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
-import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
-import BreakfastDiningIcon from '@mui/icons-material/BreakfastDining';
-import LunchDiningIcon from '@mui/icons-material/LunchDining';
-import DinnerDiningIcon from '@mui/icons-material/DinnerDining';
-import IcecreamIcon from '@mui/icons-material/Icecream';
-import DeleteIcon from '@mui/icons-material/Delete';
-import ModalRecipe from '../../Components/Common/AddRecipe';
-import './MealPlanner.scss';
+  Tooltip,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import RestaurantMenuIcon from "@mui/icons-material/RestaurantMenu";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
+import BreakfastDiningIcon from "@mui/icons-material/BreakfastDining";
+import LunchDiningIcon from "@mui/icons-material/LunchDining";
+import DinnerDiningIcon from "@mui/icons-material/DinnerDining";
+import IcecreamIcon from "@mui/icons-material/Icecream";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ModalRecipe from "../../Components/Common/AddRecipe";
+import "./MealPlanner.scss";
 
 const mealTypes = [
-  { name: 'Breakfast', icon: <BreakfastDiningIcon /> },
-  { name: 'Lunch', icon: <LunchDiningIcon /> },
-  { name: 'Dinner', icon: <DinnerDiningIcon /> },
-  { name: 'Snack', icon: <IcecreamIcon /> },
+  { name: "Breakfast", icon: <BreakfastDiningIcon /> },
+  { name: "Lunch", icon: <LunchDiningIcon /> },
+  { name: "Dinner", icon: <DinnerDiningIcon /> },
+  { name: "Snack", icon: <IcecreamIcon /> },
 ];
 
 const MealPlanner = () => {
@@ -43,7 +42,7 @@ const MealPlanner = () => {
   const [editMode, setEditMode] = useState(false); // New state for edit mode
   const navigate = useNavigate();
 
-  const formatDate = (date) => date.toISOString().split('T')[0];
+  const formatDate = (date) => date.toISOString().split("T")[0];
 
   const handlePreviousWeek = () => {
     const newWeek = new Date(currentWeek);
@@ -103,25 +102,25 @@ const MealPlanner = () => {
               <ArrowBackIosIcon />
             </IconButton>
             <Typography variant="subtitle1" className="week-range">
-              {weekDates[0].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-              {' - '}
-              {weekDates[6].toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+              {weekDates[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })}
+              {" - "}
+              {weekDates[6].toLocaleDateString("en-US", { month: "short", day: "numeric" })}
             </Typography>
             <IconButton onClick={handleNextWeek} aria-label="next week">
               <ArrowForwardIosIcon />
             </IconButton>
           </Box>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Chip 
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <Chip
               icon={<RestaurantMenuIcon />}
               label={editMode ? "Exit Edit Mode" : "Plan Your Meals"}
               color="primary"
               variant={editMode ? "filled" : "outlined"}
               className="plan-chip"
               onClick={toggleEditMode}
-              sx={{ cursor: 'pointer' }}
+              sx={{ cursor: "pointer" }}
             />
-            
+
             {/* Edit Mode Toggle Button */}
             {/* <Chip
               icon={<EditIcon />}
@@ -139,22 +138,20 @@ const MealPlanner = () => {
             <TableHead>
               <TableRow>
                 <TableCell className="meal-type-cell">Meal</TableCell>
-                {weekDates.map(date => (
+                {weekDates.map((date) => (
                   <TableCell key={date} className="date-cell">
                     <Box className="date-box">
                       <Typography variant="subtitle2">
-                        {date.toLocaleDateString('en-US', { weekday: 'short' })}
+                        {date.toLocaleDateString("en-US", { weekday: "short" })}
                       </Typography>
-                      <Typography variant="h6">
-                        {date.getDate()}
-                      </Typography>
+                      <Typography variant="h6">{date.getDate()}</Typography>
                     </Box>
                   </TableCell>
                 ))}
               </TableRow>
             </TableHead>
             <TableBody>
-              {mealTypes.map(mealType => (
+              {mealTypes.map((mealType) => (
                 <TableRow key={mealType.name} className="meal-row">
                   <TableCell className="meal-type-cell">
                     <Box className="meal-type-content">
@@ -162,29 +159,29 @@ const MealPlanner = () => {
                       <Typography variant="subtitle1">{mealType.name}</Typography>
                     </Box>
                   </TableCell>
-                  {weekDates.map(date => {
+                  {weekDates.map((date) => {
                     const dateKey = formatDate(date);
                     const recipes = mealPlan[dateKey]?.[mealType.name.toLowerCase()] || [];
 
                     return (
                       <TableCell key={dateKey} className="recipe-cell">
                         {recipes.length > 0 ? (
-                          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+                          <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
                             {recipes.map((recipe, index) => (
-                              <Box 
+                              <Box
                                 key={index}
-                                className={`recipe-card ${editMode ? 'edit-mode' : ''}`}
+                                className={`recipe-card ${editMode ? "edit-mode" : ""}`}
                                 onClick={() => handleRecipeClick(recipe)}
-                                sx={{ 
-                                  cursor: editMode ? 'default' : 'pointer',
-                                  position: 'relative',
-                                  '&:hover .delete-icon': {
-                                    opacity: 1
-                                  }
+                                sx={{
+                                  cursor: editMode ? "default" : "pointer",
+                                  position: "relative",
+                                  "&:hover .delete-icon": {
+                                    opacity: 1,
+                                  },
                                 }}
                               >
-                                <img 
-                                  src={recipe.image || 'https://via.placeholder.com/80'} 
+                                <img
+                                  src={recipe.image || "https://via.placeholder.com/80"}
                                   alt={recipe.title}
                                   className="recipe-image"
                                   style={{ opacity: editMode ? 0.7 : 1 }}
@@ -193,7 +190,7 @@ const MealPlanner = () => {
                                 <Typography
                                   className="recipe-name"
                                   variant="body2"
-                                  sx={{ textAlign: 'center' }}
+                                  sx={{ textAlign: "center" }}
                                 >
                                   {recipe.title}
                                 </Typography>
@@ -205,16 +202,18 @@ const MealPlanner = () => {
                                       size="small"
                                       color="error"
                                       className="delete-icon"
-                                      onClick={(e) => handleDeleteRecipe(dateKey, mealType.name, index, e)}
+                                      onClick={(e) =>
+                                        handleDeleteRecipe(dateKey, mealType.name, index, e)
+                                      }
                                       sx={{
-                                        position: 'absolute',
-                                        top: '50%',
-                                        left: '50%',
-                                        transform: 'translate(-50%, -50%)',
-                                        backgroundColor: 'rgba(255,255,255,0.8)',
-                                        '&:hover': {
-                                          backgroundColor: 'rgba(255,255,255,0.9)',
-                                        }
+                                        position: "absolute",
+                                        top: "50%",
+                                        left: "50%",
+                                        transform: "translate(-50%, -50%)",
+                                        backgroundColor: "rgba(255,255,255,0.8)",
+                                        "&:hover": {
+                                          backgroundColor: "rgba(255,255,255,0.9)",
+                                        },
                                       }}
                                     >
                                       <DeleteIcon />
@@ -239,11 +238,7 @@ const MealPlanner = () => {
         </TableContainer>
       </Box>
       {selectedRecipe && (
-        <ModalRecipe
-          open={modalOpen}
-          handleClose={handleModalClose}
-          recipe={selectedRecipe}
-        />
+        <ModalRecipe open={modalOpen} handleClose={handleModalClose} recipe={selectedRecipe} />
       )}
       <FeatureAd />
       <Footer />

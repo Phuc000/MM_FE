@@ -1,32 +1,32 @@
 [
-    {
-      "productId": 12345,
-      "providerId": "ABC123",
-      "stock": 50
-    },
-    {
-      "productId": 12346,
-      "providerId": "XYZ789",
-      "stock": 30
-    },
-    {
-      "productId": 12347,
-      "providerId": "XYZ789",
-      "stock": 30
-    },
-    {
-      "productId": 12348,
-      "providerId": "XYZ789",
-      "stock": 30
-    },
-    {
-      "productId": 12349,
-      "providerId": "XYZ789",
-      "stock": 30
-    },
-    {
-      "productId": 12350,
-      "providerId": "XYZ789",
-      "stock": 30
-    }
-  ]
+  {
+    "productId": 12345,
+    "providerId": "ABC123",
+    "stock": 50
+  },
+  {
+    "productId": 12346,
+    "providerId": "XYZ789",
+    "stock": 30
+  },
+  {
+    "productId": 12347,
+    "providerId": "XYZ789",
+    "stock": 30
+  },
+  {
+    "productId": 12348,
+    "providerId": "XYZ789",
+    "stock": 30
+  },
+  {
+    "productId": 12349,
+    "providerId": "XYZ789",
+    "stock": 30
+  },
+  {
+    "productId": 12350,
+    "providerId": "XYZ789",
+    "stock": 30
+  }
+]

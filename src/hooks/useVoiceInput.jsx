@@ -1,11 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState, useRef } from "react";
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
 
 export const useVoiceInput = (onVoiceResult) => {
   const [listening, setListening] = useState(false);
-  
+
   // Refs for audio processing
   const audioContextRef = useRef(null);
   const analyserRef = useRef(null);
@@ -64,7 +64,7 @@ export const useVoiceInput = (onVoiceResult) => {
 
         visualizeAudio();
       } catch (err) {
-        console.error('Microphone access error:', err);
+        console.error("Microphone access error:", err);
       }
     }
   };
@@ -75,7 +75,7 @@ export const useVoiceInput = (onVoiceResult) => {
   };
 
   recognition.onerror = (event) => {
-    console.error('Voice recognition error:', event.error);
+    console.error("Voice recognition error:", event.error);
     setListening(false);
   };
 
@@ -90,6 +90,6 @@ export const useVoiceInput = (onVoiceResult) => {
   return {
     listening,
     handleVoiceInput,
-    barsRef
+    barsRef,
   };
 };

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { Box, Card, Typography, Stack, Chip, Tooltip, Button, Popover, List, ListItem } from '@mui/material';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import React, { useState } from "react";
+import { Box, Card, Typography, Chip, Button, Popover, List, ListItem } from "@mui/material";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 const ProductPromotionCard = ({ promo }) => {
   const [showAllProducts, setShowAllProducts] = useState(false);
@@ -22,7 +22,7 @@ const ProductPromotionCard = ({ promo }) => {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? 'products-popover' : undefined;
+  const id = open ? "products-popover" : undefined;
 
   const formatDate = (dateString) => {
     const options = { year: "numeric", month: "long", day: "numeric" };
@@ -30,64 +30,64 @@ const ProductPromotionCard = ({ promo }) => {
   };
   return (
     <Card
-    variant="outlined"
-    sx={{
-      position: 'relative',
-      display: 'flex',
-      // width: 'fit-content',
-      width: 400,
-      height: 160,
-      overflow: 'visible',
-      borderRadius: 0,
-      borderColor: '#bbb',
-      borderWidth: 2,
-      borderStyle: 'solid',
-      '&:hover': {
-        borderColor: '#fe3bd4',
-      },
-    }}
-  >
-    {/* Left Section */}
-    <Box
+      variant="outlined"
       sx={{
-        flex: 1,
-        padding: 2,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center',
+        position: "relative",
+        display: "flex",
+        // width: 'fit-content',
+        width: 400,
+        height: 160,
+        overflow: "visible",
+        borderRadius: 0,
+        borderColor: "#bbb",
+        borderWidth: 2,
+        borderStyle: "solid",
+        "&:hover": {
+          borderColor: "#fe3bd4",
+        },
       }}
     >
-      <Typography variant="h6" sx={{ color: '#fe3bd4', fontWeight: 'bold' }}>
-        {promo.name}
-      </Typography>
-      <Typography variant="body2" sx={{ color: '#444', marginBottom: 1 }}>
-        {promo.description}
-      </Typography>
-      <Typography variant="body2" sx={{ color: '#555' }}>
-        <strong>End Date:</strong> {formatDate(promo.endDay)}
-      </Typography>
+      {/* Left Section */}
+      <Box
+        sx={{
+          flex: 1,
+          padding: 2,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
+        <Typography variant="h6" sx={{ color: "#fe3bd4", fontWeight: "bold" }}>
+          {promo.name}
+        </Typography>
+        <Typography variant="body2" sx={{ color: "#444", marginBottom: 1 }}>
+          {promo.description}
+        </Typography>
+        <Typography variant="body2" sx={{ color: "#555" }}>
+          <strong>End Date:</strong> {formatDate(promo.endDay)}
+        </Typography>
 
-      {/* Explore Button */}
-      {promo.products && promo.products.length > 0 && (
-          <Button 
+        {/* Explore Button */}
+        {promo.products && promo.products.length > 0 && (
+          <Button
             variant="outlined"
             startIcon={<ArrowDropDownIcon />}
             onClick={handleExploreClick}
-            sx={{ 
-              width: 'fit-content', 
-              marginTop: 'auto',
-              borderColor: '#fe3bd4',
-              color: '#fe3bd4',
-              '&:hover': {
-                borderColor: '#fe3bd4',
-                backgroundColor: 'rgba(254, 59, 212, 0.04)',
-              }
+            sx={{
+              width: "fit-content",
+              marginTop: "auto",
+              borderColor: "#fe3bd4",
+              color: "#fe3bd4",
+              "&:hover": {
+                borderColor: "#fe3bd4",
+                backgroundColor: "rgba(254, 59, 212, 0.04)",
+              },
             }}
           >
             Explore Products ({promo.products.length})
           </Button>
         )}
-        
+
         {/* Popover for Products */}
         <Popover
           id={id}
@@ -95,49 +95,49 @@ const ProductPromotionCard = ({ promo }) => {
           anchorEl={anchorEl}
           onClose={handleClose}
           anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
+            vertical: "bottom",
+            horizontal: "left",
           }}
           transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
+            vertical: "top",
+            horizontal: "left",
           }}
           sx={{
-            '& .MuiPaper-root': {
+            "& .MuiPaper-root": {
               maxHeight: 300,
               width: 250,
-              overflowY: 'auto',
+              overflowY: "auto",
               padding: 1,
               borderRadius: 1,
-              boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
-              '&::-webkit-scrollbar': {
-                width: '6px',
+              boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+              "&::-webkit-scrollbar": {
+                width: "6px",
               },
-              '&::-webkit-scrollbar-thumb': {
-                backgroundColor: '#fe3bd4',
-                borderRadius: '6px',
+              "&::-webkit-scrollbar-thumb": {
+                backgroundColor: "#fe3bd4",
+                borderRadius: "6px",
               },
-            }
+            },
           }}
         >
-          <Typography 
-            variant="subtitle1" 
-            sx={{ 
-              fontWeight: 'bold', 
-              padding: '8px 16px',
-              borderBottom: '1px solid #eee',
-              color: '#fe3bd4'
+          <Typography
+            variant="subtitle1"
+            sx={{
+              fontWeight: "bold",
+              padding: "8px 16px",
+              borderBottom: "1px solid #eee",
+              color: "#fe3bd4",
             }}
           >
             Promotional Products
           </Typography>
           <List sx={{ padding: 0 }}>
             {promo.products.map((product, index) => (
-              <ListItem key={`${product.id}-${index}`} sx={{ padding: '8px 16px' }}>
+              <ListItem key={`${product.id}-${index}`} sx={{ padding: "8px 16px" }}>
                 <Chip
                   label={product.name}
                   size="medium"
-                  sx={{ width: '100%', justifyContent: 'flex-start' }}
+                  sx={{ width: "100%", justifyContent: "flex-start" }}
                   onClick={() => {
                     // Handle navigation to product detail if needed
                     window.location.href = `/buy-product/${product.id}`;
@@ -148,60 +148,60 @@ const ProductPromotionCard = ({ promo }) => {
           </List>
         </Popover>
       </Box>
-    {/* Dashed Divider with Cutouts */}
-    <Box
-      sx={{
-        position: 'relative',
-        width: 0,
-        borderLeft: '2px dashed #ccc',
-        marginY: 1,
-      }}
-    >
+      {/* Dashed Divider with Cutouts */}
       <Box
         sx={{
-          position: 'absolute',
-          top: -25,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: 30,
-          height: 30,
-          backgroundColor: '#fff',
-          borderRadius: '50%',
-          borderBottom: 'none',
+          position: "relative",
+          width: 0,
+          borderLeft: "2px dashed #ccc",
+          marginY: 1,
         }}
-      />
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: -25,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 30,
+            height: 30,
+            backgroundColor: "#fff",
+            borderRadius: "50%",
+            borderBottom: "none",
+          }}
+        />
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: -25,
+            left: "50%",
+            transform: "translateX(-50%)",
+            width: 30,
+            height: 30,
+            backgroundColor: "#fff",
+            borderRadius: "50%",
+            borderTop: "none",
+          }}
+        />
+      </Box>
+      {/* Right Section */}
       <Box
         sx={{
-          position: 'absolute',
-          bottom: -25,
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: 30,
-          height: 30,
-          backgroundColor: '#fff',
-          borderRadius: '50%',
-          borderTop: 'none',
+          width: 100,
+          backgroundColor: "#fe3bd4",
+          color: "#fff",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
         }}
-      />
-    </Box>
-    {/* Right Section */}
-    <Box
-      sx={{
-        width: 100,
-        backgroundColor: '#fe3bd4',
-        color: '#fff',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}
-    >
-      <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
-        {(promo.discount * 100).toFixed(0)}%
-      </Typography>
-      <Typography variant="subtitle2">OFF</Typography>
-    </Box>
-  </Card>
+      >
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          {(promo.discount * 100).toFixed(0)}%
+        </Typography>
+        <Typography variant="subtitle2">OFF</Typography>
+      </Box>
+    </Card>
   );
 };
 

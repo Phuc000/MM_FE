@@ -1,31 +1,36 @@
 // PaginationFilter.jsx
-import React from 'react';
-import './PaginationFilter.css';
+import React from "react";
+import "./PaginationFilter.css";
 
-const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showOnSaleFilter = false, children }) => {
+const PaginationFilter = ({
+  items,
+  itemsPerPage: defaultItemsPerPage = 50,
+  showOnSaleFilter = false,
+  children,
+}) => {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [itemsPerPage, setItemsPerPage] = React.useState(defaultItemsPerPage);
   const [filters, setFilters] = React.useState({
-    aisle: 'All',
-    priceRange: { min: '', max: '' },
+    aisle: "All",
+    priceRange: { min: "", max: "" },
     // consistency: 'All',
-    onSale: false
+    onSale: false,
   });
 
   // Get unique values for filters
-  const uniqueAisles = ['All', ...new Set(items.map(item => item.aisle).filter(Boolean))];
+  const uniqueAisles = ["All", ...new Set(items.map((item) => item.aisle).filter(Boolean))];
   // const uniqueConsistencies = ['All', ...new Set(items.map(item => item.consistency).filter(Boolean))];
 
   // Filter items
-  const filteredItems = items.filter(item => {
-    const matchesAisle = filters.aisle === 'All' || item.aisle === filters.aisle;
+  const filteredItems = items.filter((item) => {
+    const matchesAisle = filters.aisle === "All" || item.aisle === filters.aisle;
     const discountedPrice = item.discountedPrice || 0;
     const minPrice = filters.priceRange.min ? parseFloat(filters.priceRange.min) : -Infinity;
     const maxPrice = filters.priceRange.max ? parseFloat(filters.priceRange.max) : Infinity;
     const matchesPrice = discountedPrice >= minPrice && discountedPrice <= maxPrice;
     // const matchesConsistency = filters.consistency === 'All' || item.consistency === filters.consistency;
-    const matchesSale = !showOnSaleFilter || !filters.onSale || (item.discount > 0);
-    
+    const matchesSale = !showOnSaleFilter || !filters.onSale || item.discount > 0;
+
     // return matchesAisle && matchesPrice && matchesConsistency && matchesSale;
     return matchesAisle && matchesPrice && matchesSale;
   });
@@ -56,13 +61,13 @@ const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showO
 
   // Filter handler
   const handleFilterChange = (filterType, value) => {
-    setFilters(prevFilters => {
+    setFilters((prevFilters) => {
       const newFilters = { ...prevFilters };
-      if (filterType === 'aisle') newFilters.aisle = value;
-      else if (filterType === 'priceMin') newFilters.priceRange.min = value;
-      else if (filterType === 'priceMax') newFilters.priceRange.max = value;
+      if (filterType === "aisle") newFilters.aisle = value;
+      else if (filterType === "priceMin") newFilters.priceRange.min = value;
+      else if (filterType === "priceMax") newFilters.priceRange.max = value;
       // else if (filterType === 'consistency') newFilters.consistency = value;
-      else if (filterType === 'onSale') newFilters.onSale = value;
+      else if (filterType === "onSale") newFilters.onSale = value;
       return newFilters;
     });
     setCurrentPage(1); // Reset to first page when filters change
@@ -81,7 +86,7 @@ const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showO
         <button
           key={page}
           onClick={() => goToPage(page)}
-          className={`btn btn--secondary ${currentPage === page ? 'active' : ''}`}
+          className={`btn btn--secondary ${currentPage === page ? "active" : ""}`}
         >
           {page}
         </button>
@@ -97,10 +102,10 @@ const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showO
       <button
         key={1}
         onClick={() => goToPage(1)}
-        className={`btn btn--secondary ${currentPage === 1 ? 'active' : ''}`}
+        className={`btn btn--secondary ${currentPage === 1 ? "active" : ""}`}
       >
         1
-      </button>
+      </button>,
     );
 
     // Determine the range of pages to show around currentPage
@@ -116,7 +121,11 @@ const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showO
 
     // Add ellipsis if there's a gap between 1 and startPage
     if (startPage > 2) {
-      buttons.push(<span key="ellipsis-start" className="pagination-ellipsis">...</span>);
+      buttons.push(
+        <span key="ellipsis-start" className="pagination-ellipsis">
+          ...
+        </span>,
+      );
     }
 
     // Add pages around currentPage
@@ -125,16 +134,20 @@ const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showO
         <button
           key={page}
           onClick={() => goToPage(page)}
-          className={`btn btn--secondary ${currentPage === page ? 'active' : ''}`}
+          className={`btn btn--secondary ${currentPage === page ? "active" : ""}`}
         >
           {page}
-        </button>
+        </button>,
       );
     }
 
     // Add ellipsis if there's a gap between endPage and last page
     if (endPage < totalPages - 1) {
-      buttons.push(<span key="ellipsis-end" className="pagination-ellipsis">...</span>);
+      buttons.push(
+        <span key="ellipsis-end" className="pagination-ellipsis">
+          ...
+        </span>,
+      );
     }
 
     // Always show last page
@@ -143,10 +156,10 @@ const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showO
         <button
           key={totalPages}
           onClick={() => goToPage(totalPages)}
-          className={`btn btn--secondary ${currentPage === totalPages ? 'active' : ''}`}
+          className={`btn btn--secondary ${currentPage === totalPages ? "active" : ""}`}
         >
           {totalPages}
-        </button>
+        </button>,
       );
     }
 
@@ -161,11 +174,13 @@ const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showO
           <select
             id="aisle-filter"
             value={filters.aisle}
-            onChange={(e) => handleFilterChange('aisle', e.target.value)}
+            onChange={(e) => handleFilterChange("aisle", e.target.value)}
             className="filter-dropdown"
           >
             {uniqueAisles.map((aisle) => (
-              <option key={aisle} value={aisle}>{aisle}</option>
+              <option key={aisle} value={aisle}>
+                {aisle}
+              </option>
             ))}
           </select>
         </div>
@@ -175,7 +190,7 @@ const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showO
             type="number"
             placeholder="Min"
             value={filters.priceRange.min}
-            onChange={(e) => handleFilterChange('priceMin', e.target.value)}
+            onChange={(e) => handleFilterChange("priceMin", e.target.value)}
             className="filter-input"
             min="0"
             step="0.01"
@@ -185,7 +200,7 @@ const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showO
             type="number"
             placeholder="Max"
             value={filters.priceRange.max}
-            onChange={(e) => handleFilterChange('priceMax', e.target.value)}
+            onChange={(e) => handleFilterChange("priceMax", e.target.value)}
             className="filter-input"
             min="0"
             step="0.01"
@@ -197,13 +212,13 @@ const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showO
               <input
                 type="checkbox"
                 checked={filters.onSale}
-                onChange={(e) => handleFilterChange('onSale', e.target.checked)}
+                onChange={(e) => handleFilterChange("onSale", e.target.checked)}
               />
               On Sale Only
             </label>
           </div>
         )}
-        
+
         {/* Items per page selection - positioned on the right */}
         <div className="filter-group items-per-page">
           <label htmlFor="items-per-page">Items per page: </label>
@@ -220,31 +235,32 @@ const PaginationFilter = ({ items, itemsPerPage: defaultItemsPerPage = 50, showO
           </select>
         </div>
       </div>
-      
-      <div style={{marginLeft: '15px'}}>
-      {children(currentItems, filteredItems.length, (
-        filteredItems.length > itemsPerPage && (
-          <div className="pagination">
-            <button
-              onClick={goToPreviousPage}
-              disabled={currentPage === 1}
-              className="btn btn--secondary"
-            >
-              Previous
-            </button>
-            {renderPaginationButtons()}
-            <button
-              onClick={goToNextPage}
-              disabled={currentPage === totalPages}
-              className="btn btn--secondary"
-            >
-              Next
-            </button>
-          </div>
-        )
-      ))}
+
+      <div style={{ marginLeft: "15px" }}>
+        {children(
+          currentItems,
+          filteredItems.length,
+          filteredItems.length > itemsPerPage && (
+            <div className="pagination">
+              <button
+                onClick={goToPreviousPage}
+                disabled={currentPage === 1}
+                className="btn btn--secondary"
+              >
+                Previous
+              </button>
+              {renderPaginationButtons()}
+              <button
+                onClick={goToNextPage}
+                disabled={currentPage === totalPages}
+                className="btn btn--secondary"
+              >
+                Next
+              </button>
+            </div>
+          ),
+        )}
       </div>
-      
     </div>
   );
 };

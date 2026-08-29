@@ -1,5 +1,5 @@
 // src/admin/AddInventoryDialog.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -11,8 +11,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
-} from '@mui/material';
-import axios from 'axios';
+} from "@mui/material";
+import axios from "axios";
 
 const AddInventoryDialog = ({
   open,
@@ -21,30 +21,30 @@ const AddInventoryDialog = ({
   selectedStore,
   existingProducts,
   availableProducts,
-  setAvailableProducts
+  setAvailableProducts,
 }) => {
   const [inventoryRecord, setInventoryRecord] = useState({
-    productID: '',
+    productID: "",
     storeID: selectedStore,
-    numberAtStore: '',
+    numberAtStore: "",
   });
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState("");
   const [categoryList, setCategories] = useState([]);
 
   useEffect(() => {
-      const fetchCategories = async () => {
-        try {
-          const response = await axios.get(
-            `${import.meta.env.VITE_REACT_APP_API_URL}/products/category`
-          );
-          setCategories(response.data);
-        } catch (error) {
-          console.error('Error fetching categories:', error);
-        } 
-      };
-  
-      fetchCategories();
-    }, []);
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/products/category`,
+        );
+        setCategories(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   useEffect(() => {
     if (selectedCategory) {
@@ -55,11 +55,11 @@ const AddInventoryDialog = ({
           const categoryProducts = response.data;
           // Filter out products already in the store's inventory
           const productsNotInStore = categoryProducts.filter(
-            (product) => !existingProducts.includes(product.productID)
+            (product) => !existingProducts.includes(product.productID),
           );
           setAvailableProducts(productsNotInStore);
         })
-        .catch((error) => console.error('Error fetching products:', error));
+        .catch((error) => console.error("Error fetching products:", error));
     } else {
       setAvailableProducts([]);
     }
@@ -75,7 +75,7 @@ const AddInventoryDialog = ({
   const handleCategoryChange = (e) => {
     setSelectedCategory(e.target.value);
     // Reset product selection when category changes
-    setInventoryRecord((prev) => ({ ...prev, productID: '' }));
+    setInventoryRecord((prev) => ({ ...prev, productID: "" }));
   };
 
   const onSave = () => {
@@ -88,7 +88,7 @@ const AddInventoryDialog = ({
   };
 
   return (
-    <Dialog open={open} onClose={handleClose} sx={{ width: '100%' }} maxWidth="sm">
+    <Dialog open={open} onClose={handleClose} sx={{ width: "100%" }} maxWidth="sm">
       <DialogTitle>Add Inventory Record</DialogTitle>
       <DialogContent>
         <FormControl fullWidth margin="dense" required>
@@ -114,7 +114,7 @@ const AddInventoryDialog = ({
               value={inventoryRecord.productID}
               onChange={handleChange}
               label="Product"
-              sx={{ width: '100%' }}
+              sx={{ width: "100%" }}
             >
               {availableProducts.length === 0 && (
                 <MenuItem disabled>No products available</MenuItem>
@@ -144,9 +144,7 @@ const AddInventoryDialog = ({
           onClick={onSave}
           variant="contained"
           disabled={
-            !inventoryRecord.productID ||
-            !inventoryRecord.numberAtStore ||
-            !selectedCategory
+            !inventoryRecord.productID || !inventoryRecord.numberAtStore || !selectedCategory
           }
         >
           Add

@@ -8,24 +8,24 @@ import "./AccountDetail.scss";
 const AccountDetails = () => {
   const { user, login } = useAuth();
   const [userData, setUserData] = useState(null);
-  const [buttonClass, setButtonClass] = useState('');
+  const [buttonClass, setButtonClass] = useState("");
 
   useEffect(() => {
     if (user) {
       setUserData({
-        fName: user.fName || '',
-        lName: user.lName || '',
-        address: user.address || '',
-        phoneNumber: user.phoneNumber || '',
-        email: user.email || '',
+        fName: user.fName || "",
+        lName: user.lName || "",
+        address: user.address || "",
+        phoneNumber: user.phoneNumber || "",
+        email: user.email || "",
         // Add other fields as needed
       });
     }
   }, [user]);
 
   const saveUserDetails = async () => {
-    console.log('Saving user details...');
-    setButtonClass('onclic');
+    console.log("Saving user details...");
+    setButtonClass("onclic");
     try {
       const response = await axios.patch(
         `${import.meta.env.VITE_REACT_APP_API_URL}/customers/${user.id}`,
@@ -38,10 +38,10 @@ const AccountDetails = () => {
         },
         {
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
           withCredentials: true,
-        }
+        },
       );
 
       // Update the user data in context if needed
@@ -56,11 +56,11 @@ const AccountDetails = () => {
           // Update other fields as needed
         });
         setTimeout(() => {
-          setButtonClass('validate');
+          setButtonClass("validate");
           setTimeout(() => {
-            setButtonClass('');
-            toast.success('Account details saved successfully!', {
-              position: 'bottom-left',
+            setButtonClass("");
+            toast.success("Account details saved successfully!", {
+              position: "bottom-left",
               autoClose: 3000,
               hideProgressBar: false,
               closeOnClick: true,
@@ -70,12 +70,11 @@ const AccountDetails = () => {
             });
           }, 1250);
         }, 2250);
-        
       }
     } catch (error) {
-      console.error('Error saving user details:', error);
+      console.error("Error saving user details:", error);
       // Handle error, display message to user, etc.
-      setButtonClass('');
+      setButtonClass("");
     }
   };
 
@@ -87,8 +86,7 @@ const AccountDetails = () => {
         id="save-info-button"
         className={`save-info ${buttonClass}`}
         onClick={saveUserDetails}
-      >
-      </button>
+      ></button>
     </div>
   );
 };

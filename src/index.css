@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700;900&display=swap");
 
 body {
   margin: 0;
 
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 a {
   text-decoration: none;
@@ -18,7 +18,7 @@ a {
  * 2. Prevent adjustments of font size after orientation changes in iOS.
  */
 
- html {
+html {
   line-height: 1.15; /* 1 */
   -webkit-text-size-adjust: 100%; /* 2 */
 }
@@ -184,7 +184,8 @@ textarea {
  */
 
 button,
-input { /* 1 */
+input {
+  /* 1 */
   overflow: visible;
 }
 
@@ -194,14 +195,14 @@ input { /* 1 */
  */
 
 button,
-select { /* 1 */
+select {
+  /* 1 */
   text-transform: none;
 }
 
 /**
  * Correct the inability to style clickable types in iOS and Safari.
  */
-
 
 /**
  * Remove the inner border and padding in Firefox.

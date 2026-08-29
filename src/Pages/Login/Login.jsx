@@ -6,8 +6,7 @@ import "./Login.css";
 const Login = () => {
   const [type, setType] = useState("signIn");
 
-  const containerClass =
-    "cred-box-container " + (type === "signUp" ? "right-panel-active" : "");
+  const containerClass = "cred-box-container " + (type === "signUp" ? "right-panel-active" : "");
 
   useEffect(() => {
     console.log("Type changed to:", type);
@@ -33,9 +32,7 @@ const Login = () => {
             <div className="overlay">
               <div className="overlay-panel overlay-left">
                 <h1>Welcome Back!</h1>
-                <p>
-                  To keep connected with us please login with your personal info
-                </p>
+                <p>To keep connected with us please login with your personal info</p>
                 <button
                   className="ghost-button"
                   id="signIn"

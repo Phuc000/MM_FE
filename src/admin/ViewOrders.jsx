@@ -61,7 +61,7 @@ const ViewOrders = () => {
       });
       // Sort transactions by dateAndTime in descending order
       const sortedTransactions = response.data.sort(
-        (a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime)
+        (a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime),
       );
       setTransactions(sortedTransactions);
     } catch (error) {
@@ -107,7 +107,7 @@ const ViewOrders = () => {
   // Transactions to display on the current page
   const displayedTransactions = transactions.slice(
     page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
+    page * rowsPerPage + rowsPerPage,
   );
 
   return (
@@ -124,11 +124,7 @@ const ViewOrders = () => {
         View Orders
       </Typography>
       <FormControl sx={{ mb: 2, minWidth: 200 }}>
-        <Select
-          value={filterStatus}
-          displayEmpty
-          onChange={handleStatusChange}
-        >
+        <Select value={filterStatus} displayEmpty onChange={handleStatusChange}>
           <MenuItem value="">
             <em>All Statuses</em>
           </MenuItem>
@@ -162,14 +158,10 @@ const ViewOrders = () => {
                 <TableCell>{tx.customerID}</TableCell>
                 <TableCell>{tx.storeID}</TableCell>
                 <TableCell>
-                  {tx.shipperID === "00000000-0000-0000-0000-000000000000"
-                    ? "N/A"
-                    : tx.shipperID}
+                  {tx.shipperID === "00000000-0000-0000-0000-000000000000" ? "N/A" : tx.shipperID}
                 </TableCell>
                 <TableCell>{tx.paymentMethod}</TableCell>
-                <TableCell>
-                  {new Date(tx.dateAndTime).toLocaleString()}
-                </TableCell>
+                <TableCell>{new Date(tx.dateAndTime).toLocaleString()}</TableCell>
                 <TableCell>{getStatusText(tx.deliveryStatus)}</TableCell>
                 <TableCell>${tx.totalPrice.toFixed(2)}</TableCell>
                 <TableCell>{tx.totalWeight} g</TableCell>
@@ -225,11 +217,7 @@ const ViewOrders = () => {
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: "100%" }}
-        >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
           {snackbar.message}
         </Alert>
       </Snackbar>

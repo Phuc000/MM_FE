@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import './FeatureAd.css';
+import React, { useEffect, useRef, useState } from "react";
+import "./FeatureAd.css";
 
 const FeatureAd = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -17,8 +17,8 @@ const FeatureAd = () => {
       },
       {
         threshold: 0.15, // Trigger when 15% of the component is visible
-        rootMargin: '0px 0px -50px 0px' // Adjust trigger point slightly
-      }
+        rootMargin: "0px 0px -50px 0px", // Adjust trigger point slightly
+      },
     );
 
     if (containerRef.current) {
@@ -34,45 +34,40 @@ const FeatureAd = () => {
 
   const features = [
     {
-      icon: 'ad1.png', 
-      title: 'Best prices & offers',
-      description: 'Orders now'
+      icon: "ad1.png",
+      title: "Best prices & offers",
+      description: "Orders now",
     },
     {
-      icon: 'ad2.png',
-      title: 'Free delivery',
-      description: '24/7 amazing services'
+      icon: "ad2.png",
+      title: "Free delivery",
+      description: "24/7 amazing services",
     },
     {
-      icon: 'ad3.png',
-      title: 'Great daily deal',
-      description: 'When you sign up'
+      icon: "ad3.png",
+      title: "Great daily deal",
+      description: "When you sign up",
     },
     {
-      icon: 'ad4.png',
-      title: 'Wide assortment',
-      description: 'Mega Discounts'
+      icon: "ad4.png",
+      title: "Wide assortment",
+      description: "Mega Discounts",
     },
     {
-      icon: 'ad5.png',
-      title: 'Easy returns',
-      description: 'Within 30 days'
-    }
+      icon: "ad5.png",
+      title: "Easy returns",
+      description: "Within 30 days",
+    },
   ];
 
   return (
-    <div 
-      ref={containerRef} 
-      className="feature-ad-container"
-    >
+    <div ref={containerRef} className="feature-ad-container">
       {features.map((feature, index) => (
-        <div 
-          key={index} 
+        <div
+          key={index}
           className="feature-card"
           style={{
-            animation: isVisible 
-              ? `fadeInUp 0.6s ease forwards ${index * 0.15}s` 
-              : 'none',
+            animation: isVisible ? `fadeInUp 0.6s ease forwards ${index * 0.15}s` : "none",
             opacity: 0, // Start invisible
           }}
         >

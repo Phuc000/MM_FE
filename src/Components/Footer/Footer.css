@@ -1,96 +1,95 @@
 :root {
-    --main_red: #ff2a2b;
-    --main_yellow: #fe3bd4;
-    --verysoft_yellow: #fef5f5;
-    --main_dark: #2e2e2e;
+  --main_red: #ff2a2b;
+  --main_yellow: #fe3bd4;
+  --verysoft_yellow: #fef5f5;
+  --main_dark: #2e2e2e;
 
-    --fz_sm: 14px;
-    --fz_md: 16px;
-    --fz_lg: 18px;
-    --fz_xxlg: 24px;
+  --fz_sm: 14px;
+  --fz_md: 16px;
+  --fz_lg: 18px;
+  --fz_xxlg: 24px;
 }
 
 /*#######*/
 /*! footer*/
 .footer {
-    background: var(--main_dark);
-    font-size: var(--fz_lg);
+  background: var(--main_dark);
+  font-size: var(--fz_lg);
 
-    padding: 36px 0;
-    width: 100vw;
+  padding: 36px 0;
+  width: 100vw;
 }
 
 .footer-subtitle {
-    color: white;
+  color: white;
 }
 
 .footer__container {
-
-    display: flex;
-    flex-direction: column; 
-    gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .footer__info-social {
-    display: flex;
-    justify-content: space-around; 
-    align-items: center;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .footer__info {
-    align-items: center;
-     width: max-content;
-    text-align: center;
+  align-items: center;
+  width: max-content;
+  text-align: center;
 }
 
 .footer__logo {
-    display: flex;
-    justify-content: space-around; 
-    margin-left: 90px;
-    width: 100%;
+  display: flex;
+  justify-content: space-around;
+  margin-left: 90px;
+  width: 100%;
 
-    @media (max-width: 480px) {
-        margin-left: 40px;
-    }
+  @media (max-width: 480px) {
+    margin-left: 40px;
+  }
 }
 
 .footer__list {
-    color: white;
-    list-style: none;
-    padding: 0px;
+  color: white;
+  list-style: none;
+  padding: 0px;
 }
 
 .social__list {
-    display: flex;
-    gap: 16px;
-    justify-content: space-evenly;
+  display: flex;
+  gap: 16px;
+  justify-content: space-evenly;
 }
 
 .social__item i {
-    color: white;
-    font-size: var(--fz_xxlg);
+  color: white;
+  font-size: var(--fz_xxlg);
 }
 
 .footer__disclaimer {
-    text-align: center;
-    margin: 0px auto;
-    color: white;
-    font-weight: bold;
+  text-align: center;
+  margin: 0px auto;
+  color: white;
+  font-weight: bold;
 }
 
 .footerAuthors {
-    text-align: center;
-    margin: 0px auto;
-    color: white;
-    margin-top: 12px;
-    text-transform: uppercase;
-    font-weight: bold;
-    line-height: 2.2;
+  text-align: center;
+  margin: 0px auto;
+  color: white;
+  margin-top: 12px;
+  text-transform: uppercase;
+  font-weight: bold;
+  line-height: 2.2;
 }
 
 .footerAuthors a {
-    color: white;
-    background: var(--main_yellow);
-    padding: 0.4em 0.6em;
-    border-radius: 16px;
+  color: white;
+  background: var(--main_yellow);
+  padding: 0.4em 0.6em;
+  border-radius: 16px;
 }

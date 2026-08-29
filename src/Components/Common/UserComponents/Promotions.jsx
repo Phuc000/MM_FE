@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "../../../hooks/useAuth";
-import { Card, Typography, Box } from '@mui/material';
+import { Card, Typography, Box } from "@mui/material";
 import "./Promotions.scss";
 import ProductPromotionCard from "./ProductPromotionCard";
 import CustomerPromotionCard from "./CustomerPromotionCard";
@@ -16,9 +16,7 @@ const Promotions = () => {
 
   const fetchBillPromotions = async () => {
     try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/promotions/bill`
-      );
+      const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/promotions/bill`);
       // console.log('Bill Promotions:', response.data);
       setBillPromotions(response.data);
     } catch (error) {
@@ -29,7 +27,7 @@ const Promotions = () => {
   const fetchProductPromotions = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/promotions/product`
+        `${import.meta.env.VITE_REACT_APP_API_URL}/promotions/product`,
       );
       setProductPromotions(response.data);
     } catch (error) {
@@ -40,7 +38,7 @@ const Promotions = () => {
   const fetchCustomerPromotions = async (customerId) => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/promotions/customer/${customerId}`
+        `${import.meta.env.VITE_REACT_APP_API_URL}/promotions/customer/${customerId}`,
       );
       setCustomerPromotions(response.data);
     } catch (error) {
@@ -79,23 +77,23 @@ const Promotions = () => {
           <div className="promo-section">
             <div className="promo-list-title">Bill Promotions</div>
             {billPromotions.length > 0 ? (
-              <Box className="promo-list" sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
+              <Box className="promo-list" sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
                 {billPromotions.map((promo) => (
                   <Card
                     key={promo.promotionId}
                     variant="outlined"
                     sx={{
-                      position: 'relative',
-                      display: 'flex',
+                      position: "relative",
+                      display: "flex",
                       width: 400,
                       height: 160,
-                      overflow: 'visible',
+                      overflow: "visible",
                       borderRadius: 0,
-                      borderColor: '#bbb',
+                      borderColor: "#bbb",
                       borderWidth: 2,
-                      borderStyle: 'solid',
-                      '&:hover': {
-                        borderColor: '#fe3bd4',
+                      borderStyle: "solid",
+                      "&:hover": {
+                        borderColor: "#fe3bd4",
                       },
                     }}
                   >
@@ -104,59 +102,59 @@ const Promotions = () => {
                       sx={{
                         flex: 1,
                         padding: 2,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'center',
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
                       }}
                     >
-                      <Typography variant="h6" sx={{ color: '#fe3bd4', fontWeight: 'bold' }}>
+                      <Typography variant="h6" sx={{ color: "#fe3bd4", fontWeight: "bold" }}>
                         {promo.name}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: '#444', marginBottom: 1 }}>
+                      <Typography variant="body2" sx={{ color: "#444", marginBottom: 1 }}>
                         {promo.description}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: '#555' }}>
+                      <Typography variant="body2" sx={{ color: "#555" }}>
                         <strong>End Date:</strong> {formatDate(promo.endDay)}
                       </Typography>
-                      <Typography variant="body2" sx={{ color: '#555', marginBottom: 1 }}>
+                      <Typography variant="body2" sx={{ color: "#555", marginBottom: 1 }}>
                         <strong>Limited:</strong> only {promo.promotionChance} times left!
                       </Typography>
                     </Box>
                     {/* Dashed Divider with Cutouts */}
                     <Box
                       sx={{
-                        position: 'relative',
+                        position: "relative",
                         width: 0,
-                        borderLeft: '2px dashed #ccc',
+                        borderLeft: "2px dashed #ccc",
                         marginY: 1,
                       }}
                     >
                       {/* Top Cutout */}
                       <Box
                         sx={{
-                          position: 'absolute',
+                          position: "absolute",
                           top: -25,
-                          left: '50%',
-                          transform: 'translateX(-50%)',
+                          left: "50%",
+                          transform: "translateX(-50%)",
                           width: 30,
                           height: 30,
-                          backgroundColor: '#fff',
-                          borderRadius: '50%',
-                          borderBottom: 'none',
+                          backgroundColor: "#fff",
+                          borderRadius: "50%",
+                          borderBottom: "none",
                         }}
                       />
                       {/* Bottom Cutout */}
                       <Box
                         sx={{
-                          position: 'absolute',
+                          position: "absolute",
                           bottom: -25,
-                          left: '50%',
-                          transform: 'translateX(-50%)',
+                          left: "50%",
+                          transform: "translateX(-50%)",
                           width: 30,
                           height: 30,
-                          backgroundColor: '#fff',
-                          borderRadius: '50%',
-                          borderTop: 'none',
+                          backgroundColor: "#fff",
+                          borderRadius: "50%",
+                          borderTop: "none",
                         }}
                       />
                     </Box>
@@ -164,15 +162,15 @@ const Promotions = () => {
                     <Box
                       sx={{
                         width: 100,
-                        backgroundColor: '#fe3bd4',
-                        color: '#fff',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        justifyContent: 'center',
+                        backgroundColor: "#fe3bd4",
+                        color: "#fff",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+                      <Typography variant="h4" sx={{ fontWeight: "bold" }}>
                         {(promo.discount * 100).toFixed(0)}%
                       </Typography>
                       <Typography variant="subtitle2">OFF</Typography>
@@ -184,43 +182,43 @@ const Promotions = () => {
               <p>No bill promotions available at the moment.</p>
             )}
           </div>
-            
-            {/* Product Promotions */}
-            <div className="promo-section">
-              <div className="promo-list-title">Product Promotions</div>
-              {productPromotions.length > 0 ? (
-                <Box className="promo-list" sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                  {productPromotions.map((promo) => (
-                    <ProductPromotionCard key={promo.promotionID} promo={promo} />
-                  ))}
-                </Box>
-              ) : (
-                <p>No product promotions available at the moment.</p>
-              )}
-            </div>
 
-          {/* Customer Promotions */}
-          {user && user.role === 'Customer' && (
-          customerPromotions.length > 0 ? (
-            <div className="promo-section">
-              <div className="promo-list-title">Your Promotions</div>
-              <Box className="promo-list" sx={{ display: 'flex', flexWrap: 'wrap', gap: 2 }}>
-                {customerPromotions.map((promo) => (
-                  <CustomerPromotionCard key={promo.promotionId} promo={promo} />
+          {/* Product Promotions */}
+          <div className="promo-section">
+            <div className="promo-list-title">Product Promotions</div>
+            {productPromotions.length > 0 ? (
+              <Box className="promo-list" sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                {productPromotions.map((promo) => (
+                  <ProductPromotionCard key={promo.promotionID} promo={promo} />
                 ))}
               </Box>
-            </div>
-          ) : (
-            <div className="promo-section">
-              <div className="promo-list-title">Your Promotions</div>
-              <p>No promotions available for you at the moment.</p>
-            </div>
-          )
-        )}
+            ) : (
+              <p>No product promotions available at the moment.</p>
+            )}
+          </div>
+
+          {/* Customer Promotions */}
+          {user &&
+            user.role === "Customer" &&
+            (customerPromotions.length > 0 ? (
+              <div className="promo-section">
+                <div className="promo-list-title">Your Promotions</div>
+                <Box className="promo-list" sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+                  {customerPromotions.map((promo) => (
+                    <CustomerPromotionCard key={promo.promotionId} promo={promo} />
+                  ))}
+                </Box>
+              </div>
+            ) : (
+              <div className="promo-section">
+                <div className="promo-list-title">Your Promotions</div>
+                <p>No promotions available for you at the moment.</p>
+              </div>
+            ))}
         </>
       )}
     </div>
   );
-}
+};
 
 export default Promotions;

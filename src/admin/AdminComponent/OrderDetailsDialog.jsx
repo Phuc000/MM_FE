@@ -1,5 +1,5 @@
 // src/admin/OrderDetailsDialog.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -12,7 +12,7 @@ import {
   TableBody,
   TableRow,
   TableCell,
-} from '@mui/material';
+} from "@mui/material";
 
 const OrderDetailsDialog = ({ open, handleClose, orderId }) => {
   const [orderDetails, setOrderDetails] = useState(null);
@@ -22,7 +22,7 @@ const OrderDetailsDialog = ({ open, handleClose, orderId }) => {
       fetch(`/api/orders/${orderId}`)
         .then((response) => response.json())
         .then((data) => setOrderDetails(data))
-        .catch((error) => console.error('Error fetching order details:', error));
+        .catch((error) => console.error("Error fetching order details:", error));
     }
   }, [open, orderId]);
 

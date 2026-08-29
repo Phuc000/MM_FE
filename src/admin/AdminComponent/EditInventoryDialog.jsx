@@ -1,5 +1,5 @@
 // src/admin/EditInventoryDialog.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -7,7 +7,7 @@ import {
   DialogActions,
   TextField,
   Button,
-} from '@mui/material';
+} from "@mui/material";
 
 const EditInventoryDialog = ({ open, handleClose, handleSave, record }) => {
   const [quantity, setQuantity] = useState(0);
@@ -34,14 +34,14 @@ const EditInventoryDialog = ({ open, handleClose, handleSave, record }) => {
         <TextField
           margin="dense"
           label="Product Name"
-          value={record?.product?.name || ''}
+          value={record?.product?.name || ""}
           fullWidth
           disabled
         />
         <TextField
           margin="dense"
           label="Store Name"
-          value={record?.storeName || ''}
+          value={record?.storeName || ""}
           fullWidth
           disabled
         />
@@ -57,11 +57,7 @@ const EditInventoryDialog = ({ open, handleClose, handleSave, record }) => {
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button
-          onClick={onSave}
-          variant="contained"
-          disabled={!quantity || quantity < 0}
-        >
+        <Button onClick={onSave} variant="contained" disabled={!quantity || quantity < 0}>
           Save
         </Button>
       </DialogActions>

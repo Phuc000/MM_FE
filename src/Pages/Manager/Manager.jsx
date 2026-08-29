@@ -1,17 +1,17 @@
 // src/Manager.jsx
 import React, { Suspense } from "react";
-import { Outlet, Navigate } from 'react-router-dom';
-import UserLayout from '../../Components/UserLayout/UserLayout';
-import { useAuth } from '../../hooks/useAuth';
+import { Outlet, Navigate } from "react-router-dom";
+import UserLayout from "../../Components/UserLayout/UserLayout";
+import { useAuth } from "../../hooks/useAuth";
 
 // Import icons for menu items
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import ListAltIcon from '@mui/icons-material/ListAlt';
-import InventoryIcon from '@mui/icons-material/Inventory';
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import ListAltIcon from "@mui/icons-material/ListAlt";
+import InventoryIcon from "@mui/icons-material/Inventory";
 
 // Loading spinner while lazy loading children
 const LoadingSpinner = () => (
-  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+  <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height: "100vh" }}>
     Loading...
   </div>
 );
@@ -21,16 +21,15 @@ const Manager = () => {
   const { user } = useAuth();
 
   // Ensure the user is authenticated and has the "StoreManager" role
-  if (!user || user.role !== 'StoreManager') {
+  if (!user || user.role !== "StoreManager") {
     return <Navigate to="/login" replace />;
   }
 
   const managerMenuItems = [
-    { text: 'Dashboard', icon: <DashboardIcon />, path: '/manager' },
+    { text: "Dashboard", icon: <DashboardIcon />, path: "/manager" },
     // { text: 'Create Product', icon: <AddBoxIcon />, path: '/manager/create-product' },
-    { text: 'Store Orders', icon: <ListAltIcon />, path: '/manager/store-orders' },
-    { text: 'Restock Inventory', icon: <InventoryIcon />, path: '/manager/restock' },
-    
+    { text: "Store Orders", icon: <ListAltIcon />, path: "/manager/store-orders" },
+    { text: "Restock Inventory", icon: <InventoryIcon />, path: "/manager/restock" },
   ];
 
   const managerName = `${user.fName} ${user.lName}`;

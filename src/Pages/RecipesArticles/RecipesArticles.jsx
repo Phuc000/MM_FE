@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Header, Footer } from '../../Components';
-import FeatureAd from '../../Components/Common/Feature_Ad/FeatureAd';
-import RecipeCard from '../../Components/Common/RecipeCard/RecipeCard';
-import AddRecipe from '../../Components/Common/AddRecipe';
-import './RecipesArticles.scss';
-import Skeleton from '@mui/material/Skeleton';
-import { TextField, Button, Box } from '@mui/material';
-import Pagination from '@mui/material/Pagination'; // Import Material-UI Pagination
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Header, Footer } from "../../Components";
+import FeatureAd from "../../Components/Common/Feature_Ad/FeatureAd";
+
+import AddRecipe from "../../Components/Common/AddRecipe";
+import "./RecipesArticles.scss";
+import Skeleton from "@mui/material/Skeleton";
+import { TextField, Button, Box } from "@mui/material";
+import Pagination from "@mui/material/Pagination"; // Import Material-UI Pagination
 
 const RecipesArticles = () => {
   const [recipes, setRecipes] = useState([]);
-  const [includeFilter, setIncludeFilter] = useState('');
-  const [excludeFilter, setExcludeFilter] = useState('');
+  const [includeFilter, setIncludeFilter] = useState("");
+  const [excludeFilter, setExcludeFilter] = useState("");
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,16 +21,17 @@ const RecipesArticles = () => {
 
   useEffect(() => {
     setLoading(true);
-    
-    axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/recipes`, {
-      withCredentials: true
-    })
-      .then(response => {
+
+    axios
+      .get(`${import.meta.env.VITE_REACT_APP_API_URL}/recipes`, {
+        withCredentials: true,
+      })
+      .then((response) => {
         setRecipes(response.data);
         setLoading(false);
       })
-      .catch(error => {
-        console.error('Error fetching recipes:', error);
+      .catch((error) => {
+        console.error("Error fetching recipes:", error);
         setLoading(false);
       });
   }, []);
@@ -39,23 +40,26 @@ const RecipesArticles = () => {
   const filteredRecipes = recipes.filter((recipe) => {
     // Split the include and exclude filters into arrays of tags
     const includeTags = includeFilter
-      ? includeFilter.split(',').map((tag) => tag.trim().toLowerCase()).filter((tag) => tag)
+      ? includeFilter
+          .split(",")
+          .map((tag) => tag.trim().toLowerCase())
+          .filter((tag) => tag)
       : [];
     const excludeTags = excludeFilter
-      ? excludeFilter.split(',').map((tag) => tag.trim().toLowerCase()).filter((tag) => tag)
+      ? excludeFilter
+          .split(",")
+          .map((tag) => tag.trim().toLowerCase())
+          .filter((tag) => tag)
       : [];
 
     // Check if recipe matches all include tags (if any)
     const includeMatch = includeTags.length
-      ? includeTags.every((tag) =>
-          (recipe.tags &&
-            recipe.tags.some((recipeTag) =>
-              recipeTag.toLowerCase().includes(tag)
-            )) ||
-          (recipe.ingredients &&
-            recipe.ingredients.some((ing) =>
-              ing.name.toLowerCase().includes(tag)
-            ))
+      ? includeTags.every(
+          (tag) =>
+            (recipe.tags &&
+              recipe.tags.some((recipeTag) => recipeTag.toLowerCase().includes(tag))) ||
+            (recipe.ingredients &&
+              recipe.ingredients.some((ing) => ing.name.toLowerCase().includes(tag))),
         )
       : true;
 
@@ -63,14 +67,13 @@ const RecipesArticles = () => {
     const excludeMatch = excludeTags.length
       ? excludeTags.every(
           (tag) =>
-            !(recipe.tags &&
-              recipe.tags.some((recipeTag) =>
-                recipeTag.toLowerCase().includes(tag)
-              )) &&
-            !(recipe.ingredients &&
-              recipe.ingredients.some((ing) =>
-                ing.name.toLowerCase().includes(tag)
-              ))
+            !(
+              recipe.tags && recipe.tags.some((recipeTag) => recipeTag.toLowerCase().includes(tag))
+            ) &&
+            !(
+              recipe.ingredients &&
+              recipe.ingredients.some((ing) => ing.name.toLowerCase().includes(tag))
+            ),
         )
       : true;
 
@@ -94,8 +97,8 @@ const RecipesArticles = () => {
   };
 
   const handleResetFilters = () => {
-    setIncludeFilter('');
-    setExcludeFilter('');
+    setIncludeFilter("");
+    setExcludeFilter("");
     setCurrentPage(1); // Reset to first page when filters are cleared
   };
 
@@ -133,15 +136,9 @@ const RecipesArticles = () => {
       <div className="recipes-articles-container">
         {/* Hero Section */}
         <section className="hero-section">
-          <img
-            className="hero-icon"
-            src="/Images/ad/recipe.png"
-            alt="Recipe book icon"
-          />
+          <img className="hero-icon" src="/Images/ad/recipe.png" alt="Recipe book icon" />
           <h1>Kitchen Articles</h1>
-          <p className="hero-subtitle">
-            Discover delicious recipes for every taste and occasion!
-          </p>
+          <p className="hero-subtitle">Discover delicious recipes for every taste and occasion!</p>
         </section>
 
         {/* Main Content with Filter and Recipes */}
@@ -156,9 +153,13 @@ const RecipesArticles = () => {
               ))
             ) : currentRecipes.length > 0 ? (
               currentRecipes.map((recipe) => (
-                <div key={recipe.id} className="recipe-item" onClick={() => handleRecipeClick(recipe)}>
+                <div
+                  key={recipe.id}
+                  className="recipe-item"
+                  onClick={() => handleRecipeClick(recipe)}
+                >
                   <img
-                    src={recipe.image || '/Images/placeholder.png'}
+                    src={recipe.image || "/Images/placeholder.png"}
                     alt={recipe.title}
                     className="recipe-image"
                   />
@@ -171,8 +172,8 @@ const RecipesArticles = () => {
                             ? recipe.ingredients
                                 .slice(0, 5)
                                 .map((ing) => ing.name)
-                                .join(' • ')
-                            : recipe.tags.slice(0, 5).join(' • ')}
+                                .join(" • ")
+                            : recipe.tags.slice(0, 5).join(" • ")}
                         </p>
                       </div>
                       <div className="recipe-meta">
@@ -185,8 +186,11 @@ const RecipesArticles = () => {
                             Array.from({ length: 5 }, (_, index) => (
                               <span
                                 key={index}
-                                className={`star ${index + 1 <= Math.floor(recipe.averageRating) ? 'filled' : ''} ${
-                                  index + 1 === Math.ceil(recipe.averageRating) && recipe.averageRating % 1 !== 0 ? 'half-filled' : ''
+                                className={`star ${index + 1 <= Math.floor(recipe.averageRating) ? "filled" : ""} ${
+                                  index + 1 === Math.ceil(recipe.averageRating) &&
+                                  recipe.averageRating % 1 !== 0
+                                    ? "half-filled"
+                                    : ""
                                 }`}
                               >
                                 ★
@@ -202,8 +206,8 @@ const RecipesArticles = () => {
             ) : (
               <p className="no-recipes">
                 {includeFilter || excludeFilter
-                  ? 'No recipes match the selected filters'
-                  : 'Loading recipes...'}
+                  ? "No recipes match the selected filters"
+                  : "Loading recipes..."}
               </p>
             )}
 
@@ -248,11 +252,7 @@ const RecipesArticles = () => {
                   className="filter-input"
                 />
               </div>
-              <Button
-                onClick={handleResetFilters}
-                className="reset-button"
-                variant="outlined"
-              >
+              <Button onClick={handleResetFilters} className="reset-button" variant="outlined">
                 Reset
               </Button>
             </div>
@@ -261,13 +261,8 @@ const RecipesArticles = () => {
 
         {/* Modal */}
         {selectedRecipe && (
-          <AddRecipe
-            open={isModalOpen}
-            handleClose={handleCloseModal}
-            recipe={selectedRecipe}
-          />
+          <AddRecipe open={isModalOpen} handleClose={handleCloseModal} recipe={selectedRecipe} />
         )}
-
       </div>
       <FeatureAd />
       <Footer />

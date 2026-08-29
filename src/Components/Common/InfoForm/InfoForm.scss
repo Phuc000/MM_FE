@@ -1,79 +1,78 @@
 .billing-details {
-    max-width: 900px;
-    width: 100%;
-    background-color: #fff;
+  max-width: 900px;
+  width: 100%;
+  background-color: #fff;
 
-    h2 {
-        margin-top: 0;
-      font-size: 1.8rem;
-      color: #333;
-      margin-bottom: 20px;
-    }
-  
-    .billing-form {
+  h2 {
+    margin-top: 0;
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 20px;
+  }
+
+  .billing-form {
+    display: flex;
+    flex-direction: column;
+
+    .form-row {
+      width: 100%;
       display: flex;
-      flex-direction: column;
-  
-      .form-row {
-        width: 100%;
-        display: flex;
-        gap: 15px;
-        margin-bottom: 20px;
-  
-        .form-group {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-  
-          label {
-            font-size: 1rem;
-            color: #555;
-            margin-bottom: 8px;
-          }
-  
-          input,
-          select,
-          textarea {
-            width: 100%;
-            padding: 20px;
-            font-size: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            transition: border-color 0.3s ease;
-  
-            &:focus {
-              border-color: #4a90e2;
-              outline: none;
-            }
-          }
-  
-          textarea {
-            resize: vertical;
-            min-height: 200px;
-          }
-  
-          select {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-color: #fff;
-            cursor: pointer;
-          }
-        }
-      }
-  
-      .form-group {
-        margin-bottom: 20px;
-  
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
+      gap: 15px;
+      margin-bottom: 20px;
 
-      // Media query for small screens (e.g., phones)
-      @media (max-width: 480px) {
-        padding: 0; // Remove padding on small screens
+      .form-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        label {
+          font-size: 1rem;
+          color: #555;
+          margin-bottom: 8px;
+        }
+
+        input,
+        select,
+        textarea {
+          width: 100%;
+          padding: 20px;
+          font-size: 1rem;
+          border: 1px solid #ccc;
+          border-radius: 8px;
+          transition: border-color 0.3s ease;
+
+          &:focus {
+            border-color: #4a90e2;
+            outline: none;
+          }
+        }
+
+        textarea {
+          resize: vertical;
+          min-height: 200px;
+        }
+
+        select {
+          -webkit-appearance: none;
+          -moz-appearance: none;
+          appearance: none;
+          background-color: #fff;
+          cursor: pointer;
+        }
       }
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    // Media query for small screens (e.g., phones)
+    @media (max-width: 480px) {
+      padding: 0; // Remove padding on small screens
     }
   }
-  
+}

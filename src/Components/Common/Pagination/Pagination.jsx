@@ -1,5 +1,5 @@
-import React from 'react';
-import './Pagination.css';
+import React from "react";
+import "./Pagination.css";
 
 const Pagination = ({ items, itemsPerPage = 10, children }) => {
   const [currentPage, setCurrentPage] = React.useState(1);
@@ -31,7 +31,7 @@ const Pagination = ({ items, itemsPerPage = 10, children }) => {
         <button
           key={page}
           onClick={() => goToPage(page)}
-          className={`btn btn--secondary ${currentPage === page ? 'active' : ''}`}
+          className={`btn btn--secondary ${currentPage === page ? "active" : ""}`}
         >
           {page}
         </button>
@@ -47,10 +47,10 @@ const Pagination = ({ items, itemsPerPage = 10, children }) => {
       <button
         key={1}
         onClick={() => goToPage(1)}
-        className={`btn btn--secondary ${currentPage === 1 ? 'active' : ''}`}
+        className={`btn btn--secondary ${currentPage === 1 ? "active" : ""}`}
       >
         1
-      </button>
+      </button>,
     );
 
     // Determine the range of pages to show around currentPage
@@ -66,7 +66,11 @@ const Pagination = ({ items, itemsPerPage = 10, children }) => {
 
     // Add ellipsis if there's a gap between 1 and startPage
     if (startPage > 2) {
-      buttons.push(<span key="ellipsis-start" className="pagination-ellipsis">...</span>);
+      buttons.push(
+        <span key="ellipsis-start" className="pagination-ellipsis">
+          ...
+        </span>,
+      );
     }
 
     // Add pages around currentPage
@@ -75,16 +79,20 @@ const Pagination = ({ items, itemsPerPage = 10, children }) => {
         <button
           key={page}
           onClick={() => goToPage(page)}
-          className={`btn btn--secondary ${currentPage === page ? 'active' : ''}`}
+          className={`btn btn--secondary ${currentPage === page ? "active" : ""}`}
         >
           {page}
-        </button>
+        </button>,
       );
     }
 
     // Add ellipsis if there's a gap between endPage and last page
     if (endPage < totalPages - 1) {
-      buttons.push(<span key="ellipsis-end" className="pagination-ellipsis">...</span>);
+      buttons.push(
+        <span key="ellipsis-end" className="pagination-ellipsis">
+          ...
+        </span>,
+      );
     }
 
     // Always show last page
@@ -93,10 +101,10 @@ const Pagination = ({ items, itemsPerPage = 10, children }) => {
         <button
           key={totalPages}
           onClick={() => goToPage(totalPages)}
-          className={`btn btn--secondary ${currentPage === totalPages ? 'active' : ''}`}
+          className={`btn btn--secondary ${currentPage === totalPages ? "active" : ""}`}
         >
           {totalPages}
-        </button>
+        </button>,
       );
     }
 
@@ -105,8 +113,10 @@ const Pagination = ({ items, itemsPerPage = 10, children }) => {
 
   return (
     <div className="pagination-container">
-      <div style={{ marginLeft: '15px' }}>
-        {children(currentItems, items.length, (
+      <div style={{ marginLeft: "15px" }}>
+        {children(
+          currentItems,
+          items.length,
           items.length > itemsPerPage && (
             <div className="pagination">
               <button
@@ -125,8 +135,8 @@ const Pagination = ({ items, itemsPerPage = 10, children }) => {
                 Next
               </button>
             </div>
-          )
-        ))}
+          ),
+        )}
       </div>
     </div>
   );

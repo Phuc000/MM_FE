@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import './AddRecipe.scss';
-import Modal from '@mui/material/Modal';
-import { Button, Chip, IconButton, Typography, Rating, Box, Tooltip } from '@mui/material';
-import AddToMealPlanDialog from '../AddMealPlanDialog';
-import AddToCartConfirmation from './AddToCartConfirmation';
-import ShopRecipeConfirmation from '../ShowRecipeConfirmation';
-import CloseIcon from '@mui/icons-material/Close';
-import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useAuth } from '../../../hooks/useAuth';
-import { useWebSocket } from '../../../hooks/useWebSocket';
-import { useLocationContext } from '../../../Context/LocationContext';
+import React, { useState, useEffect } from "react";
+import "./AddRecipe.scss";
+import Modal from "@mui/material/Modal";
+import { Button, Chip, IconButton, Typography, Rating, Box, Tooltip } from "@mui/material";
+import AddToMealPlanDialog from "../AddMealPlanDialog";
+import AddToCartConfirmation from "./AddToCartConfirmation";
+import ShopRecipeConfirmation from "../ShowRecipeConfirmation";
+import CloseIcon from "@mui/icons-material/Close";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../../hooks/useAuth";
+import { useWebSocket } from "../../../hooks/useWebSocket";
+import { useLocationContext } from "../../../Context/LocationContext";
 
 const ModalRecipe = ({ open, handleClose, recipe }) => {
   const [mealPlannerOpen, setMealPlannerOpen] = useState(false);
@@ -22,14 +22,14 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
   const locationContext = useLocationContext();
 
   // Using the WebSocket hook for AI cart assistant
-  const { 
-    wsStatus, 
+  const {
+    wsStatus,
     messages, // Access messages from useWebSocket
-    wsRef, 
+    wsRef,
     error,
     setError,
     cartActionInProgress,
-    handleShopRecipeConfirm
+    handleShopRecipeConfirm,
   } = useWebSocket(user?.id, locationContext);
   const [userRating, setUserRating] = useState(null); // State for user rating
 
@@ -51,17 +51,17 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
   useEffect(() => {
     // Skip if no messages
     if (!messages?.length) return;
-    
+
     // Look at the last message
     const latestMessage = messages[messages.length - 1];
-    
+
     // Check if it has shopRecipe data
     if (latestMessage?.shopRecipe) {
-      console.log('Found recipe ingredients in messages:', latestMessage.shopRecipe);
-      
+      console.log("Found recipe ingredients in messages:", latestMessage.shopRecipe);
+
       // Set foundIngredients state with the data from the message
       setFoundIngredients(latestMessage.shopRecipe);
-      
+
       // Close the confirmation dialog
       setCartConfirmOpen(false);
     }
@@ -72,27 +72,26 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
     if (wsRef.current && wsRef.current.readyState === WebSocket.OPEN) {
       // Reset any previously found ingredients
       setFoundIngredients(null);
-      
+
       // Send a message to the AI chatbot to process the recipe
       const message = {
         message: `SYSTEM INSTRUCTION: This is an automated recipe ingredients request. 
           Do not ask follow-up questions or request additional information.
           Find and add all matching ingredients for recipe "${recipe.title}" to user's cart immediately.`,
-        action: 'addRecipeToCart',
+        action: "addRecipeToCart",
       };
-      
-      const safeJSON = JSON.stringify(message)
-        .replace(/[\u0080-\uFFFF]/g, char => {
-          return '\\u' + ('0000' + char.charCodeAt(0).toString(16)).slice(-4);
-        });
-      
+
+      const safeJSON = JSON.stringify(message).replace(/[\u0080-\uFFFF]/g, (char) => {
+        return "\\u" + ("0000" + char.charCodeAt(0).toString(16)).slice(-4);
+      });
+
       wsRef.current.send(safeJSON);
-      
+
       // Show a processing toast
-      toast.info('AI is processing recipe ingredients...', {
-        position: 'bottom-left',
+      toast.info("AI is processing recipe ingredients...", {
+        position: "bottom-left",
         autoClose: 5000,
-        theme: 'colored',
+        theme: "colored",
       });
     } else {
       setError("WebSocket connection not available. Please try again later.");
@@ -104,17 +103,17 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
     try {
       // Use the handler from the useWebSocket hook
       await handleShopRecipeConfirm(selectedItems);
-      
+
       // Reset state and show success message
       setFoundIngredients(null);
       toast.success(`Added selected ingredients to your cart!`, {
-        position: 'bottom-left',
+        position: "bottom-left",
         autoClose: 3000,
       });
     } catch (err) {
-      console.error('Error adding ingredients to cart:', err);
-      toast.error('Failed to add some ingredients to cart', {
-        position: 'bottom-left',
+      console.error("Error adding ingredients to cart:", err);
+      toast.error("Failed to add some ingredients to cart", {
+        position: "bottom-left",
       });
     }
   };
@@ -123,9 +122,9 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
   const handleRatingChange = (event, newValue) => {
     setUserRating(newValue);
     toast.success(`Rated ${newValue} stars!`, {
-      position: 'bottom-left',
+      position: "bottom-left",
       autoClose: 3000,
-      theme: 'colored',
+      theme: "colored",
     });
   };
 
@@ -142,11 +141,7 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
           {/* Header with Image and Close Button */}
           <div className="modal-header">
             <img src={recipe.image} alt={recipe.title} className="recipe-image" />
-            <IconButton
-              onClick={handleClose}
-              className="close-button"
-              aria-label="Close"
-            >
+            <IconButton onClick={handleClose} className="close-button" aria-label="Close">
               <CloseIcon />
             </IconButton>
           </div>
@@ -163,14 +158,14 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
                 onChange={handleRatingChange}
                 precision={0.5} // Allow half-star ratings
                 size="medium"
-                sx={{ color: '#f5c518' }} // Gold color for stars
+                sx={{ color: "#f5c518" }} // Gold color for stars
               />
             </Tooltip>
           </Box>
           <div className="recipe-meta">
             <Typography variant="body2" className="meta-info">
-              <span>🕒 {recipe.readyInMinutes} min</span> •{' '}
-              <span>🍽️ {recipe.servings} servings</span> •{' '}
+              <span>🕒 {recipe.readyInMinutes} min</span> •{" "}
+              <span>🍽️ {recipe.servings} servings</span> •{" "}
               <span>❤️ Health Score: {recipe.healthScore}</span>
             </Typography>
           </div>
@@ -181,11 +176,7 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
               <Chip key={index} label={tag} className="tag-chip" size="small" />
             ))}
             {extraTagsCount > 0 && (
-              <Chip
-                label={`+${extraTagsCount}`}
-                className="tag-chip more-chip"
-                size="small"
-              />
+              <Chip label={`+${extraTagsCount}`} className="tag-chip more-chip" size="small" />
             )}
           </div>
 
@@ -201,7 +192,7 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
                   <li key={index} className="ingredient-item">
                     <span className="ingredient-amount">
                       {ingredient.amount} {ingredient.unit}
-                    </span>{' '}
+                    </span>{" "}
                     {ingredient.nameClean}
                   </li>
                 ))}
@@ -212,7 +203,7 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
                   <li key={index} className="ingredient-item">
                     <span className="ingredient-amount">
                       {ingredient.amount} {ingredient.unit}
-                    </span>{' '}
+                    </span>{" "}
                     {ingredient.nameClean}
                   </li>
                 ))}
@@ -229,10 +220,7 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
           <Typography variant="h6" className="section-title">
             Instructions
           </Typography>
-          <div
-            className="instructions"
-            dangerouslySetInnerHTML={{ __html: recipe.instructions }}
-          />
+          <div className="instructions" dangerouslySetInnerHTML={{ __html: recipe.instructions }} />
 
           {/* Show found ingredients if available */}
           {foundIngredients && (
@@ -269,14 +257,14 @@ const ModalRecipe = ({ open, handleClose, recipe }) => {
           </div>
         </div>
       </Modal>
-      
+
       {/* Meal planner dialog */}
       <AddToMealPlanDialog
         open={mealPlannerOpen}
         handleClose={() => setMealPlannerOpen(false)}
         recipe={recipe}
       />
-      
+
       {/* Cart confirmation dialog - only show if no ingredients found yet */}
       {!foundIngredients && (
         <AddToCartConfirmation

@@ -24,20 +24,20 @@ import {
   useMediaQuery,
   Pagination,
   Card,
-  CardContent 
+  CardContent,
 } from "@mui/material";
 import { useAuth } from "../../../hooks/useAuth";
 import OrderDetailsModal from "./OrderDetailsModal";
 import "./StoreOrders.scss";
 // Import icons for status chips
-import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import LocalShippingIcon from '@mui/icons-material/LocalShipping';
-import AccessTimeIcon from '@mui/icons-material/AccessTime';
-import PersonIcon from '@mui/icons-material/Person';
-import InfoIcon from '@mui/icons-material/Info';
-import PaymentIcon from '@mui/icons-material/Payment';
-import EventIcon from '@mui/icons-material/Event';
-import CancelIcon from '@mui/icons-material/Cancel';
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import PersonIcon from "@mui/icons-material/Person";
+import InfoIcon from "@mui/icons-material/Info";
+import PaymentIcon from "@mui/icons-material/Payment";
+
+import CancelIcon from "@mui/icons-material/Cancel";
 
 const StoreOrders = () => {
   // Keep existing state and hooks
@@ -63,7 +63,7 @@ const StoreOrders = () => {
           {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
-          }
+          },
         );
         const employeeData = response.data;
         setStoreId(employeeData.storeID);
@@ -82,13 +82,16 @@ const StoreOrders = () => {
     const fetchTransactions = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/transactions/store/${storeId}`, {
-          headers: { "Content-Type": "application/json" },
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/transactions/store/${storeId}`,
+          {
+            headers: { "Content-Type": "application/json" },
+            withCredentials: true,
+          },
+        );
         // Sort transactions by dateAndTime in descending order
         const sortedTransactions = response.data.sort(
-          (a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime)
+          (a, b) => new Date(b.dateAndTime) - new Date(a.dateAndTime),
         );
         setTransactions(sortedTransactions);
       } catch (error) {
@@ -112,17 +115,23 @@ const StoreOrders = () => {
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
-        }
+        },
       );
       setTransactions((prev) =>
-        prev.map((tx) =>
-          tx.transactionId === transactionId ? { ...tx, deliveryStatus: 1 } : tx
-        )
+        prev.map((tx) => (tx.transactionId === transactionId ? { ...tx, deliveryStatus: 1 } : tx)),
       );
-      setSnackbar({ open: true, message: "Transaction status updated to Prepared.", severity: "success" });
+      setSnackbar({
+        open: true,
+        message: "Transaction status updated to Prepared.",
+        severity: "success",
+      });
     } catch (error) {
       console.error("Error updating transaction status:", error);
-      setSnackbar({ open: true, message: "Failed to update transaction status.", severity: "error" });
+      setSnackbar({
+        open: true,
+        message: "Failed to update transaction status.",
+        severity: "error",
+      });
     }
   };
 
@@ -155,15 +164,13 @@ const StoreOrders = () => {
   const formatTransactionId = (id) => {
     if (!id) return "";
     // Show only the first 4 and last 4 characters for better readability
-    return id.length > 10 
-      ? `#${id.substring(0, 4)}...${id.substring(id.length - 4)}`
-      : `#${id}`;
+    return id.length > 10 ? `#${id.substring(0, 4)}...${id.substring(id.length - 4)}` : `#${id}`;
   };
 
   // Add a function to get status chips
   const getStatusChip = (status) => {
     let color, icon, label;
-    
+
     switch (status) {
       case 0:
         color = "warning";
@@ -204,13 +211,13 @@ const StoreOrders = () => {
         color = "default";
         label = "Unknown";
     }
-    
+
     return (
-      <Chip 
-        icon={icon} 
-        label={label} 
-        color={color} 
-        size="small" 
+      <Chip
+        icon={icon}
+        label={label}
+        color={color}
+        size="small"
         variant="outlined"
         sx={{ fontWeight: 500 }}
       />
@@ -220,7 +227,7 @@ const StoreOrders = () => {
   // Format date in a more readable way
   const formatDate = (dateString) => {
     const date = new Date(dateString);
-    return `${date.toLocaleDateString()} - ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    return `${date.toLocaleDateString()} - ${date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`;
   };
 
   const handleStatusChange = (event) => {
@@ -242,10 +249,7 @@ const StoreOrders = () => {
     return getStatusText(tx.deliveryStatus) === statusFilter;
   });
 
-  const paginatedData = filteredTransactions.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-  );
+  const paginatedData = filteredTransactions.slice((page - 1) * itemsPerPage, page * itemsPerPage);
 
   const handleChangePage = (_, value) => {
     setPage(value);
@@ -283,7 +287,7 @@ const StoreOrders = () => {
       </Box>
 
       {loading ? (
-        Array.from(new Array(itemsPerPage)).map((_, index) => (
+        Array.from(new Array(itemsPerPage)).map((_, index) =>
           isMobile ? (
             <Card key={index} sx={{ mb: 2 }}>
               <CardContent>
@@ -294,8 +298,8 @@ const StoreOrders = () => {
             </Card>
           ) : (
             <Skeleton key={index} variant="rectangular" height={60} sx={{ mb: 1 }} />
-          )
-        ))
+          ),
+        )
       ) : paginatedData.length > 0 ? (
         isMobile ? (
           paginatedData.map((tx) => (
@@ -316,7 +320,7 @@ const StoreOrders = () => {
                 <Typography variant="body1" sx={{ mb: 0.5 }}>
                   <strong>Payment:</strong> {tx.paymentMethod}
                 </Typography>
-                <Typography variant="body1" sx={{ fontWeight: 700, color: '#fe3bd4' }}>
+                <Typography variant="body1" sx={{ fontWeight: 700, color: "#fe3bd4" }}>
                   <strong>Total:</strong> ${tx.totalPrice.toFixed(2)}
                 </Typography>
                 <TableCell
@@ -325,15 +329,20 @@ const StoreOrders = () => {
                     display: "flex",
                     justifyContent: "center",
                     borderBottom: "none", // <-- remove bottom border
-                    boxShadow: "none",     // <-- ensure no shadow
-                    paddingBottom: 0,           // <-- remove padding
+                    boxShadow: "none", // <-- ensure no shadow
+                    paddingBottom: 0, // <-- remove padding
                   }}
                 >
                   {tx.deliveryStatus === 0 && (
                     <Button
                       variant="contained"
                       size="small"
-                      sx={{ backgroundColor: "#fe3bd4", color: "white", '&:hover': { backgroundColor: '#d81cb1' }, mr: 1 }}
+                      sx={{
+                        backgroundColor: "#fe3bd4",
+                        color: "white",
+                        "&:hover": { backgroundColor: "#d81cb1" },
+                        mr: 1,
+                      }}
                       onClick={(e) => {
                         e.stopPropagation();
                         handlePrepare(tx.transactionId);
@@ -345,7 +354,7 @@ const StoreOrders = () => {
                   <Button
                     variant="outlined"
                     size="small"
-                    sx={{ borderColor: 'rgba(0, 0, 0, 0.23)', color: 'rgba(0, 0, 0, 0.87)' }}
+                    sx={{ borderColor: "rgba(0, 0, 0, 0.23)", color: "rgba(0, 0, 0, 0.87)" }}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleOpenModal(tx);
@@ -358,49 +367,57 @@ const StoreOrders = () => {
             </Card>
           ))
         ) : (
-          <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2, boxShadow: '0 2px 8px rgba(0,0,0,0.08)', mb: 3 }}>
+          <TableContainer
+            component={Paper}
+            elevation={1}
+            sx={{ borderRadius: 2, boxShadow: "0 2px 8px rgba(0,0,0,0.08)", mb: 3 }}
+          >
             <Table aria-label="transactions table">
               <TableHead>
-                <TableRow sx={{ backgroundColor: 'rgba(254, 59, 212, 0.05)' }}>
+                <TableRow sx={{ backgroundColor: "rgba(254, 59, 212, 0.05)" }}>
                   <TableCell sx={{ fontWeight: 700 }}>Order</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Customer</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Date & Time</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Status</TableCell>
                   <TableCell sx={{ fontWeight: 700 }}>Payment</TableCell>
-                  <TableCell sx={{ fontWeight: 700 }} align="right">Total</TableCell>
-                  <TableCell align="center" sx={{ fontWeight: 700 }}>Actions</TableCell>
+                  <TableCell sx={{ fontWeight: 700 }} align="right">
+                    Total
+                  </TableCell>
+                  <TableCell align="center" sx={{ fontWeight: 700 }}>
+                    Actions
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {paginatedData.map((tx) => (
                   <TableRow
                     key={tx.transactionId}
-                    sx={{ '&:hover': { backgroundColor: 'rgba(0,0,0,0.03)' }, cursor: 'pointer' }}
+                    sx={{ "&:hover": { backgroundColor: "rgba(0,0,0,0.03)" }, cursor: "pointer" }}
                     onClick={() => handleOpenModal(tx)}
                   >
                     <TableCell>
                       <Tooltip title={tx.transactionId} placement="top">
-                        <Typography variant="body2" fontWeight={600} sx={{ color: '#333' }}>
+                        <Typography variant="body2" fontWeight={600} sx={{ color: "#333" }}>
                           {formatTransactionId(tx.transactionId)}
                         </Typography>
                       </Tooltip>
                     </TableCell>
                     <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <PersonIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <PersonIcon fontSize="small" sx={{ mr: 1, color: "text.secondary" }} />
                         <Typography variant="body2">{tx.customerID}</Typography>
                       </Box>
                     </TableCell>
                     <TableCell>{formatDate(tx.dateAndTime)}</TableCell>
                     <TableCell>{getStatusChip(tx.deliveryStatus)}</TableCell>
                     <TableCell>
-                      <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        <PaymentIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+                      <Box sx={{ display: "flex", alignItems: "center" }}>
+                        <PaymentIcon fontSize="small" sx={{ mr: 1, color: "text.secondary" }} />
                         <Typography variant="body2">{tx.paymentMethod}</Typography>
                       </Box>
                     </TableCell>
                     <TableCell align="right">
-                      <Typography variant="body2" fontWeight={700} sx={{ color: '#fe3bd4' }}>
+                      <Typography variant="body2" fontWeight={700} sx={{ color: "#fe3bd4" }}>
                         ${tx.totalPrice.toFixed(2)}
                       </Typography>
                     </TableCell>
@@ -409,7 +426,12 @@ const StoreOrders = () => {
                         <Button
                           variant="contained"
                           size="small"
-                          sx={{ backgroundColor: "#fe3bd4", color: "white", '&:hover': { backgroundColor: '#d81cb1' }, mr: 1 }}
+                          sx={{
+                            backgroundColor: "#fe3bd4",
+                            color: "white",
+                            "&:hover": { backgroundColor: "#d81cb1" },
+                            mr: 1,
+                          }}
                           onClick={(e) => {
                             e.stopPropagation();
                             handlePrepare(tx.transactionId);
@@ -421,7 +443,7 @@ const StoreOrders = () => {
                       <Button
                         variant="outlined"
                         size="small"
-                        sx={{ borderColor: 'rgba(0, 0, 0, 0.23)', color: 'rgba(0, 0, 0, 0.87)' }}
+                        sx={{ borderColor: "rgba(0, 0, 0, 0.23)", color: "rgba(0, 0, 0, 0.87)" }}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleOpenModal(tx);
@@ -453,7 +475,7 @@ const StoreOrders = () => {
             display: "flex",
             justifyContent: "center",
             borderBottom: "none", // <-- remove bottom border
-            boxShadow: "none",     // <-- ensure no shadow
+            boxShadow: "none", // <-- ensure no shadow
           }}
         />
       </Box>

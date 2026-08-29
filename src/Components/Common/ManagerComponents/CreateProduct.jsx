@@ -90,12 +90,7 @@ const CreateProduct = () => {
 
         <div className="right-section">
           <label>Upload Product Images (up to 4)</label>
-          <input
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={handleImageChange}
-          />
+          <input type="file" multiple accept="image/*" onChange={handleImageChange} />
 
           <div className="image-preview">
             {images.map((src, index) => (

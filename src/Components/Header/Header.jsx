@@ -8,9 +8,9 @@ import LocationSelector from "../Modal/LocationSelector";
 
 // import Badge from '@mui/material/Badge';
 // import { styled } from '@mui/material/styles';
-import SearchIcon from '@mui/icons-material/Search';
-import LocationOnIcon from '@mui/icons-material/LocationOn'; // Import Location Icon
-import { Box, Typography} from '@mui/material';
+import SearchIcon from "@mui/icons-material/Search";
+import LocationOnIcon from "@mui/icons-material/LocationOn"; // Import Location Icon
+import { Box, Typography } from "@mui/material";
 import "./Header.css";
 
 import debounce from "lodash.debounce";
@@ -22,25 +22,31 @@ const Header = () => {
   const { location } = useLocationContext();
   const [showSelector, setShowSelector] = useState(false);
 
-  
   const handleProductSelect = async (product) => {
     try {
       // Call API 1: Get product details by name
       console.log("Product selected:", product);
-      const response1 = await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/products/chatbot`, [product],{
-        headers: {
-          'Content-Type': 'application/json',
+      const response1 = await axios.post(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/products/chatbot`,
+        [product],
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
       console.log("Product details:", response1.data);
       const productId = response1.data[0].productID;
-        console.log("Product ID:", productId);
+      console.log("Product ID:", productId);
       // Call API 2: Get product store information by product ID
-      const response2 = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/${productId}`,{
-        headers: {
-          'Content-Type': 'application/json',
+      const response2 = await axios.get(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/${productId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
       const storeId = response2.data[0].storeID;
 
       // Navigate to the product's store page
@@ -49,7 +55,7 @@ const Header = () => {
       console.error("Error fetching product or store information:", error);
     }
   };
-  
+
   // const StyledBadge = styled(Badge)(({ theme }) => ({
   //   '& .MuiBadge-badge': {
   //     right: 10,
@@ -58,7 +64,6 @@ const Header = () => {
   //     padding: '0 4px',
   //   },
   // }));
-
 
   // Test here
   const [query, setQuery] = useState("");
@@ -106,10 +111,7 @@ const Header = () => {
   return (
     <div className="header">
       <nav>
-        <LocationSelector
-          open={showSelector} 
-          onClose={() => setShowSelector(false)} 
-        />
+        <LocationSelector open={showSelector} onClose={() => setShowSelector(false)} />
 
         <Link to="/" className="navbar-item home_logo">
           <img src="/Images/logo.png" alt="logo-shophouse" className="nav__logo" />
@@ -129,18 +131,18 @@ const Header = () => {
                 <SearchIcon />
               </button>
               {suggestions.length > 0 && (
-            <div className="dropdown">
-              {suggestions.map((product, index) => (
-                <a
-                  key={index}
-                  onClick={() => handleProductSelect(product)} // Call handleProductSelect on click
-                  className="dropdown-item"
-                >
-                  {product}
-                </a>
-              ))}
-            </div>
-          )}
+                <div className="dropdown">
+                  {suggestions.map((product, index) => (
+                    <a
+                      key={index}
+                      onClick={() => handleProductSelect(product)} // Call handleProductSelect on click
+                      className="dropdown-item"
+                    >
+                      {product}
+                    </a>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -153,25 +155,19 @@ const Header = () => {
               MEAL PLANNER
             </Link>
           </li>
-                
+
           <li>
-            <Link
-              to="/Chat"
-              className={`a__navbar btn btn--primary ${getNavItemClass("/Chat")}`}
-            >
+            <Link to="/Chat" className={`a__navbar btn btn--primary ${getNavItemClass("/Chat")}`}>
               CHATBOT
             </Link>
           </li>
-                
+
           <li>
-            <Link
-              to="/Cart"
-              className={`a__navbar btn btn--primary ${getNavItemClass("/Cart")}`}
-            >
+            <Link to="/Cart" className={`a__navbar btn btn--primary ${getNavItemClass("/Cart")}`}>
               MY CART
             </Link>
           </li>
-                
+
           {!user && (
             <li>
               <Link
@@ -182,7 +178,7 @@ const Header = () => {
               </Link>
             </li>
           )}
-        
+
           {user && (
             <li>
               <Link
@@ -204,19 +200,24 @@ const Header = () => {
           width="100%"
           flexWrap="wrap"
           flexDirection={{ xs: "column", sm: "row" }}
-          sx={{ padding: { xs: '10px', sm: '20px' }}}
+          sx={{ padding: { xs: "10px", sm: "20px" } }}
         >
-          <Box sx={{marginBottom: { xs: '5px', sm: 0} }} display="flex" alignItems="center" gap={3}>
+          <Box
+            sx={{ marginBottom: { xs: "5px", sm: 0 } }}
+            display="flex"
+            alignItems="center"
+            gap={3}
+          >
             <Link to="/" className={getNavItemClass("/")}>
               <Typography
                 variant="body1"
                 sx={{
                   fontWeight: 900,
-                  fontFamily: 'Quicksand, sans-serif',
-                  transition: 'color 0.3s',
-                  color: 'rgb(24, 40, 51)',
-                  '&:hover': {
-                    color: '#fe3bd4',
+                  fontFamily: "Quicksand, sans-serif",
+                  transition: "color 0.3s",
+                  color: "rgb(24, 40, 51)",
+                  "&:hover": {
+                    color: "#fe3bd4",
                   },
                 }}
               >
@@ -228,11 +229,11 @@ const Header = () => {
                 variant="body1"
                 sx={{
                   fontWeight: 900,
-                  fontFamily: 'Quicksand, sans-serif',
-                  transition: 'color 0.3s',
-                  color: 'rgb(24, 40, 51)',
-                  '&:hover': {
-                    color: '#fe3bd4',
+                  fontFamily: "Quicksand, sans-serif",
+                  transition: "color 0.3s",
+                  color: "rgb(24, 40, 51)",
+                  "&:hover": {
+                    color: "#fe3bd4",
                   },
                 }}
               >
@@ -244,11 +245,11 @@ const Header = () => {
                 variant="body1"
                 sx={{
                   fontWeight: 900,
-                  fontFamily: 'Quicksand, sans-serif',
-                  transition: 'color 0.3s',
-                  color: 'rgb(24, 40, 51)',
-                  '&:hover': {
-                    color: '#fe3bd4',
+                  fontFamily: "Quicksand, sans-serif",
+                  transition: "color 0.3s",
+                  color: "rgb(24, 40, 51)",
+                  "&:hover": {
+                    color: "#fe3bd4",
                   },
                 }}
               >
@@ -273,21 +274,21 @@ const Header = () => {
             </Link> */}
           </Box>
           {/* User current location on the right with MUI styling */}
-          <Box 
-            display="flex" 
-            alignItems="center" 
-            justifyContent="flex-end" 
-            sx={{ cursor: 'pointer', pr: { xs: 1, sm: 2 } }} 
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="flex-end"
+            sx={{ cursor: "pointer", pr: { xs: 1, sm: 2 } }}
             onClick={() => setShowSelector(true)} // Open Location Selector on click
             aria-label="Change Location"
           >
             <LocationOnIcon color="primary" />
-            <Typography 
-              variant="body1" 
-              sx={{ 
-                fontWeight: 900, 
-                fontFamily: 'Quicksand, sans-serif',
-                ml: 1 
+            <Typography
+              variant="body1"
+              sx={{
+                fontWeight: 900,
+                fontFamily: "Quicksand, sans-serif",
+                ml: 1,
               }}
             >
               {location?.ward.name}, {location?.city.name}

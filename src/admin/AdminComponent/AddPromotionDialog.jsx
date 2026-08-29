@@ -1,5 +1,5 @@
 // src/admin/AddPromotionDialog.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -16,20 +16,20 @@ import {
   OutlinedInput,
   FormHelperText,
   CircularProgress,
-} from '@mui/material';
-import axios from 'axios';
+} from "@mui/material";
+import axios from "axios";
 
-const promotionTypes = ['ProductPromotion', 'BillPromotion', 'CustomerPromotion'];
+const promotionTypes = ["ProductPromotion", "BillPromotion", "CustomerPromotion"];
 
 const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
   const [promotion, setPromotion] = useState({
-    name: '',
-    description: '',
-    discount: '',
-    startDay: '',
-    endDay: '',
-    type: '',
-    category: '',
+    name: "",
+    description: "",
+    discount: "",
+    startDay: "",
+    endDay: "",
+    type: "",
+    category: "",
     specificFields: {},
   });
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -42,11 +42,11 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
       try {
         setLoading(true);
         const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_API_URL}/products/category`
+          `${import.meta.env.VITE_REACT_APP_API_URL}/products/category`,
         );
         setCategories(response.data);
       } catch (error) {
-        console.error('Error fetching categories:', error);
+        console.error("Error fetching categories:", error);
       } finally {
         setLoading(false);
       }
@@ -61,11 +61,11 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
         try {
           setLoading(true);
           const response = await axios.get(
-            `${import.meta.env.VITE_REACT_APP_API_URL}/products/category/${promotion.category}`
+            `${import.meta.env.VITE_REACT_APP_API_URL}/products/category/${promotion.category}`,
           );
           setFilteredProducts(response.data);
         } catch (error) {
-          console.error('Error fetching products by category:', error);
+          console.error("Error fetching products by category:", error);
         } finally {
           setLoading(false);
         }
@@ -90,7 +90,7 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
 
   const handleProductSelection = (event) => {
     const { value } = event.target;
-    if (promotion.type === 'CustomerPromotion') {
+    if (promotion.type === "CustomerPromotion") {
       setPromotion({
         ...promotion,
         specificFields: { productId: value },
@@ -107,13 +107,13 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
     handleSave(promotion);
     handleClose();
     setPromotion({
-      name: '',
-      description: '',
-      discount: '',
-      startDay: '',
-      endDay: '',
-      type: '',
-      category: '',
+      name: "",
+      description: "",
+      discount: "",
+      startDay: "",
+      endDay: "",
+      type: "",
+      category: "",
       specificFields: {},
     });
     setFilteredProducts([]);
@@ -145,7 +145,7 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
           label="Discount"
           name="discount"
           type="number"
-          inputProps={{ step: '0.01' }}
+          inputProps={{ step: "0.01" }}
           value={promotion.discount}
           onChange={handleChange}
           fullWidth
@@ -175,12 +175,7 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
         />
         <FormControl fullWidth margin="dense" required>
           <InputLabel>Promotion Type</InputLabel>
-          <Select
-            name="type"
-            value={promotion.type}
-            onChange={handleChange}
-            label="Promotion Type"
-          >
+          <Select name="type" value={promotion.type} onChange={handleChange} label="Promotion Type">
             {promotionTypes.map((type) => (
               <MenuItem value={type} key={type}>
                 {type}
@@ -188,7 +183,7 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
             ))}
           </Select>
         </FormControl>
-        {promotion.type && promotion.type !== 'BillPromotion' && (
+        {promotion.type && promotion.type !== "BillPromotion" && (
           <FormControl fullWidth margin="dense" required>
             <InputLabel>Category</InputLabel>
             <Select
@@ -218,7 +213,7 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
         )}
 
         {/* Specific Fields Based on Promotion Type */}
-        {promotion.type === 'ProductPromotion' && (
+        {promotion.type === "ProductPromotion" && (
           <FormControl fullWidth margin="dense">
             <InputLabel>Products</InputLabel>
             <Select
@@ -231,9 +226,10 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
                 selected
                   .map(
                     (productId) =>
-                      filteredProducts.find((product) => product.productID === productId)?.name || ''
+                      filteredProducts.find((product) => product.productID === productId)?.name ||
+                      "",
                   )
-                  .join(', ')
+                  .join(", ")
               }
               disabled={loading || filteredProducts.length === 0}
             >
@@ -262,14 +258,14 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
           </FormControl>
         )}
 
-        {promotion.type === 'BillPromotion' && (
+        {promotion.type === "BillPromotion" && (
           <>
             <TextField
               margin="dense"
               label="Apply Price"
               name="applyPrice"
               type="number"
-              value={promotion.specificFields.applyPrice || ''}
+              value={promotion.specificFields.applyPrice || ""}
               onChange={handleSpecificFieldChange}
               fullWidth
               required
@@ -279,7 +275,7 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
               label="Promotion Chance"
               name="promotionChance"
               type="number"
-              value={promotion.specificFields.promotionChance || ''}
+              value={promotion.specificFields.promotionChance || ""}
               onChange={handleSpecificFieldChange}
               fullWidth
               required
@@ -287,12 +283,12 @@ const AddPromotionDialog = ({ open, handleClose, handleSave }) => {
           </>
         )}
 
-        {promotion.type === 'CustomerPromotion' && (
+        {promotion.type === "CustomerPromotion" && (
           <FormControl fullWidth margin="dense">
             <InputLabel>Product</InputLabel>
             <Select
               name="productId"
-              value={promotion.specificFields.productId || ''}
+              value={promotion.specificFields.productId || ""}
               onChange={handleProductSelection}
               label="Product"
               disabled={loading || filteredProducts.length === 0}

@@ -1,115 +1,114 @@
 .promotion-container {
-    padding: 20px;
-    background-color: white;
-    border-radius: 10px;
-    max-width: fit-content;
-    // margin: 0 auto;
-    font-family: 'Arial', sans-serif;
-  
-    .promo-section {
-      margin-bottom: 16px;
-    }
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  max-width: fit-content;
+  // margin: 0 auto;
+  font-family: "Arial", sans-serif;
 
-    .promotion-title {
-      font-size: 2.5rem;
-      text-align: center;
-      color: #333;
-      margin-bottom: 20px;
-      font-weight: bold;
-    }
-  
-    .promotion-subtitle {
-      font-size: 1.3rem;
-      text-align: center;
-      color: #777;
-      margin-bottom: 30px;
-    }
-  
-    .promo-list-title {
-      font-size: 1.8rem;
-      color: #444;
-      margin-bottom: 15px;
-      font-weight: 900;
-      font-family: 'Quicksand', sans-serif;
-    }
-  
-    .promo-list {
-      list-style: none;
-      padding: 0;
-  
-      .promo-item {
-        background-color: white;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 15px;
-        margin-bottom: 25px;
-        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
+  .promo-section {
+    margin-bottom: 16px;
+  }
+
+  .promotion-title {
+    font-size: 2.5rem;
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+
+  .promotion-subtitle {
+    font-size: 1.3rem;
+    text-align: center;
+    color: #777;
+    margin-bottom: 30px;
+  }
+
+  .promo-list-title {
+    font-size: 1.8rem;
+    color: #444;
+    margin-bottom: 15px;
+    font-weight: 900;
+    font-family: "Quicksand", sans-serif;
+  }
+
+  .promo-list {
+    list-style: none;
+    padding: 0;
+
+    .promo-item {
+      background-color: white;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 15px;
+      margin-bottom: 25px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      display: flex;
+      justify-content: space-between;
+
+      &:hover {
+        transform: translateY(-5px);
+      }
+
+      .promo-header {
         display: flex;
         justify-content: space-between;
-  
-        &:hover {
-          transform: translateY(-5px);
+        align-items: center;
+        width: 100%;
+        margin-bottom: 10px;
+
+        .promo-name {
+          font-size: 1.8rem;
+          font-weight: bold;
+          color: #fe3bd4;
         }
-  
-        .promo-header {
+
+        .promo-discount {
+          background-color: #fe3bd4;
+          padding: 10px;
+          color: white;
+          font-size: 1.5rem;
+          border-radius: 8px;
+          text-align: center;
           display: flex;
-          justify-content: space-between;
-          align-items: center;
-          width: 100%;
-          margin-bottom: 10px;
-  
-          .promo-name {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: #fe3bd4;
-          }
-  
-          .promo-discount {
-            background-color: #fe3bd4;
-            padding: 10px;
-            color: white;
-            font-size: 1.5rem;
-            border-radius: 8px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-  
-            span:last-child {
-              font-size: 1rem;
-              font-weight: 300;
-            }
+          flex-direction: column;
+          justify-content: center;
+
+          span:last-child {
+            font-size: 1rem;
+            font-weight: 300;
           }
         }
-  
-        .promo-details {
-          font-size: 1rem;
-          color: #555;
-          width: 100%;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-  
-          p {
-            margin: 5px 0;
-  
-            strong {
-              color: #333;
-            }
+      }
+
+      .promo-details {
+        font-size: 1rem;
+        color: #555;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        p {
+          margin: 5px 0;
+
+          strong {
+            color: #333;
           }
-  
-          .promo-dates {
-            display: flex;
-            flex-direction: column;
-  
-            i {
-              margin-right: 5px;
-              color: #999;
-            }
+        }
+
+        .promo-dates {
+          display: flex;
+          flex-direction: column;
+
+          i {
+            margin-right: 5px;
+            color: #999;
           }
         }
       }
     }
   }
-  
+}

@@ -1,4 +1,4 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext } from "react";
 
 const TimerContext = createContext();
 
@@ -10,9 +10,7 @@ export const TimerProvider = ({ children }) => {
   };
 
   return (
-    <TimerContext.Provider value={{ refreshKey, refreshTimer }}>
-      {children}
-    </TimerContext.Provider>
+    <TimerContext.Provider value={{ refreshKey, refreshTimer }}>{children}</TimerContext.Provider>
   );
 };
 

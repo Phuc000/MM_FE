@@ -1,18 +1,18 @@
 // src/Pages/Cart/Cart.jsx
-import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Header, Footer, Title, CartSummary } from '../../Components';
-import { useAuth } from '../../hooks/useAuth'; // Import useAuth
-import PromotionTicket from '../../Components/Common/PromotionTicket/PromotionTicket';
-import { Button } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Header, Footer, Title, CartSummary } from "../../Components";
+import { useAuth } from "../../hooks/useAuth"; // Import useAuth
+import PromotionTicket from "../../Components/Common/PromotionTicket/PromotionTicket";
+import { Button } from "@mui/material";
+import DeleteIcon from "@mui/icons-material/Delete";
 
-import { Typography } from '@mui/material';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios'; // Import axios for making HTTP requests
-import './Cart.css';
-import './Style.scss';
+import { Typography } from "@mui/material";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import axios from "axios"; // Import axios for making HTTP requests
+import "./Cart.css";
+import "./Style.scss";
 
 const Cart = () => {
   const [cart, setCart] = useState([]);
@@ -26,7 +26,6 @@ const Cart = () => {
 
   // Check for valid user role or redirect to Login
   useEffect(() => {
-    
     const validateUserAndNavigate = async () => {
       if (!user || user.role !== "Customer") {
         navigate("/Login");
@@ -35,12 +34,12 @@ const Cart = () => {
 
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_API_URL}/cart/checkout/${user.id}`
+          `${import.meta.env.VITE_REACT_APP_API_URL}/cart/checkout/${user.id}`,
         );
         if (response.data === true) {
           navigate("/CheckOut");
         } else {
-          console.log("CAll here"); 
+          console.log("CAll here");
           await fetchCart(user.id);
         }
       } catch (error) {
@@ -57,42 +56,42 @@ const Cart = () => {
       // Step 1: Get cart items and selected promotion for the customer
       const cartResponse = await axios.get(
         `${import.meta.env.VITE_REACT_APP_API_URL}/cart/${customerId}`,
-        { headers: { 'Content-Type': 'application/json' } }
+        { headers: { "Content-Type": "application/json" } },
       );
       console.log("Cart Response:", cartResponse.data);
-      
+
       const cartItems = cartResponse.data.cart.cartItems;
       const selectedPromotions = cartResponse.data.selectedPromotions;
-  
+
       // Update cart state
       setCart(cartItems);
       setSelectedCustomerPromotions(selectedPromotions); // Set the already selected customer promotions
       calculateTotals(cartItems, selectedPromotions);
-  
+
       console.log("Check cart:", cartItems);
       console.log("Check selected promotions:", selectedPromotions);
-  
+
       // Step 2: Get all customer promotions for the products in the cart
       const productIdList = cartItems.map((item) => item.productID);
       console.log("Product ID List:", productIdList);
-  
+
       const promotionResponse = await axios.post(
         `${import.meta.env.VITE_REACT_APP_API_URL}/promotions/customer/product`,
         productIdList, // Send the array
-        { headers: { 'Content-Type': 'application/json' } }
+        { headers: { "Content-Type": "application/json" } },
       );
-  
+
       setCustomerPromotions(promotionResponse.data);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
   };
-  
+
   const handleRemoveItem = async (productId, storeId, discountedPrice, quantity) => {
     // Remove item from cart
     try {
       await axios.delete(
-        `${import.meta.env.VITE_REACT_APP_API_URL}/cart/remove/${user.id}/${productId}/${storeId}/${discountedPrice}/${quantity}`
+        `${import.meta.env.VITE_REACT_APP_API_URL}/cart/remove/${user.id}/${productId}/${storeId}/${discountedPrice}/${quantity}`,
       );
       var newCart = cart.filter((item) => item.productID !== productId);
       setCart(newCart);
@@ -104,20 +103,28 @@ const Cart = () => {
       // Filter promotions and build the indices set in a single pass
       selectedCustomerPromotions.forEach((promotion, index) => {
         if (promotion.product.productId === productId) {
-          removedSelectedPromotions.push(promotion);  // Collect matching promotions
-          removedIndicesSet.add(index);  // Track the index of the removed promotion
+          removedSelectedPromotions.push(promotion); // Collect matching promotions
+          removedIndicesSet.add(index); // Track the index of the removed promotion
         }
       });
 
       // Filter out the elements in amountDiscount using the indices set
-      let updatedAmountDiscount = amountDiscount.filter((_, index) => !removedIndicesSet.has(index));
+      let updatedAmountDiscount = amountDiscount.filter(
+        (_, index) => !removedIndicesSet.has(index),
+      );
 
       // Update the state with the new amountDiscount array
       setAmountDiscount(updatedAmountDiscount);
       console.log("Removed Selected Promotions:", removedSelectedPromotions);
-      var response = await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/cart/remove-select-promotion/${user.id}`, removedSelectedPromotions, { headers: { 'Content-Type': 'application/json' } });
+      var response = await axios.post(
+        `${import.meta.env.VITE_REACT_APP_API_URL}/cart/remove-select-promotion/${user.id}`,
+        removedSelectedPromotions,
+        { headers: { "Content-Type": "application/json" } },
+      );
       setSelectedCustomerPromotions(response.data);
-      let newPromotionList = customerPromotions.filter((promotion) => promotion.product.productId !== productId);
+      let newPromotionList = customerPromotions.filter(
+        (promotion) => promotion.product.productId !== productId,
+      );
       setCustomerPromotions(newPromotionList);
       console.log("New Customer Promotions:", newPromotionList);
 
@@ -192,26 +199,26 @@ const Cart = () => {
   const handleSelectPromotion = async (promotion) => {
     // Check if the promotion is already selected
     const isAlreadySelected = selectedCustomerPromotions.some(
-      (selectedPromotion) => selectedPromotion.promotionId === promotion.promotionId
+      (selectedPromotion) => selectedPromotion.promotionId === promotion.promotionId,
     );
-  
+
     let updatedPromotions;
     if (isAlreadySelected) {
       // Remove the promotion if it's already selected
       updatedPromotions = selectedCustomerPromotions.filter(
-        (selectedPromotion) => selectedPromotion.promotionId !== promotion.promotionId
+        (selectedPromotion) => selectedPromotion.promotionId !== promotion.promotionId,
       );
     } else {
       // Add the promotion if it's not already selected
       updatedPromotions = [...selectedCustomerPromotions, promotion];
     }
-  
+
     // Update the cart totals after the state update
     calculateTotals(cart, updatedPromotions);
-  
+
     // Update state synchronously
     setSelectedCustomerPromotions(updatedPromotions);
-  
+
     // Perform the async API call to select or remove the promotion
     try {
       if (isAlreadySelected) {
@@ -219,24 +226,23 @@ const Cart = () => {
         await axios.post(
           `${import.meta.env.VITE_REACT_APP_API_URL}/cart/remove-select-promotion/${user.id}`,
           [promotion],
-          { headers: { 'Content-Type': 'application/json' } }
+          { headers: { "Content-Type": "application/json" } },
         );
       } else {
         // Send the promotion selection request
         await axios.post(
           `${import.meta.env.VITE_REACT_APP_API_URL}/cart/select-promotion/${user.id}`,
           promotion,
-          { headers: { 'Content-Type': 'application/json' } }
+          { headers: { "Content-Type": "application/json" } },
         );
       }
     } catch (error) {
       console.error("Error selecting promotion:", error);
     }
   };
-  
 
   const { subtotal, discountAmount, total } = totals;
-  console.log('Subtotal:', subtotal, 'Discount:', discountAmount, 'Total:', total);
+  console.log("Subtotal:", subtotal, "Discount:", discountAmount, "Total:", total);
   const shipping = subtotal > 50 ? 0 : 0; // Example: Free shipping over $50
   const estimate = "Ho Chi Minh city"; // Example: Estimate based on the shipping address
 
@@ -256,41 +262,49 @@ const Cart = () => {
               <div className="cart-items">
                 <div className="cart-row">
                   <p className="cart-item-count">
-                    You have <span className="item-count-number">{cart.length}</span> item(s) in your cart.
+                    You have <span className="item-count-number">{cart.length}</span> item(s) in
+                    your cart.
                   </p>
                   <Button
-                  className='clear-cart-button'
-                  variant="contained"
-                  color="error"
-                  startIcon={<DeleteIcon />}
-                  onClick={handleClearCart}
-                  sx={{
-                    fontWeight: 'bold',
-                    borderRadius: '8px',
-                    padding: '8px 16px',
-                    textTransform: 'none',
-                    backgroundColor: '#d93e2d',
-                    transition: 'all 0.2s ease-in-out',
-                    '&:hover': {
-                      backgroundColor: '#e01e35',
-                      transform: 'translateY(-2px)',
-                      boxShadow: '0 4px 8px rgba(0,0,0,0.2)',
-                    },
-                    '&:active': {
-                      transform: 'translateY(0px)',
-                    }
-                  }}
-                >
-                  Clear Cart
-                </Button>
+                    className="clear-cart-button"
+                    variant="contained"
+                    color="error"
+                    startIcon={<DeleteIcon />}
+                    onClick={handleClearCart}
+                    sx={{
+                      fontWeight: "bold",
+                      borderRadius: "8px",
+                      padding: "8px 16px",
+                      textTransform: "none",
+                      backgroundColor: "#d93e2d",
+                      transition: "all 0.2s ease-in-out",
+                      "&:hover": {
+                        backgroundColor: "#e01e35",
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+                      },
+                      "&:active": {
+                        transform: "translateY(0px)",
+                      },
+                    }}
+                  >
+                    Clear Cart
+                  </Button>
                 </div>
                 {cart.map((item, index) => (
                   <div key={index} className="cart-item">
                     <div className="cart-img-wrapper">
-                      <img src={item.imageURL || "/Images/no-image.jpg"} alt={item.pName} className="cart__img" />
+                      <img
+                        src={item.imageURL || "/Images/no-image.jpg"}
+                        alt={item.pName}
+                        className="cart__img"
+                      />
                     </div>
                     <div className="item-details">
-                      <Link to={`/buy-product/${item.productID}/${item.storeID}`} className="product-link">
+                      <Link
+                        to={`/buy-product/${item.productID}/${item.storeID}`}
+                        className="product-link"
+                      >
                         <p className="item-name">{item.pName}</p>
                       </Link>
                       <p className="item-storeid">Store: {item.storeName}</p>
@@ -301,7 +315,9 @@ const Cart = () => {
                             <p className="promo-product-discount">
                               Price: ${item.discountedPrice.toFixed(2)}
                             </p>
-                            <p className="cart_product__disscount_num">{(item.discount * 100).toFixed(0)}% off</p>
+                            <p className="cart_product__disscount_num">
+                              {(item.discount * 100).toFixed(0)}% off
+                            </p>
                           </div>
                         </>
                       ) : (
@@ -312,7 +328,12 @@ const Cart = () => {
                     <button
                       className="remove-item-button x_button"
                       onClick={() =>
-                        handleRemoveItem(item.productID, item.storeID, item.discountedPrice, item.quantity)
+                        handleRemoveItem(
+                          item.productID,
+                          item.storeID,
+                          item.discountedPrice,
+                          item.quantity,
+                        )
                       }
                       role="button"
                     >
@@ -339,7 +360,7 @@ const Cart = () => {
                   <div style={{ display: "flex", gap: "16px", flexWrap: "wrap" }}>
                     {customerPromotions.map((promotion) => {
                       const productInCart = cart.find(
-                        (item) => item.productID === promotion.product.productId
+                        (item) => item.productID === promotion.product.productId,
                       );
 
                       return (
@@ -348,9 +369,12 @@ const Cart = () => {
                           promotion={promotion}
                           onSelect={handleSelectPromotion}
                           disabled={!productInCart}
-                          selected={selectedCustomerPromotions.find(
-                            (selectedPromotion) => selectedPromotion.promotionId === promotion.promotionId
-                          ) !== undefined}
+                          selected={
+                            selectedCustomerPromotions.find(
+                              (selectedPromotion) =>
+                                selectedPromotion.promotionId === promotion.promotionId,
+                            ) !== undefined
+                          }
                         />
                       );
                     })}
@@ -358,12 +382,12 @@ const Cart = () => {
                 </div>
               </div>
               <div className="cart-summary">
-                <CartSummary 
-                  subtotal={subtotal} 
-                  shipping={shipping} 
-                  estimate={estimate} 
+                <CartSummary
+                  subtotal={subtotal}
+                  shipping={shipping}
+                  estimate={estimate}
                   discountAmountList={amountDiscount}
-                  total={parseFloat((total + shipping).toFixed(2))} 
+                  total={parseFloat((total + shipping).toFixed(2))}
                   cart={cart}
                   selectedCustomerPromotion={selectedCustomerPromotions}
                 />

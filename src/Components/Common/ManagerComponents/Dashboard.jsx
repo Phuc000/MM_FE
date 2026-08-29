@@ -1,14 +1,10 @@
 // src/pages/Manager/Dashboard.jsx
 import React, { useEffect, useState } from "react";
-import { ShowProduct, StoreCard } from "../../../Components";
-import Pagination from "../../../Components/Helper/Pagination";
-import ProductList from "../ProductList/ProductList";
+import { StoreCard } from "../../../Components";
+
 import axios from "axios";
 import { useAuth } from "../../../hooks/useAuth";
-import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell
-} from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Pie } from "recharts";
 
 import "./Dashboard.scss";
 
@@ -31,7 +27,7 @@ const Dashboard = () => {
           {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
-          }
+          },
         );
         const employeeData = response.data;
         setStoreId(employeeData.storeID);
@@ -54,7 +50,7 @@ const Dashboard = () => {
           {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
-          }
+          },
         );
         setStore(storeResponse.data);
 
@@ -64,7 +60,7 @@ const Dashboard = () => {
           {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
-          }
+          },
         );
         console.log("Order: ", ordersResponse.data);
         setDeliveryStats(ordersResponse.data);
@@ -76,7 +72,7 @@ const Dashboard = () => {
           {
             headers: { "Content-Type": "application/json" },
             withCredentials: true,
-          }
+          },
         );
         console.log("Top 10 Products: ", top10ProductsResponse.data);
         setTop10Products(top10ProductsResponse.data);
@@ -116,27 +112,27 @@ const Dashboard = () => {
     const { deliveredCount, cancelledCount, ghostCount, totalBills } = stats;
     const knownTotal = deliveredCount + cancelledCount + ghostCount;
     const otherCount = totalBills - knownTotal;
-  
+
     const pieData = [
       { name: "Delivered", value: deliveredCount },
       { name: "Cancelled", value: cancelledCount },
       { name: "Ghost", value: ghostCount },
     ];
-  
+
     if (otherCount > 0) {
       pieData.push({ name: "Other", value: otherCount });
     }
-  
+
     return pieData;
   };
-  
+
   const deliveryColors = {
     Delivered: "#82ca9d",
     Cancelled: "#ff6b6b",
     Ghost: "#8884d8",
     Other: "#d0d0d0",
   };
-  
+
   const getTotal = (deliveryStats) => {
     const pieData = getPieData(deliveryStats);
     return pieData.reduce((sum, item) => sum + item.value, 0);
@@ -144,9 +140,9 @@ const Dashboard = () => {
 
   // Long product names: add line breaks + smaller font
   const renderCustomXAxisTick = ({ x, y, payload }) => {
-    const words = payload.value.split(' ');
+    const words = payload.value.split(" ");
     const lineHeight = 16; // Adjust line height here
-  
+
     return (
       <g transform={`translate(${x},${y})`}>
         {words.map((word, index) => (
@@ -168,15 +164,13 @@ const Dashboard = () => {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", padding: "0rem" }}>
-    <h1 style={{ marginBottom: "0.5rem", marginTop:0 }}>Dashboard</h1>
-    <div className="dashboard-container">
-      {/* Bar Chart */}
-      {top10Products.length > 0 ? (
-        <div className="chart-container">
-          <h2 className="chart-container-h2">Top 5 Products by Revenue</h2>
-          <ResponsiveContainer
-              height={450}
-            >
+      <h1 style={{ marginBottom: "0.5rem", marginTop: 0 }}>Dashboard</h1>
+      <div className="dashboard-container">
+        {/* Bar Chart */}
+        {top10Products.length > 0 ? (
+          <div className="chart-container">
+            <h2 className="chart-container-h2">Top 5 Products by Revenue</h2>
+            <ResponsiveContainer height={450}>
               <BarChart data={top10Products}>
                 <XAxis dataKey="name" tick={renderCustomXAxisTick} interval={0} height={100} />
                 <YAxis />
@@ -185,48 +179,49 @@ const Dashboard = () => {
                 <Bar dataKey="revenue" fill="#8884d8" name="Revenue ($)" />
               </BarChart>
             </ResponsiveContainer>
-        </div>
-      ) : (
-        <div className="no-data-container">
-          <p className="no-data-text">No data available for top products.</p>
-        </div>
-      )}
-
-      {/* StoreCard + Delivery Stats */}
-      <div className="sidebar-container">
-        {store && (
-          <div className="store__header">
-            <StoreCard store={store} />
+          </div>
+        ) : (
+          <div className="no-data-container">
+            <p className="no-data-text">No data available for top products.</p>
           </div>
         )}
 
-        <div className="delivery-stats-container">
-          <h2 className="delivery-title">Order Delivery Status</h2>
-          <div className="delivery-stats-grid">
-            {deliveryStats.totalBills > 0 ? 
-              getPieData(deliveryStats).map((stat) => (
-                <div
-                  key={stat.name}
-                  className="delivery-stat-box"
-                  style={{
-                    backgroundColor: deliveryColors[stat.name] || "#ccc",
-                  }}
-                >
-                  <span className="delivery-stat-label">{stat.name}</span>
-                  <span className="delivery-stat-value">
-                    {((stat.value / getTotal(deliveryStats)) * 100).toFixed(0)}%
-                  </span>
+        {/* StoreCard + Delivery Stats */}
+        <div className="sidebar-container">
+          {store && (
+            <div className="store__header">
+              <StoreCard store={store} />
+            </div>
+          )}
+
+          <div className="delivery-stats-container">
+            <h2 className="delivery-title">Order Delivery Status</h2>
+            <div className="delivery-stats-grid">
+              {deliveryStats.totalBills > 0 ? (
+                getPieData(deliveryStats).map((stat) => (
+                  <div
+                    key={stat.name}
+                    className="delivery-stat-box"
+                    style={{
+                      backgroundColor: deliveryColors[stat.name] || "#ccc",
+                    }}
+                  >
+                    <span className="delivery-stat-label">{stat.name}</span>
+                    <span className="delivery-stat-value">
+                      {((stat.value / getTotal(deliveryStats)) * 100).toFixed(0)}%
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="no-data-delivery">
+                  <p className="no-data-text">No data available for order delivery.</p>
                 </div>
-              )) : 
-              <div className="no-data-delivery">
-                <p className="no-data-text">No data available for order delivery.</p>
-              </div>
-            }
+              )}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
   );
 };
 

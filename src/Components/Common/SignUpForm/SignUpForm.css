@@ -1,5 +1,4 @@
 .name-row {
-    display: flex;
-    gap: 10px; /* Adjust the gap as needed */
-  }
-  
+  display: flex;
+  gap: 10px; /* Adjust the gap as needed */
+}

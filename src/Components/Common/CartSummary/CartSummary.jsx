@@ -1,26 +1,26 @@
 // src/Components/CartSummary/CartSummary.jsx
-import {useState} from 'react';
-import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
-import './CartSummary.scss';
-import RevalidateCartModal from '../RevalidateCartModal/RevalidateCartModal';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useAuth } from '../../../hooks/useAuth';
-import { fetchTimeLeft } from '../../Timer/Timer';
-import { useTimer } from '../../../Context/TimerContext';
+import { useState } from "react";
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
+import "./CartSummary.scss";
+import RevalidateCartModal from "../RevalidateCartModal/RevalidateCartModal";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useAuth } from "../../../hooks/useAuth";
+import { fetchTimeLeft } from "../../Timer/Timer";
+import { useTimer } from "../../../Context/TimerContext";
 
 const CartSummary = ({
   subtotal = 0,
   shipping = 0,
-  estimate = '',
+  estimate = "",
   total = 0,
   checkout = false,
   billPromotion = 0,
-  discountAmountList=[],
-  cart=[],
-  selectedCustomerPromotion=[]
+  discountAmountList = [],
+  cart = [],
+  selectedCustomerPromotion = [],
 }) => {
   const navigate = useNavigate();
   const { refreshTimer } = useTimer();
@@ -33,20 +33,20 @@ const CartSummary = ({
     productUpdated: [],
   });
 
-  const {user} = useAuth();
+  const { user } = useAuth();
 
   const handleRevalidateCart = async (cart) => {
     var payload = {
       customerId: user.id,
       cartItems: cart,
-    }
+    };
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_REACT_APP_API_URL}/cart/revalidate`,
         payload,
-        { headers: { "Content-Type": "application/json" } }
+        { headers: { "Content-Type": "application/json" } },
       );
-  
+
       const validatedCart = response.data;
       setRevalidateData(validatedCart);
       return validatedCart;
@@ -60,10 +60,10 @@ const CartSummary = ({
       });
     }
   };
-  
+
   const handleCheckOut = async () => {
     const validatedCart = await handleRevalidateCart(cart);
-  
+
     // Check if any product is not available, out of stock, or updated
     if (
       validatedCart.productsNotAvailable.length > 0 ||
@@ -76,7 +76,7 @@ const CartSummary = ({
       const fullcart = {
         customerId: user.id,
         cartItems: cart,
-      }
+      };
       const payload = {
         cart: fullcart,
         promotions: selectedCustomerPromotion,
@@ -108,15 +108,14 @@ const CartSummary = ({
 
   const handleBackToCart = async () => {
     try {
-      await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/cart/backtocart/${user.id}`, 
-        {
+      await axios.post(`${import.meta.env.VITE_REACT_APP_API_URL}/cart/backtocart/${user.id}`, {
         headers: {
           "Content-Type": "application/json",
         },
       });
       await fetchTimeLeft(user.id);
       refreshTimer(); // Trigger the Timer to refresh
-      navigate('/Cart');
+      navigate("/Cart");
     } catch (error) {
       console.error("Error removing reserve cart:", error);
     }
@@ -132,19 +131,23 @@ const CartSummary = ({
         <hr />
         {customerPromotionNameList.length > 0 && (
           <div>
-            {customerPromotionNameList.map((name, index) => (
-              console.log(discountAmountList[index]),
-              <div className="summary-item" key={index}>
-                <span>{name || "Special Customer Promotion"}</span>
-                <span>- ${Number(discountAmountList[index]).toFixed(2)}</span>
-              </div>
-            ))}
+            {customerPromotionNameList.map(
+              (name, index) => (
+                console.log(discountAmountList[index]),
+                (
+                  <div className="summary-item" key={index}>
+                    <span>{name || "Special Customer Promotion"}</span>
+                    <span>- ${Number(discountAmountList[index]).toFixed(2)}</span>
+                  </div>
+                )
+              ),
+            )}
             <hr />
           </div>
         )}
         <div className="summary-item">
           <span>Shipping</span>
-          <span>{Number(shipping) > 0 ? `$${Number(shipping).toFixed(2)}` : 'Free'}</span>
+          <span>{Number(shipping) > 0 ? `$${Number(shipping).toFixed(2)}` : "Free"}</span>
         </div>
         <div className="summary-item">
           <span>Estimate for</span>
@@ -181,7 +184,6 @@ const CartSummary = ({
         revalidateData={revalidateData}
       />
     </>
-    
   );
 };
 
@@ -194,7 +196,7 @@ CartSummary.propTypes = {
   billPromotion: PropTypes.number,
   discountAmountList: PropTypes.array,
   cart: PropTypes.array,
-  selectedCustomerPromotion: PropTypes.array
+  selectedCustomerPromotion: PropTypes.array,
 };
 
 export default CartSummary;

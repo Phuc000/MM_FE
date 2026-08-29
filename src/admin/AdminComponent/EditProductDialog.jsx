@@ -1,5 +1,5 @@
 // src/admin/EditProductDialog.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -7,7 +7,7 @@ import {
   DialogActions,
   TextField,
   Button,
-} from '@mui/material';
+} from "@mui/material";
 
 const EditProductDialog = ({ open, handleClose, handleSave, product }) => {
   const [updatedProduct, setUpdatedProduct] = useState(product);
@@ -22,7 +22,7 @@ const EditProductDialog = ({ open, handleClose, handleSave, product }) => {
 
   const onSave = () => {
     // Validate updated product data
-    console.log('Updated product data:', updatedProduct);
+    console.log("Updated product data:", updatedProduct);
     handleSave(updatedProduct);
     handleClose();
   };

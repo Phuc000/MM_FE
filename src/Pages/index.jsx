@@ -14,5 +14,4 @@ export { default as Shipper } from "./Shipper/Shipper";
 export { default as ChatPage } from "./ChatPage/ChatPage";
 export { default as RecipesArticles } from "./RecipesArticles/RecipesArticles";
 export { default as MealPlanner } from "./MealPlanner/MealPlanner";
-export {default as Unauthorized} from "./Route/Unauthorized";
-
+export { default as Unauthorized } from "./Route/Unauthorized";

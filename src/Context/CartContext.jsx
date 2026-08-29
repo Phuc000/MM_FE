@@ -61,8 +61,8 @@
 //   return context;
 // };
 
-import { createContext, useContext } from 'react';
-import { useState } from 'react';
+import { createContext, useContext } from "react";
+import { useState } from "react";
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
@@ -72,7 +72,9 @@ export const CartProvider = ({ children }) => {
   const [selectedCustomerPromotion, setSelectedCustomerPromotion] = useState([]);
 
   return (
-    <CartContext.Provider value={{ cart, selectedCustomerPromotion, setCart, setSelectedCustomerPromotion }}>
+    <CartContext.Provider
+      value={{ cart, selectedCustomerPromotion, setCart, setSelectedCustomerPromotion }}
+    >
       {children}
     </CartContext.Provider>
   );

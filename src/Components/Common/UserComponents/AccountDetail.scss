@@ -1,64 +1,64 @@
 .account_details_wrapper {
-    padding: 20px;
+  padding: 20px;
 }
 
 .save-info {
-    outline: none;
-    height: 45px;
-    text-align: center;
-    width: 130px;
-    border-radius: 10px;
-    background: #fff;
-    border: 3px solid #fe3bd4;
-    color: #fe3bd4;
-    letter-spacing: 1px;
-    text-shadow: 0;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.25s ease;
-    margin-top: 20px;
-    margin-left: 50px;
- }
- .save-info:hover {
-    color: white;
-    background: #fe3bd4;
- }
- .save-info:active {
-    letter-spacing: 2px;
- }
- .save-info:after {
-    content: "Save";
- }
- .onclic {
-    width: 40px;
-    border-color: #bbb;
-    border-width: 3px;
-    font-size: 0;
-    border-left-color: #fe3bd4;
-    animation: rotating 2s 0.25s linear infinite;
- }
-  .onclic:after {
-    content: "";
- }
-  .onclic:hover {
-    color: #fe3bd4;
-    background: white;
- }
-  .validate {
-    font-size: 13px;
-    color: white;
-    background: #fe3bd4;
- }
-  .validate:after {
-    /* font-family: 'FontAwesome'; */
-    content: "Saved";
- }
-  @keyframes rotating {
-    from {
-      transform: rotate(0deg);
-   }
-    to {
-      transform: rotate(360deg);
-   }
- }
+  outline: none;
+  height: 45px;
+  text-align: center;
+  width: 130px;
+  border-radius: 10px;
+  background: #fff;
+  border: 3px solid #fe3bd4;
+  color: #fe3bd4;
+  letter-spacing: 1px;
+  text-shadow: 0;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  margin-top: 20px;
+  margin-left: 50px;
+}
+.save-info:hover {
+  color: white;
+  background: #fe3bd4;
+}
+.save-info:active {
+  letter-spacing: 2px;
+}
+.save-info:after {
+  content: "Save";
+}
+.onclic {
+  width: 40px;
+  border-color: #bbb;
+  border-width: 3px;
+  font-size: 0;
+  border-left-color: #fe3bd4;
+  animation: rotating 2s 0.25s linear infinite;
+}
+.onclic:after {
+  content: "";
+}
+.onclic:hover {
+  color: #fe3bd4;
+  background: white;
+}
+.validate {
+  font-size: 13px;
+  color: white;
+  background: #fe3bd4;
+}
+.validate:after {
+  /* font-family: 'FontAwesome'; */
+  content: "Saved";
+}
+@keyframes rotating {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

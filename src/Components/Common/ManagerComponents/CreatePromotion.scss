@@ -1,58 +1,57 @@
 // CreatePromotion.scss
 .create-promotion {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px;
+  background-color: #fff;
+
+  h1 {
+    color: rgb(17, 29, 37);
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .promotion-form {
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    padding: 20px;
-    background-color: #fff;
-  
-    h1 {
-        color: rgb(17, 29, 37);
-        font-size: 2rem;
-        margin-bottom: 20px;
-      }
-  
-    .promotion-form {
+    gap: 15px;
+    width: 100%;
+    max-width: 400px;
+
+    .form-group {
       display: flex;
       flex-direction: column;
-      gap: 15px;
-      width: 100%;
-      max-width: 400px;
-  
-      .form-group {
-        display: flex;
-        flex-direction: column;
-  
-        label {
-          font-weight: bold;
-          color: #333;
-        }
-  
-        input,
-        textarea {
-          padding: 8px;
-          border: 1px solid #ccc;
-          border-radius: 4px;
-        }
-  
-        textarea {
-          resize: vertical;
-        }
+
+      label {
+        font-weight: bold;
+        color: #333;
       }
-  
-      .submit-button {
-        padding: 10px 20px;
-        border: none;
-        background-color: #fe3bd4;
-        color: #fff;
+
+      input,
+      textarea {
+        padding: 8px;
+        border: 1px solid #ccc;
         border-radius: 4px;
-        cursor: pointer;
-        align-self: flex-start;
-  
-        &:hover {
-          background-color: #e02db3;
-        }
+      }
+
+      textarea {
+        resize: vertical;
+      }
+    }
+
+    .submit-button {
+      padding: 10px 20px;
+      border: none;
+      background-color: #fe3bd4;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      align-self: flex-start;
+
+      &:hover {
+        background-color: #e02db3;
       }
     }
   }
-  
+}

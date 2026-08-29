@@ -1,42 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@400;700;900&display=swap");
 
 .my-orders {
-    margin-right: 5vw;
-    
-    h2 {
-        font-weight: 900;
-        font-family: 'Quicksand', sans-serif;
-        font-size: 2em;
-        color: #333;
-    }
-  
-    .orders-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 1em;
-      text-align: left;
-    }
-  
-    th, td {
-      padding: 12px 15px;
-      border: 1px solid #ddd;
-    }
-  
-    th {
-      background-color: #f4f4f4;
-      font-weight: bold;
-    }
-  
-    tr:nth-child(even) {
-      background-color: #f9f9f9;
-    }
-  
-    .view-link {
-      color: #fe3bd4;
-      text-decoration: none;
-      &:hover {
-        color: rgb(253, 192, 64);
-      }
+  margin-right: 5vw;
+
+  h2 {
+    font-weight: 900;
+    font-family: "Quicksand", sans-serif;
+    font-size: 2em;
+    color: #333;
+  }
+
+  .orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1em;
+    text-align: left;
+  }
+
+  th,
+  td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+  }
+
+  th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+
+  .view-link {
+    color: #fe3bd4;
+    text-decoration: none;
+    &:hover {
+      color: rgb(253, 192, 64);
     }
   }
-  
+}

@@ -1,48 +1,47 @@
 [
-    {
-      "productId": 12345,
-      "category": "Clothes",
-      "description": "Black sweatshirt",
-      "productName": "Black Sweatshirt",
-      "price": 35.00
-    },
-    {
-      "productId": 12346,
-      "category": "Clothes",
-      "description": "Pink sweatshirt",
-      "productName": "Pink Sweatshirt",
-      "price": 28.00
-    },
-    {
-      "productId": 12347,
-      "category": "Clothes",
-      "description": "Lumberjack shirt",
-      "productName": "Lumberjack Shirt",
-      "price": 69.99,
-      "discount": 20
-    },
-    {
-      "productId": 12348,
-      "category": "Clothes",
-      "description": "Striped T-shirt",
-      "productName": "Striped T-Shirt",
-      "price": 19.99,
-      "discount": 25
-    },
-    {
-      "productId": 12349,
-      "category": "Clothes",
-      "description": "Polo t-shirt",
-      "productName": "Polo T-Shirt",
-      "price": 7.00
-    },
-    {
-      "productId": 12350,
-      "category": "Clothes",
-      "description": "Pink winter coat",
-      "productName": "Pink Winter Coat",
-      "price": 68.00,
-      "discount": 67
-    }
-  ]
-  
+  {
+    "productId": 12345,
+    "category": "Clothes",
+    "description": "Black sweatshirt",
+    "productName": "Black Sweatshirt",
+    "price": 35.0
+  },
+  {
+    "productId": 12346,
+    "category": "Clothes",
+    "description": "Pink sweatshirt",
+    "productName": "Pink Sweatshirt",
+    "price": 28.0
+  },
+  {
+    "productId": 12347,
+    "category": "Clothes",
+    "description": "Lumberjack shirt",
+    "productName": "Lumberjack Shirt",
+    "price": 69.99,
+    "discount": 20
+  },
+  {
+    "productId": 12348,
+    "category": "Clothes",
+    "description": "Striped T-shirt",
+    "productName": "Striped T-Shirt",
+    "price": 19.99,
+    "discount": 25
+  },
+  {
+    "productId": 12349,
+    "category": "Clothes",
+    "description": "Polo t-shirt",
+    "productName": "Polo T-Shirt",
+    "price": 7.0
+  },
+  {
+    "productId": 12350,
+    "category": "Clothes",
+    "description": "Pink winter coat",
+    "productName": "Pink Winter Coat",
+    "price": 68.0,
+    "discount": 67
+  }
+]

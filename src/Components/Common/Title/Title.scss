@@ -1,24 +1,23 @@
 .title {
-    margin-bottom: 24px;
-    position: relative;
-    padding-left: 32px;
-    display: flex;
-    align-items: center;
-    
-    p {
-      font-size: 18px;
-  
-    }
-  
-    &::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 6px;
-      height: 30px;
-      background-color: #fe3bd4;
-      border-radius: 100vh;
-    }
+  margin-bottom: 24px;
+  position: relative;
+  padding-left: 32px;
+  display: flex;
+  align-items: center;
+
+  p {
+    font-size: 18px;
   }
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 30px;
+    background-color: #fe3bd4;
+    border-radius: 100vh;
+  }
+}

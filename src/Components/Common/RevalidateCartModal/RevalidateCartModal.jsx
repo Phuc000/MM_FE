@@ -74,34 +74,33 @@ const RevalidateCartModal = ({ isOpen, onClose, revalidateData }) => {
 
 // Define prop types
 RevalidateCartModal.propTypes = {
-    isOpen: PropTypes.bool.isRequired,
-    onClose: PropTypes.func.isRequired,
-    revalidateData: PropTypes.shape({
-      productsNotAvailable: PropTypes.arrayOf(
-        PropTypes.shape({
-          productId: PropTypes.string.isRequired,
-          productName: PropTypes.string.isRequired,
-          productDescription: PropTypes.string,
-          availableQuantity: PropTypes.number,
-          newPrice: PropTypes.number,
-        })
-      ).isRequired,
-      outOfStockCartItem: PropTypes.arrayOf(
-        PropTypes.shape({
-          productId: PropTypes.string.isRequired,
-          productName: PropTypes.string.isRequired,
-          availableQuantity: PropTypes.number,
-        })
-      ).isRequired,
-      productUpdated: PropTypes.arrayOf(
-        PropTypes.shape({
-          productId: PropTypes.string.isRequired,
-          productName: PropTypes.string.isRequired,
-          newPrice: PropTypes.number,
-        })
-      ).isRequired,
-    }).isRequired,
-  };
-  
+  isOpen: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  revalidateData: PropTypes.shape({
+    productsNotAvailable: PropTypes.arrayOf(
+      PropTypes.shape({
+        productId: PropTypes.string.isRequired,
+        productName: PropTypes.string.isRequired,
+        productDescription: PropTypes.string,
+        availableQuantity: PropTypes.number,
+        newPrice: PropTypes.number,
+      }),
+    ).isRequired,
+    outOfStockCartItem: PropTypes.arrayOf(
+      PropTypes.shape({
+        productId: PropTypes.string.isRequired,
+        productName: PropTypes.string.isRequired,
+        availableQuantity: PropTypes.number,
+      }),
+    ).isRequired,
+    productUpdated: PropTypes.arrayOf(
+      PropTypes.shape({
+        productId: PropTypes.string.isRequired,
+        productName: PropTypes.string.isRequired,
+        newPrice: PropTypes.number,
+      }),
+    ).isRequired,
+  }).isRequired,
+};
 
 export default RevalidateCartModal;

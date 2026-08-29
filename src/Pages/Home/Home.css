@@ -14,8 +14,8 @@
   --main_yellow: #fe3bd4;
   --verysoft_yellow: #fef5f5;
   --main_dark: #2e2e2e;
-  --category_accent: 	#fe3bd4; /* New accent color for categories */
-  --category_hover: #F3CFC6; /* Darker shade for hover */
+  --category_accent: #fe3bd4; /* New accent color for categories */
+  --category_hover: #f3cfc6; /* Darker shade for hover */
 
   --fz_sm: 14px;
   --fz_md: 16px;
@@ -28,7 +28,7 @@
 }
 
 html {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
 }
 
 /*################*/
@@ -109,7 +109,7 @@ html {
 .hero {
   height: calc(100vh - 60px);
   width: 100vw;
-  background: url('/Images/bg_desktop.webp');
+  background: url("/Images/bg_desktop.webp");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -211,7 +211,7 @@ html {
 
   /*Hero section*/
   .hero {
-    background: url('/Images/bg_mobile.webp');
+    background: url("/Images/bg_mobile.webp");
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center;
@@ -353,22 +353,24 @@ html {
   justify-content: center;
   text-decoration: none;
   color: #333;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   padding: 10px;
   margin-right: 10px; /* Increased from 20px to 25px for balanced spacing */
   margin-left: 10px; /* Increased from 20px to 25px for symmetry */
 }
 
 /* Apply repeating background colors */
-.category-card:nth-child(3n+1) {
+.category-card:nth-child(3n + 1) {
   background-color: var(--light-red);
 }
 
-.category-card:nth-child(3n+2) {
+.category-card:nth-child(3n + 2) {
   background-color: var(--light-yellow);
 }
 
-.category-card:nth-child(3n+3) {
+.category-card:nth-child(3n + 3) {
   background-color: var(--light-green);
 }
 
@@ -417,7 +419,8 @@ html {
   margin-top: 5px;
 }
 
-.prev-button, .next-button {
+.prev-button,
+.next-button {
   background-color: var(--category_accent);
   color: white;
   border: none;
@@ -426,7 +429,9 @@ html {
   height: 40px;
   font-size: 20px;
   cursor: pointer;
-  transition: background-color 0.3s ease, opacity 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    opacity 0.3s ease;
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -440,13 +445,15 @@ html {
   right: 0;
 }
 
-.prev-button.disabled, .next-button.disabled {
-  background-color: #F3CFC6;
+.prev-button.disabled,
+.next-button.disabled {
+  background-color: #f3cfc6;
   cursor: not-allowed;
   opacity: 0.6;
 }
 
-.prev-button:hover:not(.disabled), .next-button:hover:not(.disabled) {
+.prev-button:hover:not(.disabled),
+.next-button:hover:not(.disabled) {
   background-color: var(--category_hover);
 }
 
@@ -472,7 +479,8 @@ html {
     font-size: 10px;
   }
 
-  .prev-button, .next-button {
+  .prev-button,
+  .next-button {
     width: 30px;
     height: 30px;
     font-size: 16px;
@@ -492,7 +500,8 @@ html {
     height: 60px;
   }
 
-  .prev-button, .next-button {
+  .prev-button,
+  .next-button {
     width: 25px;
     height: 25px;
     font-size: 14px;
@@ -591,7 +600,7 @@ html {
 }
 
 #bannerblock {
-  background: url('/Images/bg_mobile.webp');
+  background: url("/Images/bg_mobile.webp");
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
@@ -604,7 +613,7 @@ html {
 .bannerblock {
   display: flex;
   justify-content: center;
-  background: url('/Images/promo-banner.jpg');
+  background: url("/Images/promo-banner.jpg");
   background-size: cover;
   background-position: center -120px;
   height: 590px;

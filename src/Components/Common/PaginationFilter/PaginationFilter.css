@@ -1,65 +1,66 @@
 .filter-controls {
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-    gap: 20px; /* Increased gap for spacing between filters */
-  }
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Increased gap for spacing between filters */
+}
 
-  @media (max-width: 576px) {
-    .filter-controls {
-      flex-direction: column; /* Stack filters on smaller screens */
-      align-items: flex-start; /* Align to the left */
-    }
-    
+@media (max-width: 576px) {
+  .filter-controls {
+    flex-direction: column; /* Stack filters on smaller screens */
+    align-items: flex-start; /* Align to the left */
   }
-  
-  .filter-group {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  
-  .filter-dropdown, .filter-input {
-    padding: 5px 10px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    background-color: #fff;
-  }
-  
-  .filter-dropdown:focus, .filter-input:focus {
-    outline: none;
-    border-color: #000;
-  }
-  
-  .filter-input {
-    width: 80px; /* Fixed width for price inputs */
-  }
-  
-  .pagination {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-  
-  .pagination .btn {
-    padding: 5px 10px;
-    font-size: 14px;
-  }
-  
-  .pagination .btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  
-  .pagination .btn.active {
-    background-color: #000;
-    color: #fff;
-    border-color: #000;
-  }
-  .pagination-ellipsis {
-    padding: 0.5rem 1rem;
-    display: flex;
-    align-items: center;
-  }
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.filter-dropdown,
+.filter-input {
+  padding: 5px 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+}
+
+.filter-dropdown:focus,
+.filter-input:focus {
+  outline: none;
+  border-color: #000;
+}
+
+.filter-input {
+  width: 80px; /* Fixed width for price inputs */
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.pagination .btn {
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+.pagination .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination .btn.active {
+  background-color: #000;
+  color: #fff;
+  border-color: #000;
+}
+.pagination-ellipsis {
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+}

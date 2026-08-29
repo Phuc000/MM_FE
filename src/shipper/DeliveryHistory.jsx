@@ -1,7 +1,7 @@
 // src/admin/DeliveryHistory.jsx
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import { useAuth } from '../hooks/useAuth';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { useAuth } from "../hooks/useAuth";
 import {
   Typography,
   Table,
@@ -17,44 +17,43 @@ import {
   Pagination,
   useMediaQuery,
   useTheme,
-} from '@mui/material';
+} from "@mui/material";
 
 const DeliveryHistory = () => {
   const { user } = useAuth();
   const [deliveries, setDeliveries] = useState([]);
   const [snackbar, setSnackbar] = useState({
     open: false,
-    message: '',
-    severity: 'success',
+    message: "",
+    severity: "success",
   });
 
-  const [isLoading, setIsLoading] = useState(true); // Loading state  
+  const [isLoading, setIsLoading] = useState(true); // Loading state
 
   const theme = useTheme();
-  const isXs = useMediaQuery(theme.breakpoints.down('sm'));
+  const isXs = useMediaQuery(theme.breakpoints.down("sm"));
   const itemsPerPage = isXs ? 5 : 10;
   const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchDeliveryHistory = async () => {
       try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_REACT_APP_API_URL}/transactions`,
-          {
-            headers: { 'Content-Type': 'application/json' },
-            withCredentials: true,
-          }
-        );
+        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/transactions`, {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        });
         const filteredDeliveries = response.data.filter(
-          (transaction) => transaction.shipperID === user.id && (transaction.deliveryStatus === 4 || transaction.deliveryStatus === 6)
+          (transaction) =>
+            transaction.shipperID === user.id &&
+            (transaction.deliveryStatus === 4 || transaction.deliveryStatus === 6),
         );
         setDeliveries(filteredDeliveries);
       } catch (error) {
-        console.error('Error fetching delivery history:', error);
+        console.error("Error fetching delivery history:", error);
         setSnackbar({
           open: true,
-          message: 'Failed to fetch delivery history.',
-          severity: 'error',
+          message: "Failed to fetch delivery history.",
+          severity: "error",
         });
       } finally {
         setIsLoading(false);
@@ -72,37 +71,38 @@ const DeliveryHistory = () => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
-    };
-    
-    // Calculate the data to display based on pagination
-    const paginatedDeliveries = deliveries.slice(
-    (page - 1) * itemsPerPage,
-    page * itemsPerPage
-    );
-    
-    // Calculate total number of pages
-    const totalPages = Math.ceil(deliveries.length / itemsPerPage);
+  };
+
+  // Calculate the data to display based on pagination
+  const paginatedDeliveries = deliveries.slice((page - 1) * itemsPerPage, page * itemsPerPage);
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(deliveries.length / itemsPerPage);
 
   return (
     <div>
-      <Typography variant="h4" gutterBottom sx={{
-          textAlign: { xs: 'center', sm: 'left' },
-        }}>
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{
+          textAlign: { xs: "center", sm: "left" },
+        }}
+      >
         Delivery History
       </Typography>
       <TableContainer
         component={Paper}
         sx={{
-          overflowX: 'auto',
-          boxShadow: '2px 4px 8px rgba(0, 0, 0, 0.1)',
+          overflowX: "auto",
+          boxShadow: "2px 4px 8px rgba(0, 0, 0, 0.1)",
           borderRadius: 2,
         }}
       >
         <Table aria-label="delivery history table">
-        <TableHead
+          <TableHead
             sx={{
-              backgroundColor: 'rgba(0, 0, 0, 0.04)',
-              display: { xs: 'none', sm: 'table-header-group' },
+              backgroundColor: "rgba(0, 0, 0, 0.04)",
+              display: { xs: "none", sm: "table-header-group" },
             }}
           >
             <TableRow>
@@ -130,42 +130,57 @@ const DeliveryHistory = () => {
                   <TableRow
                     key={delivery.transactionId}
                     sx={{
-                      display: { xs: 'block', sm: 'table-row' },
+                      display: { xs: "block", sm: "table-row" },
                       marginBottom: { xs: 2, sm: 0 },
-                      border: { xs: '1px solid #ccc', sm: 'none' },
+                      border: { xs: "1px solid #ccc", sm: "none" },
                       borderRadius: { xs: 2, sm: 0 },
                       padding: { xs: 2, sm: 0 },
                     }}
                   >
                     <TableCell
-                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                      sx={{
+                        display: { xs: "flex", sm: "table-cell" },
+                        justifyContent: "space-between",
+                      }}
                     >
                       <strong className="shipperTableItem">Transaction ID:</strong>
                       {delivery.transactionId}
                     </TableCell>
                     <TableCell
-                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                      sx={{
+                        display: { xs: "flex", sm: "table-cell" },
+                        justifyContent: "space-between",
+                      }}
                     >
                       <strong className="shipperTableItem">Date and Time:</strong>
                       {new Date(delivery.dateAndTime).toLocaleDateString()}
                     </TableCell>
                     <TableCell
-                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                      sx={{
+                        display: { xs: "flex", sm: "table-cell" },
+                        justifyContent: "space-between",
+                      }}
                     >
                       <strong className="shipperTableItem">Customer ID:</strong>
                       {delivery.customerID}
                     </TableCell>
                     <TableCell
-                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                      sx={{
+                        display: { xs: "flex", sm: "table-cell" },
+                        justifyContent: "space-between",
+                      }}
                     >
-                      <strong className="shipperTableItem">Total Price:</strong>
-                      ${delivery.totalPrice.toFixed(2)}
+                      <strong className="shipperTableItem">Total Price:</strong>$
+                      {delivery.totalPrice.toFixed(2)}
                     </TableCell>
                     <TableCell
-                      sx={{ display: { xs: 'flex', sm: 'table-cell' }, justifyContent: 'space-between' }}
+                      sx={{
+                        display: { xs: "flex", sm: "table-cell" },
+                        justifyContent: "space-between",
+                      }}
                     >
                       <strong className="shipperTableItem">Status:</strong>
-                      {delivery.deliveryStatus === 4 ? 'Delivered' : 'Ghost'}
+                      {delivery.deliveryStatus === 4 ? "Delivered" : "Ghost"}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -184,13 +199,13 @@ const DeliveryHistory = () => {
 
       {/* Pagination */}
       {!isLoading && deliveries.length > itemsPerPage && (
-        <div style={{ display: 'flex', justifyContent: 'center', marginTop: '24px' }}>
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "24px" }}>
           <Pagination
             count={totalPages}
             page={page}
             onChange={handleChangePage}
             color="primary"
-            size={isXs ? 'small' : 'medium'}
+            size={isXs ? "small" : "medium"}
           />
         </div>
       )}
@@ -198,13 +213,9 @@ const DeliveryHistory = () => {
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       >
-        <Alert
-          onClose={handleCloseSnackbar}
-          severity={snackbar.severity}
-          sx={{ width: '100%' }}
-        >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity} sx={{ width: "100%" }}>
           {snackbar.message}
         </Alert>
       </Snackbar>

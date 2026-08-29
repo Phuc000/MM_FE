@@ -1,11 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 import { Header, Footer, ShowProduct, StoreCard } from "../../Components";
-import FeatureAd from '../../Components/Common/Feature_Ad/FeatureAd';
-import ProductList from '../../Components/Common/ProductList/ProductList';
-import Pagination from '../../Components/Common/Pagination/Pagination';
-import PaginationFilter from '../../Components/Common/PaginationFilter/PaginationFilter';
+import FeatureAd from "../../Components/Common/Feature_Ad/FeatureAd";
+import ProductList from "../../Components/Common/ProductList/ProductList";
+
+import PaginationFilter from "../../Components/Common/PaginationFilter/PaginationFilter";
 import axios from "axios";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
 import "./Home.css";
 
 const Home = () => {
@@ -50,20 +50,22 @@ const Home = () => {
 
   // Fetch stores
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/stores/`, {
-      headers: { 'Content-Type': 'application/json' },
-    })
+    axios
+      .get(`${import.meta.env.VITE_REACT_APP_API_URL}/stores/`, {
+        headers: { "Content-Type": "application/json" },
+      })
       .then((response) => setStores(response.data))
       .catch((error) => console.error(`Error fetching store data:`, error));
   }, []);
 
   // Fetch promo products
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/promotion/`, {
-      headers: { 'Content-Type': 'application/json' },
-    })
+    axios
+      .get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/promotion/`, {
+        headers: { "Content-Type": "application/json" },
+      })
       .then((response) => {
-        console.log('Product Data Sample:', response.data[0]);
+        console.log("Product Data Sample:", response.data[0]);
         const uniqueProducts = response.data.reduce((unique, product) => {
           if (!unique.find((p) => p.productID === product.productID)) {
             return [...unique, product];
@@ -77,14 +79,18 @@ const Home = () => {
 
   // Fetch top products
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/top5products/2025`, {
-      headers: { 'Content-Type': 'application/json' },
-    })
+    axios
+      .get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/top5products/2025`, {
+        headers: { "Content-Type": "application/json" },
+      })
       .then((response) => {
         const productPromises = response.data.map((product) =>
-          axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/product/${product.productID}`, {
-            headers: { 'Content-Type': 'application/json' },
-          })
+          axios.get(
+            `${import.meta.env.VITE_REACT_APP_API_URL}/products/product/${product.productID}`,
+            {
+              headers: { "Content-Type": "application/json" },
+            },
+          ),
         );
         Promise.all(productPromises)
           .then((productResponses) => {
@@ -95,18 +101,19 @@ const Home = () => {
             }));
             setTopProducts(combinedData);
           })
-          .catch((error) => console.error('Error fetching product information:', error));
+          .catch((error) => console.error("Error fetching product information:", error));
       })
-      .catch((error) => console.error('Error fetching store data:', error));
+      .catch((error) => console.error("Error fetching store data:", error));
   }, []);
 
   // Fetch categories
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/category`, {
-      headers: { 'Accept': '*/*' },
-    })
+    axios
+      .get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/category`, {
+        headers: { Accept: "*/*" },
+      })
       .then((response) => {
-        console.log('Category Data Sample:', response.data[0]);
+        console.log("Category Data Sample:", response.data[0]);
         setCategories(response.data);
       })
       .catch((error) => console.error(`Error fetching category data:`, error));
@@ -122,42 +129,42 @@ const Home = () => {
 
   // Map categories to Font Awesome icons
   const categoryIcons = {
-    "Condiments": "fa-pepper-hot",
-    "Refrigerated": "fa-snowflake",
+    Condiments: "fa-pepper-hot",
+    Refrigerated: "fa-snowflake",
     "Gluten Free": "fa-solid fa-wheat-slash",
-    "Baking": "fa-cookie-bite",
+    Baking: "fa-cookie-bite",
     "Sweet Snacks": "fa-candy-cane",
-    "Gourmet": "fa-utensils",
+    Gourmet: "fa-utensils",
     "Health Foods": "fa-heart-pulse",
-    "Frozen": "fa-icicles",
+    Frozen: "fa-icicles",
     "Oil, Vinegar, Salad Dressing": "fa-oil-can",
-    "Bread": "fa-bread-slice",
-    "Cereal": "fa-bowl-food",
+    Bread: "fa-bread-slice",
+    Cereal: "fa-bowl-food",
     "Dried Fruits": "fa-leaf",
     "Pasta and Rice": "fa-spaghetti",
-    "Ethnic": "fa-globe",
+    Ethnic: "fa-globe",
     "Milk, Eggs, Other Dairy": "fa-egg",
     "Nut butters, Jams, and Honey": "fa-jar",
     "Savory Snacks": "fa-chips",
-    "Beverages": "fa-mug-hot",
-    "Meat": "fa-drumstick-bite",
-    "Cheese": "fa-cheese",
+    Beverages: "fa-mug-hot",
+    Meat: "fa-drumstick-bite",
+    Cheese: "fa-cheese",
     "Tea and Coffee": "fa-coffee",
-    "Seafood": "fa-fish",
+    Seafood: "fa-fish",
     "Spices and Seasonings": "fa-mortar-pestle",
     "Not in Grocery Store/Homemade": "fa-house",
-    "Produce": "fa-carrot",
+    Produce: "fa-carrot",
     "Alcoholic Beverages": "fa-wine-glass",
-    "Nuts": "fa-seedling",
+    Nuts: "fa-seedling",
     "Bakery/Bread": "fa-croissant",
     "Ethnic Foods": "fa-pepper-hot",
-    "Canned and Jarred": "fa-can"
+    "Canned and Jarred": "fa-can",
   };
 
   // Function to truncate category name to 15 characters with ellipsis
   const truncateCategoryName = (name) => {
     if (name.length > 10) {
-      return name.substring(0, 10) + '...';
+      return name.substring(0, 10) + "...";
     }
     return name;
   };
@@ -165,7 +172,7 @@ const Home = () => {
   // Helper function to generate category image paths
   const getCategoryImagePath = (category) => {
     // Replace slashes with spaces, keep all other characters (including spaces, commas, etc.)
-    const normalizedName = category.replace(/\//g, ' ');
+    const normalizedName = category.replace(/\//g, " ");
     // Return the image path with .webp extension
     return `/Images/category/${normalizedName}.png`;
   };
@@ -185,8 +192,8 @@ const Home = () => {
       },
       {
         threshold: 0.15, // Trigger when 15% of the component is visible
-        rootMargin: '0px 0px -50px 0px' // Adjust trigger point slightly
-      }
+        rootMargin: "0px 0px -50px 0px", // Adjust trigger point slightly
+      },
     );
 
     if (heroRef.current) {
@@ -206,34 +213,28 @@ const Home = () => {
       <div className="content-section">
         <section className="hero" ref={heroRef}>
           <div className="hero__content">
-            <img 
-              src="/Images/logo.png" 
-              alt="Shop house logo" 
+            <img
+              src="/Images/logo.png"
+              alt="Shop house logo"
               className="hero__logo"
               style={{
-                animation: isHeroVisible 
-                  ? `fadeInDown 0.8s ease forwards` 
-                  : 'none',
+                animation: isHeroVisible ? `fadeInDown 0.8s ease forwards` : "none",
                 opacity: 0,
               }}
             />
-            <p 
+            <p
               className="hero__text"
               style={{
-                animation: isHeroVisible 
-                  ? `fadeInUp 0.8s ease forwards 0.2s` 
-                  : 'none',
+                animation: isHeroVisible ? `fadeInUp 0.8s ease forwards 0.2s` : "none",
                 opacity: 0,
               }}
             >
               Over 30 years of experience giving our customers the products at the best price.
             </p>
-            <button 
+            <button
               className="btn btn--black btn--hero"
               style={{
-                animation: isHeroVisible 
-                  ? `fadeInUp 0.8s ease forwards 0.4s` 
-                  : 'none',
+                animation: isHeroVisible ? `fadeInUp 0.8s ease forwards 0.4s` : "none",
                 opacity: 0,
               }}
             >
@@ -250,7 +251,7 @@ const Home = () => {
                 <div
                   key={index}
                   className="top-item"
-                  style={{ display: index === currentTopProductIndex ? 'block' : 'none' }}
+                  style={{ display: index === currentTopProductIndex ? "block" : "none" }}
                 >
                   <ShowProduct product={product} storeId={null} />
                 </div>
@@ -261,7 +262,7 @@ const Home = () => {
 
         <div className="promo-products">
           <h2 className="promo-products-title">Featured Promotion Products</h2>
-          <PaginationFilter 
+          <PaginationFilter
             items={promoProducts}
             onFilteredItemsChange={(filteredItems) => setFilteredPromoCount(filteredItems.length)}
             itemsPerPage={25}
@@ -277,15 +278,15 @@ const Home = () => {
 
         <div className="categories">
           <h2
-            className={`category--cat ${categoriesIsVisible ? 'active' : ''}`}
+            className={`category--cat ${categoriesIsVisible ? "active" : ""}`}
             onClick={toggleCategoriesVisibility}
           >
-            OUR CATEGORIES <span className={`arrow ${categoriesIsVisible ? 'up' : 'down'}`}>➔</span>
+            OUR CATEGORIES <span className={`arrow ${categoriesIsVisible ? "up" : "down"}`}>➔</span>
           </h2>
           {categoriesIsVisible && (
             <div className="categories-container">
               <button
-                className={`prev-button ${currentCategoryPage === 0 ? 'disabled' : ''}`}
+                className={`prev-button ${currentCategoryPage === 0 ? "disabled" : ""}`}
                 onClick={handlePrevCategoryPage}
                 disabled={currentCategoryPage === 0}
               >
@@ -305,7 +306,7 @@ const Home = () => {
                           src={getCategoryImagePath(category)}
                           alt={category}
                           loading="lazy"
-                          onError={(e) => (e.target.src = '/Images/categories/default.png')}
+                          onError={(e) => (e.target.src = "/Images/categories/default.png")}
                         />
                       </div>
                       <div className="category-card__content">
@@ -316,7 +317,7 @@ const Home = () => {
                   ))}
               </div>
               <button
-                className={`next-button ${categories.length <= (currentCategoryPage + 1) * 11 ? 'disabled' : ''}`}
+                className={`next-button ${categories.length <= (currentCategoryPage + 1) * 11 ? "disabled" : ""}`}
                 onClick={handleNextCategoryPage}
                 disabled={categories.length <= (currentCategoryPage + 1) * 11}
               >
@@ -329,10 +330,10 @@ const Home = () => {
         {/* Stores section */}
         <div className="stores">
           <h2
-            className={`store--cat ${storesIsVisible ? 'active' : ''}`}
+            className={`store--cat ${storesIsVisible ? "active" : ""}`}
             onClick={toggleStoresVisibility}
           >
-            OUR STORES <span className={`arrow ${storesIsVisible ? 'up' : 'down'}`}>➔</span>
+            OUR STORES <span className={`arrow ${storesIsVisible ? "up" : "down"}`}>➔</span>
           </h2>
           {storesIsVisible && (
             <div className="stores-container">

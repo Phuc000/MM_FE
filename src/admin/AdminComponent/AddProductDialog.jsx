@@ -1,5 +1,5 @@
 // src/admin/AddProductDialog.jsx
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -7,21 +7,24 @@ import {
   DialogActions,
   TextField,
   Button,
-  FormControl, InputLabel, Select, MenuItem
-} from '@mui/material';
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+} from "@mui/material";
 
 const AddProductDialog = ({ open, handleClose, handleSave, availableCategories }) => {
   const [product, setProduct] = useState({
-    image: '',
-    consistency: '',
-    name: '',
-    nameClean: '',
-    originalName: '',
-    amount: '',
-    unit: '',
-    price: '',
-    aisle: '',
-    description: '',   
+    image: "",
+    consistency: "",
+    name: "",
+    nameClean: "",
+    originalName: "",
+    amount: "",
+    unit: "",
+    price: "",
+    aisle: "",
+    description: "",
   });
 
   const handleChange = (e) => {

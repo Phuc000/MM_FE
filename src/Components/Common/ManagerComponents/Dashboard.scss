@@ -8,7 +8,7 @@
 
 .chart-container {
   flex: 6;
-  // overflow-x: auto; 
+  // overflow-x: auto;
 }
 
 .sidebar-container {
@@ -131,18 +131,18 @@
   font-size: 16px;
 
   &.active {
-      background-color: #fe3bd4;
-      color: #fff;
-      border-color: #fe3bd4;
+    background-color: #fe3bd4;
+    color: #fff;
+    border-color: #fe3bd4;
   }
 
   &:hover:not(.active) {
-      background-color: #f0f0f0;
+    background-color: #f0f0f0;
   }
 
   &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 }
 
@@ -209,6 +209,6 @@
   }
 
   .store__header {
-    margin-left: 0
+    margin-left: 0;
   }
 }

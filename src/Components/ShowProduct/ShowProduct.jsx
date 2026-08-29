@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useLocationContext } from '../../Context/LocationContext';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useLocationContext } from "../../Context/LocationContext";
+import axios from "axios";
 import "./ShowProduct.scss";
 
 const ShowProduct = ({ product, storeId }) => {
@@ -26,26 +26,29 @@ const ShowProduct = ({ product, storeId }) => {
 
     if (!storeId) {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/${product.productID}`, {
-          headers: { 'Content-Type': 'application/json' },
-        });
+        const response = await axios.get(
+          `${import.meta.env.VITE_REACT_APP_API_URL}/products/atstore/${product.productID}`,
+          {
+            headers: { "Content-Type": "application/json" },
+          },
+        );
 
         const storeInfoArray = response.data;
 
         const rankedStores = getRankedStoresForProduct(
-          storeInfoArray.map(store => store.storeID)
+          storeInfoArray.map((store) => store.storeID),
         );
 
         if (rankedStores.length > 0) {
           const stockByStore = new Map(
-            storeInfoArray.map(store => [store.storeID, store.numberAtStore])
+            storeInfoArray.map((store) => [store.storeID, store.numberAtStore]),
           );
-          finalStoreId = rankedStores.find(
-            store => (stockByStore.get(store.storeID) || 0) > 0
-          )?.storeID || rankedStores[0].storeID;
+          finalStoreId =
+            rankedStores.find((store) => (stockByStore.get(store.storeID) || 0) > 0)?.storeID ||
+            rankedStores[0].storeID;
         } else {
           const maxStockStore = storeInfoArray.reduce((prev, current) =>
-            (prev.numberAtStore > current.numberAtStore) ? prev : current
+            prev.numberAtStore > current.numberAtStore ? prev : current,
           );
           finalStoreId = maxStockStore.storeID;
         }
@@ -69,16 +72,16 @@ const ShowProduct = ({ product, storeId }) => {
 
   return (
     <div className="item-product">
-      <a href={`/buy-product/${product.productID}/${storeId || ''}`} onClick={handleClick} className="product-link">
+      <a
+        href={`/buy-product/${product.productID}/${storeId || ""}`}
+        onClick={handleClick}
+        className="product-link"
+      >
         <article className="product-card" key={product.name}>
           <div className="product-card__body">
             <div className="product-img-wrapper">
               {hasValidImage && !imageError ? (
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="product-card__img"
-                />
+                <img src={product.image} alt={product.name} className="product-card__img" />
               ) : (
                 <img src="/Images/no-image.jpg" alt={product.name} className="product-card__img" />
               )}

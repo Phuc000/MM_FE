@@ -1,171 +1,167 @@
-
 $aeon_pink: #fe3bd4;
 
 /*#####################################*/
 /*Categories product*/
 .product-link {
-    text-decoration: none;
-    color: rgb(27, 27, 27);
-    width: 17vw; 
-    min-width: 240px;
+  text-decoration: none;
+  color: rgb(27, 27, 27);
+  width: 17vw;
+  min-width: 240px;
 }
-
 
 .product-card {
-    background: rgb(252, 252, 252);
-    border: 1px solid rgb(223, 223, 223);
-    border-radius: 16px;
-    overflow: hidden;
-    transition: all 0.3s ease;
+  background: rgb(252, 252, 252);
+  border: 1px solid rgb(223, 223, 223);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: all 0.3s ease;
 
-    // @media (max-width: 768px) {
-    //     max-width: 400px;
-    // }
+  // @media (max-width: 768px) {
+  //     max-width: 400px;
+  // }
 }
 
-
 .product-card:hover {
-    border: 1px solid $aeon_pink ;
-    box-shadow: 4px 12px 24px rgba(230, 170, 230, 0.9);
-    transform: translate(1%, -1%);
+  border: 1px solid $aeon_pink;
+  box-shadow: 4px 12px 24px rgba(230, 170, 230, 0.9);
+  transform: translate(1%, -1%);
 }
 
 .product-img-wrapper {
-    position: relative;
-    width: 100%;
-    padding-top: 100%; /* Maintain square aspect ratio */
-    overflow: hidden;
-    border: 1px solid #e0e0e0;
-    border-radius: 10px;
-  }
-  
-  .product-card__img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
-  }
+  position: relative;
+  width: 100%;
+  padding-top: 100%; /* Maintain square aspect ratio */
+  overflow: hidden;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+}
+
+.product-card__img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
 
 .product-card__image-container {
-    background-color: #ffffff;
-    opacity: 0.8;
-    background-image: radial-gradient(#ff2a2b 1.1500000000000001px, #ffffff 1.1500000000000001px);
-    background-size: 23px 23px;
+  background-color: #ffffff;
+  opacity: 0.8;
+  background-image: radial-gradient(#ff2a2b 1.1500000000000001px, #ffffff 1.1500000000000001px);
+  background-size: 23px 23px;
 
-    position: relative; /*Position the discount on top right corner*/
+  position: relative; /*Position the discount on top right corner*/
 }
 
 .product-card__image-container img {
-    width: 100%;
+  width: 100%;
 }
 
 .product-price-container {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
 
 .product__disscount {
-    margin: 0px;
+  margin: 0px;
 
-    display: inline-block;
-    background: var(--main_red);
-    border-radius: 8px;
-    padding: 0.4em 0.6em;
+  display: inline-block;
+  background: var(--main_red);
+  border-radius: 8px;
+  padding: 0.4em 0.6em;
 
-    position: absolute;
-    top: 8px;
-    right: 8px;
+  position: absolute;
+  top: 8px;
+  right: 8px;
 }
 
 .product-card__body {
-    padding: 16px;
-    position: relative;
+  padding: 16px;
+  position: relative;
 }
 
 .product-card__name {
-    font-size: var(--fz_md);
-    text-transform: uppercase;
-    font-weight: bold;
-    // margin: 0;
-    height: 48px; /* Limit the height for the name (adjust as needed) */
-    max-height: 48px;
-    line-height: 1.5; /* Control line spacing */
-    overflow: hidden; /* Hide overflow text */
-    text-overflow: ellipsis; /* Add ellipsis for overflow */
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limit to 2 lines */
-    -webkit-box-orient: vertical;
+  font-size: var(--fz_md);
+  text-transform: uppercase;
+  font-weight: bold;
+  // margin: 0;
+  height: 48px; /* Limit the height for the name (adjust as needed) */
+  max-height: 48px;
+  line-height: 1.5; /* Control line spacing */
+  overflow: hidden; /* Hide overflow text */
+  text-overflow: ellipsis; /* Add ellipsis for overflow */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
 }
 
 .product-card__price {
-    font-size: var(--fz_lg);
-    color: #272727;
-    text-transform: uppercase;
-    margin: 0px 0px 12px 0px; 
-    font-weight: 900;
-    font-family: 'Quicksand', sans-serif;
-    font-size: 20px;
+  font-size: var(--fz_lg);
+  color: #272727;
+  text-transform: uppercase;
+  margin: 0px 0px 12px 0px;
+  font-weight: 900;
+  font-family: "Quicksand", sans-serif;
+  font-size: 20px;
 }
 
 .product-card__price span {
-    font-weight: bolder;
+  font-weight: bolder;
 }
 
 .product-card__buttons {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
 
-    .btn {
-        padding: 0.7em 1.3em;
-    }
-
+  .btn {
+    padding: 0.7em 1.3em;
+  }
 }
 
 .product-card__aisle {
-    font-size: var(--fz_sm);
-    color: #272727;
-    margin: 0px 0px 0px 0px; 
-    font-weight: 900;
-    font-family: 'Quicksand', sans-serif;
-    font-size: 15px;
+  font-size: var(--fz_sm);
+  color: #272727;
+  margin: 0px 0px 0px 0px;
+  font-weight: 900;
+  font-family: "Quicksand", sans-serif;
+  font-size: 15px;
 }
 
 // end identical to category css (deleted)
 
 /* when has discount */
 .promo-product-price {
-    font-size: 18px;
-    margin-top: 0px;
-    color: #3a3a3a; /* Set a color for the price */
-    text-decoration: line-through;
-    font-weight: 900;
-    font-family: 'Quicksand', sans-serif;
-    margin-bottom: 10px;
-  }
-  
-  .promo-product-discount {
-    margin-top: 0px;
-    margin-bottom: 10px;
-    font-size: 20px;
-    color: #df4923; /* Set a color for the price */
-    font-weight: 900;
-    font-family: 'Quicksand', sans-serif;
-  }
-  
-  .promo_product__disscount {
-    margin: 0px;
-  
-    display: inline-block;
-    background: var(--main_red);
-    border-radius: 8px;
-    padding: 0.4em 0.6em;
-  
-    position: absolute;
-    bottom: 8px;
-    right: 8px;
-  }
+  font-size: 18px;
+  margin-top: 0px;
+  color: #3a3a3a; /* Set a color for the price */
+  text-decoration: line-through;
+  font-weight: 900;
+  font-family: "Quicksand", sans-serif;
+  margin-bottom: 10px;
+}
+
+.promo-product-discount {
+  margin-top: 0px;
+  margin-bottom: 10px;
+  font-size: 20px;
+  color: #df4923; /* Set a color for the price */
+  font-weight: 900;
+  font-family: "Quicksand", sans-serif;
+}
+
+.promo_product__disscount {
+  margin: 0px;
+
+  display: inline-block;
+  background: var(--main_red);
+  border-radius: 8px;
+  padding: 0.4em 0.6em;
+
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+}

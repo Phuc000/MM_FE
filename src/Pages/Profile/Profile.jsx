@@ -13,9 +13,19 @@ import "./Profile.scss";
 // import StoreOrders from "../../Components/Common/ManagerComponents/StoreOrders";
 // import AccountDetails from "../../Components/Common/UserComponents/AccountDetail";
 import axios from "axios";
-import { Modal, IconButton, Box, Typography, Button, Badge, Snackbar, Alert, CircularProgress } from '@mui/material';
-import { keyframes } from '@mui/system';
-import CasinoIcon from '@mui/icons-material/Casino';
+import {
+  Modal,
+  IconButton,
+  Box,
+  Typography,
+  Button,
+  Badge,
+  Snackbar,
+  Alert,
+  CircularProgress,
+} from "@mui/material";
+import { keyframes } from "@mui/system";
+import CasinoIcon from "@mui/icons-material/Casino";
 import { useAuth } from "../../hooks/useAuth";
 
 // Lazy load components
@@ -28,7 +38,9 @@ const Dashboard = lazy(() => import("../../Components/Common/ManagerComponents/D
 const StoreOrders = lazy(() => import("../../Components/Common/ManagerComponents/StoreOrders"));
 const AccountDetails = lazy(() => import("../../Components/Common/UserComponents/AccountDetail"));
 
-const Wheel = lazy(() => import('react-custom-roulette').then(module => ({ default: module.Wheel })));
+const Wheel = lazy(() =>
+  import("react-custom-roulette").then((module) => ({ default: module.Wheel })),
+);
 
 // Define the pulse animation
 const pulse = keyframes`
@@ -63,8 +75,8 @@ const Profile = () => {
 
   // Snackbar state
   const [openSnackbar, setOpenSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState("success");
 
   useEffect(() => {
     if (!user) {
@@ -94,7 +106,7 @@ const Profile = () => {
         {
           headers: { "Content-Type": "application/json" },
           withCredentials: true,
-        }
+        },
       );
       const SpinChances = response.data.fortuneChance ? response.data.fortuneChance : 0;
       setFortuneChances(SpinChances);
@@ -112,7 +124,7 @@ const Profile = () => {
             "Content-Type": "application/json",
           },
           withCredentials: true,
-        }
+        },
       );
       // Map promotions to wheel data
       const promotions = response.data.map((promo) => ({
@@ -168,7 +180,7 @@ const Profile = () => {
     if (winner.promotionId) {
       // User won a promotion
       setSnackbarMessage(`🎉 Congratulations! You won ${winner.option}!`);
-      setSnackbarSeverity('success');
+      setSnackbarSeverity("success");
       setOpenSnackbar(true);
 
       // Post the customer promotion to the API
@@ -181,27 +193,26 @@ const Profile = () => {
               "Content-Type": "application/json",
             },
             withCredentials: true,
-          }
+          },
         );
         console.log("Promotion applied successfully");
       } catch (error) {
         console.error("Error applying promotion:", error);
         setSnackbarMessage("❌ Failed to apply promotion. Please try again.");
-        setSnackbarSeverity('error');
+        setSnackbarSeverity("error");
         setOpenSnackbar(true);
       }
     } else {
       // User landed on "Better Luck Next Time"
       setSnackbarMessage("😞 Better luck next time!");
-      setSnackbarSeverity('info');
+      setSnackbarSeverity("info");
       setOpenSnackbar(true);
     }
-
   };
 
   // Adjust the badge position
   const badgeStyle = {
-    '& .MuiBadge-badge': {
+    "& .MuiBadge-badge": {
       left: 8,
       top: 8,
     },
@@ -213,25 +224,33 @@ const Profile = () => {
   };
 
   return (
-    <div style={{display: "flex", flexDirection: "column", minHeight: "100vh"}}>
+    <div style={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       <Header />
       {showUser && (
-          <div className="profile-content-wrapper">
-            <UserMenu username={`${user.fName} ${user.lName}`} onMenuClick={handleMenuClick} mode="Customer" />
-            <div className="component-container">
+        <div className="profile-content-wrapper">
+          <UserMenu
+            username={`${user.fName} ${user.lName}`}
+            onMenuClick={handleMenuClick}
+            mode="Customer"
+          />
+          <div className="component-container">
             <Suspense fallback={<CircularProgress />}>
               {activeComponent === "MyOrders" && <MyOrders />}
               {activeComponent === "Promotions" && <Promotions />}
               {activeComponent === "MyAccount" && <MyAccount />}
               {activeComponent === "AccountDetails" && <AccountDetails />}
             </Suspense>
-            </div>
           </div>
-        )}
-        {showManager && (
-          <div className="profile-content-wrapper">
-            <UserMenu username={`${user.fName} ${user.lName}`} onMenuClick={handleMenuClick} mode="Manager" />
-            <div className="component-container">
+        </div>
+      )}
+      {showManager && (
+        <div className="profile-content-wrapper">
+          <UserMenu
+            username={`${user.fName} ${user.lName}`}
+            onMenuClick={handleMenuClick}
+            mode="Manager"
+          />
+          <div className="component-container">
             <Suspense fallback={<CircularProgress />}>
               {activeComponent === "Dashboard" && <Dashboard />}
               {activeComponent === "Restock" && <Restock />}
@@ -239,159 +258,161 @@ const Profile = () => {
               {/* {activeComponent === "CreatePromotion" && <CreatePromotion />} */}
               {activeComponent === "StoreOrders" && <StoreOrders />}
             </Suspense>
-            </div>
           </div>
-        )}
-        {!showUser && !showManager && (
-          <div>
-            <h2>Please log in to view your profile</h2>
-          </div>
-        )}
+        </div>
+      )}
+      {!showUser && !showManager && (
+        <div>
+          <h2>Please log in to view your profile</h2>
+        </div>
+      )}
 
-        {/* Floating Icon */}
-        {showUser && (
-          <Box
-            sx={{
-              position: 'fixed',
-              bottom: 24,
-              right: 24,
+      {/* Floating Icon */}
+      {showUser && (
+        <Box
+          sx={{
+            position: "fixed",
+            bottom: 24,
+            right: 24,
+          }}
+        >
+          <Badge
+            badgeContent={fortuneChances > 0 ? fortuneChances : null}
+            color="secondary"
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "left",
             }}
+            sx={badgeStyle}
           >
-            <Badge
-              badgeContent={fortuneChances > 0 ? fortuneChances : null}
-              color="secondary"
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              sx={badgeStyle}
-            >
-              <IconButton
-                onClick={handleOpenWheel}
-                sx={{
-                  backgroundColor: '#fe3bd4',
-                  color: 'white',
-                  width: 64,
-                  height: 64,
-                  animation: `${pulse} 4s infinite`,
-                  '&:hover': {
-                    backgroundColor: '#d81b60',
-                  },
-                }}
-              >
-                <CasinoIcon sx={{ fontSize: 40 }} />
-              </IconButton>
-            </Badge>
-          </Box>
-        )}
-
-        {/* Modal for the Fortune Wheel */}
-        <Modal open={openWheel} onClose={handleCloseWheel}>
-          <Box
-            sx={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              bgcolor: 'background.paper',
-              boxShadow: 24,
-              borderRadius: 2,
-              p: 4,
-              width: '90%',
-              maxWidth: '500px',
-              textAlign: 'center',
-            }}
-          >
-            <Typography
-              variant="h5"
-              align="center"
-              gutterBottom
+            <IconButton
+              onClick={handleOpenWheel}
               sx={{
-                fontWeight: "bold",
-                fontFamily: "'Quicksand', sans-serif",
-                fontSize: "1.8rem",
-              }}
-            >
-              Spin the Wheel!
-            </Typography>
-            <Box sx={{ position: "relative", display: "inline-block" }}>
-              <Wheel
-                mustStartSpinning={mustSpin}
-                prizeNumber={prizeNumber}
-                data={wheelData}
-                backgroundColors={["#3e3e3e", "#df3428"]}
-                textColors={["#ffffff"]}
-                fontSize={16}
-                outerBorderColor={"#000000"}
-                outerBorderWidth={5}
-                innerRadius={18}
-                radiusLineColor={"#ffffff"}
-                radiusLineWidth={8}
-                spinDuration={0.5}
-                onStopSpinning={handleWheelStop}
-              />
-              {fortuneChances === 0 && (
-                <Box
-                  sx={{
-                    position: "absolute",
-                    top: "50%",
-                    left: "50%",
-                    transform: "translate(-50%, -50%)",
-                    backgroundColor: "rgba(0, 0, 0, 0.6)",
-                    width: "80%",
-                    color: "white",
-                    padding: 2,
-                    borderRadius: 1,
-                    zIndex: 99,
-                  }}
-                >
-                  <Typography>
-                    Purchase more than $100 to gain a spin.
-                  </Typography>
-                </Box>
-              )}
-            </Box>
-            <Typography
-              sx={{
-                mt: 2,
-                fontWeight: "bold",
-                fontFamily: "'Quicksand', sans-serif",
-              }}
-            >
-              Attempt(s): {fortuneChances}
-            </Typography>
-            <Button
-              variant="contained"
-              fullWidth
-              onClick={handleSpinClick}
-              sx={{
-                mt: 2,
                 backgroundColor: "#fe3bd4",
-                color: "#ffffff",
-                fontWeight: "bold",
-                fontFamily: "'Quicksand', sans-serif",
+                color: "white",
+                width: 64,
+                height: 64,
+                animation: `${pulse} 4s infinite`,
                 "&:hover": {
                   backgroundColor: "#d81b60",
                 },
               }}
-              disabled={fortuneChances === 0 || wheelData.length === 0 || mustSpin}
             >
-              Spin
-            </Button>
-          </Box>
-        </Modal>
+              <CasinoIcon sx={{ fontSize: 40 }} />
+            </IconButton>
+          </Badge>
+        </Box>
+      )}
 
-        {/* Snackbar for displaying the result */}
-        <Snackbar
-          open={openSnackbar}
-          autoHideDuration={6000}
-          onClose={() => setOpenSnackbar(false)}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      {/* Modal for the Fortune Wheel */}
+      <Modal open={openWheel} onClose={handleCloseWheel}>
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            bgcolor: "background.paper",
+            boxShadow: 24,
+            borderRadius: 2,
+            p: 4,
+            width: "90%",
+            maxWidth: "500px",
+            textAlign: "center",
+          }}
         >
-          <Alert onClose={() => setOpenSnackbar(false)} severity={snackbarSeverity} sx={{ width: '100%' }}>
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
+          <Typography
+            variant="h5"
+            align="center"
+            gutterBottom
+            sx={{
+              fontWeight: "bold",
+              fontFamily: "'Quicksand', sans-serif",
+              fontSize: "1.8rem",
+            }}
+          >
+            Spin the Wheel!
+          </Typography>
+          <Box sx={{ position: "relative", display: "inline-block" }}>
+            <Wheel
+              mustStartSpinning={mustSpin}
+              prizeNumber={prizeNumber}
+              data={wheelData}
+              backgroundColors={["#3e3e3e", "#df3428"]}
+              textColors={["#ffffff"]}
+              fontSize={16}
+              outerBorderColor={"#000000"}
+              outerBorderWidth={5}
+              innerRadius={18}
+              radiusLineColor={"#ffffff"}
+              radiusLineWidth={8}
+              spinDuration={0.5}
+              onStopSpinning={handleWheelStop}
+            />
+            {fortuneChances === 0 && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  backgroundColor: "rgba(0, 0, 0, 0.6)",
+                  width: "80%",
+                  color: "white",
+                  padding: 2,
+                  borderRadius: 1,
+                  zIndex: 99,
+                }}
+              >
+                <Typography>Purchase more than $100 to gain a spin.</Typography>
+              </Box>
+            )}
+          </Box>
+          <Typography
+            sx={{
+              mt: 2,
+              fontWeight: "bold",
+              fontFamily: "'Quicksand', sans-serif",
+            }}
+          >
+            Attempt(s): {fortuneChances}
+          </Typography>
+          <Button
+            variant="contained"
+            fullWidth
+            onClick={handleSpinClick}
+            sx={{
+              mt: 2,
+              backgroundColor: "#fe3bd4",
+              color: "#ffffff",
+              fontWeight: "bold",
+              fontFamily: "'Quicksand', sans-serif",
+              "&:hover": {
+                backgroundColor: "#d81b60",
+              },
+            }}
+            disabled={fortuneChances === 0 || wheelData.length === 0 || mustSpin}
+          >
+            Spin
+          </Button>
+        </Box>
+      </Modal>
+
+      {/* Snackbar for displaying the result */}
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={6000}
+        onClose={() => setOpenSnackbar(false)}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      >
+        <Alert
+          onClose={() => setOpenSnackbar(false)}
+          severity={snackbarSeverity}
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <Footer />
     </div>
   );

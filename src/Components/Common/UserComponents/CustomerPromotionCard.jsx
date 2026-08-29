@@ -1,12 +1,12 @@
-import React from 'react';
-import { Box, Card, Typography, Stack, Chip, Tooltip } from '@mui/material';
+import React from "react";
+import { Box, Card, Typography, Stack, Chip, Tooltip } from "@mui/material";
 
 const formatDate = (dateString) => {
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
   });
 };
 
@@ -15,17 +15,17 @@ const CustomerPromotionCard = ({ promo }) => {
     <Card
       variant="outlined"
       sx={{
-        position: 'relative',
-        display: 'flex',
+        position: "relative",
+        display: "flex",
         width: 400,
         height: 160,
-        overflow: 'visible',
+        overflow: "visible",
         borderRadius: 0,
-        borderColor: '#bbb',
+        borderColor: "#bbb",
         borderWidth: 2,
-        borderStyle: 'solid',
-        '&:hover': {
-          borderColor: '#fe3bd4',
+        borderStyle: "solid",
+        "&:hover": {
+          borderColor: "#fe3bd4",
         },
       }}
     >
@@ -34,18 +34,18 @@ const CustomerPromotionCard = ({ promo }) => {
         sx={{
           flex: 1,
           padding: 2,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
         }}
       >
-        <Typography variant="h6" sx={{ color: '#fe3bd4', fontWeight: 'bold' }}>
+        <Typography variant="h6" sx={{ color: "#fe3bd4", fontWeight: "bold" }}>
           {promo.name}
         </Typography>
-        <Typography variant="body2" sx={{ color: '#444', marginBottom: 1 }}>
+        <Typography variant="body2" sx={{ color: "#444", marginBottom: 1 }}>
           {promo.description}
         </Typography>
-        <Typography variant="body2" sx={{ color: '#555' }}>
+        <Typography variant="body2" sx={{ color: "#555" }}>
           <strong>End Date:</strong> {formatDate(promo.endDay)}
         </Typography>
         {/* Product Frame (No Scrolling Needed for Single Product) */}
@@ -62,36 +62,36 @@ const CustomerPromotionCard = ({ promo }) => {
       {/* Dashed Divider with Cutouts */}
       <Box
         sx={{
-          position: 'relative',
+          position: "relative",
           width: 0,
-          borderLeft: '2px dashed #ccc',
+          borderLeft: "2px dashed #ccc",
           marginY: 1,
         }}
       >
         <Box
           sx={{
-            position: 'absolute',
+            position: "absolute",
             top: -25,
-            left: '50%',
-            transform: 'translateX(-50%)',
+            left: "50%",
+            transform: "translateX(-50%)",
             width: 30,
             height: 30,
-            backgroundColor: '#fff',
-            borderRadius: '50%',
-            borderBottom: 'none',
+            backgroundColor: "#fff",
+            borderRadius: "50%",
+            borderBottom: "none",
           }}
         />
         <Box
           sx={{
-            position: 'absolute',
+            position: "absolute",
             bottom: -25,
-            left: '50%',
-            transform: 'translateX(-50%)',
+            left: "50%",
+            transform: "translateX(-50%)",
             width: 30,
             height: 30,
-            backgroundColor: '#fff',
-            borderRadius: '50%',
-            borderTop: 'none',
+            backgroundColor: "#fff",
+            borderRadius: "50%",
+            borderTop: "none",
           }}
         />
       </Box>
@@ -99,15 +99,15 @@ const CustomerPromotionCard = ({ promo }) => {
       <Box
         sx={{
           width: 100,
-          backgroundColor: '#fe3bd4',
-          color: '#fff',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
+          backgroundColor: "#fe3bd4",
+          color: "#fff",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        <Typography variant="h4" sx={{ fontWeight: 'bold' }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
           {(promo.discount * 100).toFixed(0)}%
         </Typography>
         <Typography variant="subtitle2">OFF</Typography>
